@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>라디오 엘림</title>
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="라디오 엘림" />
+    <link rel="icon" sizes="192x192" href="elim_logo.png" />
+    <link rel="apple-touch-icon" href="elim_logo.png" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Pretendard (한글 최적화 폰트) -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --elim-navy: #172554;
+            --elim-blue: #1e3a8a;
+            --elim-soft: #eef4ff;
+            --elim-line: rgba(148, 163, 184, 0.24);
+        }
+
+        html, body {
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #eef2f7;
+        }
+
+        /* 차분한 공통 배경 + 섹션별 포인트 */
+        #app {
+            isolation: isolate;
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.99), rgba(248,250,252,.98) 50%, rgba(255,255,255,.99));
+            transition: background .35s ease;
+        }
+
+        /* 상단에 아주 은은한 테마 라인 */
+        #app::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 72%;
+            height: 3px;
+            transform: translateX(-50%);
+            border-radius: 0 0 999px 999px;
+            opacity: .75;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* 화면 하단에는 거의 보이지 않는 부드러운 빛만 */
+        #app::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            left: 50%;
+            bottom: 10%;
+            transform: translateX(-50%);
+            border-radius: 999px;
+            filter: blur(26px);
+            opacity: .14;
+            pointer-events: none;
+            z-index: -1;
+            animation: softGlow 8s ease-in-out infinite;
+        }
+
+        /* 라디오 엘림: 파란 포인트 */
+        #app.theme-radio::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(59,130,246,.28),
+                rgba(30,64,175,.52),
+                rgba(59,130,246,.28),
+                transparent
+            );
+        }
+
+        #app.theme-radio::after {
+            background: radial-gradient(
+                circle,
+                rgba(96,165,250,.30),
+                rgba(96,165,250,0) 68%
+            );
+        }
+
+        /* 즐겨찾기: 일반 흰 배경 */
+        #app.theme-neutral {
+            background: #ffffff;
+        }
+
+        #app.theme-neutral::before {
+            background: transparent;
+        }
+
+        #app.theme-neutral::after {
+            background: transparent;
+            animation: none;
+        }
+
+        /* 주일말씀: 연한 금색 포인트 */
+        #app.theme-sermon {
+            background:
+                linear-gradient(145deg, rgba(255,255,255,.99), rgba(255,253,247,.98) 50%, rgba(255,255,255,.99));
+        }
+
+        #app.theme-sermon::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(245,194,66,.26),
+                rgba(217,170,45,.48),
+                rgba(245,194,66,.26),
+                transparent
+            );
+        }
+
+        #app.theme-sermon::after {
+            background: radial-gradient(
+                circle,
+                rgba(250,204,21,.24),
+                rgba(250,204,21,0) 68%
+            );
+        }
+
+        @keyframes softGlow {
+            0%, 100% {
+                transform: translateX(-50%) scale(.96);
+                opacity: .10;
+            }
+            50% {
+                transform: translateX(-50%) scale(1.05);
+                opacity: .18;
+            }
+        }
+
+
+
+
+
+
+
+        header {
+            background: rgba(255,255,255,.78) !important;
+            border-color: rgba(226,232,240,.72) !important;
+            box-shadow: 0 8px 24px rgba(15,23,42,.035);
+        }
+
+        #main-content {
+            background: transparent;
+        }
+
+        nav {
+            background: rgba(255,255,255,.86) !important;
+            border-color: rgba(226,232,240,.78) !important;
+            box-shadow: 0 -8px 28px rgba(15,23,42,.045);
+        }
+
+        #mini-player {
+            background: rgba(255,255,255,.88) !important;
+            border-color: rgba(226,232,240,.72) !important;
+        }
+
+        .hero-card {
+            border: 1px solid rgba(148,163,184,.24) !important;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .25s ease;
+        }
+
+        .theme-radio .hero-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.96), rgba(239,246,255,.90)) !important;
+        }
+
+        .theme-sermon .hero-card {
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.97), rgba(255,248,220,.92)) !important;
+        }
+
+        .theme-neutral .hero-card {
+            background: #ffffff !important;
+            border-color: rgba(226,232,240,.9) !important;
+            box-shadow: 0 8px 24px rgba(15,23,42,.04);
+        }
+
+        .hero-card:active {
+            transform: scale(.985);
+        }
+
+        .theme-radio .hero-card {
+            border-color: rgba(96,165,250,.28) !important;
+            box-shadow: 0 14px 34px rgba(59,130,246,.07);
+        }
+
+        .theme-sermon .hero-card {
+            border-color: rgba(217,170,45,.26) !important;
+            box-shadow: 0 14px 34px rgba(217,170,45,.07);
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -46px;
+            top: -58px;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .theme-radio .hero-card::after {
+            background: radial-gradient(circle, rgba(59,130,246,.14), rgba(59,130,246,0) 68%);
+        }
+
+        .theme-sermon .hero-card::after {
+            background: radial-gradient(circle, rgba(217,170,45,.16), rgba(217,170,45,0) 68%);
+        }
+
+        .theme-neutral .hero-card::after {
+            background: transparent;
+        }
+
+        .episode-card {
+            background: rgba(255,255,255,.72) !important;
+            border: 1px solid rgba(203,213,225,.62) !important;
+            box-shadow: 0 5px 16px rgba(15,23,42,.025);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+        }
+
+        .episode-card:active {
+            transform: scale(.985);
+            background: rgba(255,255,255,.92) !important;
+        }
+
+        .theme-radio .episode-card:hover {
+            border-color: rgba(96,165,250,.36) !important;
+        }
+
+        .theme-sermon .episode-card:hover {
+            border-color: rgba(217,170,45,.34) !important;
+        }
+
+        .theme-neutral .episode-card {
+            background: #ffffff !important;
+            border-color: rgba(226,232,240,.9) !important;
+            box-shadow: none;
+        }
+
+        .theme-neutral .episode-card:hover {
+            border-color: rgba(203,213,225,.95) !important;
+        }
+
+        /* 최신 콘텐츠 NEW 배지 */
+        .new-badge {
+            display: inline-flex;
+            align-items: center;
+            height: 18px;
+            padding: 0 7px;
+            margin-left: 6px;
+            border-radius: 999px;
+            font-size: 9px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: .04em;
+            vertical-align: middle;
+        }
+
+        .theme-radio .new-badge {
+            color: #1e3a8a;
+            background: rgba(219,234,254,.92);
+            border: 1px solid rgba(147,197,253,.55);
+        }
+
+        .theme-sermon .new-badge {
+            color: #7c5a13;
+            background: rgba(254,249,195,.92);
+            border: 1px solid rgba(234,179,8,.22);
+        }
+
+        /* 목록의 현재 재생 중 회차 */
+        .episode-card.now-playing {
+            position: relative;
+        }
+
+        /* 회차 썸네일 */
+        .episode-thumb {
+            width: 96px;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+            background: #f1f5f9;
+            border: 1px solid rgba(226,232,240,.95);
+        }
+
+        .hero-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            background: #f8fafc;
+            border: 1px solid rgba(226,232,240,.9);
+        }
+
+        .player-art-card {
+            width: min(100%, 340px) !important;
+            height: auto !important;
+            aspect-ratio: 16 / 9;
+        }
+
+        .player-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .player-art-card.radio-theme .player-thumb {
+            filter: none;
+            opacity: 1;
+        }
+
+        .player-thumb-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(
+                180deg,
+                rgba(15,23,42,.05),
+                rgba(15,23,42,.42)
+            );
+            pointer-events: none;
+        }
+
+        /* 라디오 엘림 재생 화면: 썸네일을 가리지 않도록 오버레이 제거 */
+        .player-art-card.radio-theme .player-thumb-overlay {
+            display: none;
+        }
+
+        /* 라디오 엘림에서는 중앙 RADIO / ELIM 장식도 숨김 */
+        .player-art-card.radio-theme .player-thumb-content {
+            display: none;
+        }
+
+        .player-thumb-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .favorite-thumb {
+            width: 96px;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+            background: #f8fafc;
+            border: 1px solid rgba(226,232,240,.9);
+        }
+
+        @media (max-width: 390px) {
+            .episode-thumb,
+            .favorite-thumb {
+                width: 88px;
+            }
+        }
+
+        .thumb-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            letter-spacing: -.02em;
+            color: #64748b;
+            background: linear-gradient(135deg, rgba(248,250,252,.98), rgba(241,245,249,.98));
+        }
+
+        .theme-radio .thumb-placeholder {
+            color: #1e3a8a;
+            background: linear-gradient(135deg, rgba(239,246,255,.98), rgba(219,234,254,.92));
+        }
+
+        .theme-sermon .thumb-placeholder {
+            color: #8a6715;
+            background: linear-gradient(135deg, rgba(255,253,245,.98), rgba(254,249,195,.88));
+        }
+
+        .hero-thumb.thumb-placeholder {
+            font-size: 24px;
+        }
+
+        .episode-thumb.thumb-placeholder,
+        .favorite-thumb.thumb-placeholder {
+            font-size: 13px;
+        }
+
+        .player-thumb.thumb-placeholder {
+            font-size: 28px;
+            color: rgba(255,255,255,.92);
+            background: linear-gradient(145deg, rgba(23,37,84,.96), rgba(37,99,235,.90));
+        }
+
+        .player-art-card.sermon-theme .player-thumb.thumb-placeholder {
+            color: #6b5012;
+            background: linear-gradient(145deg, #fffdf5, #f1dfa3);
+        }
+
+        .theme-radio .episode-card.now-playing {
+            background: rgba(239,246,255,.94) !important;
+            border-color: rgba(59,130,246,.42) !important;
+            box-shadow: 0 7px 20px rgba(59,130,246,.08);
+        }
+
+        .theme-sermon .episode-card.now-playing {
+            background: rgba(255,251,235,.95) !important;
+            border-color: rgba(217,170,45,.38) !important;
+            box-shadow: 0 7px 20px rgba(217,170,45,.08);
+        }
+
+        .playing-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .theme-radio .playing-label { color: #2563eb; }
+        .theme-sermon .playing-label { color: #a16207; }
+
+        .playing-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 999px;
+            animation: playingDot 1.15s ease-in-out infinite;
+        }
+
+        .theme-radio .playing-dot { background: #3b82f6; }
+        .theme-sermon .playing-dot { background: #d9aa2d; }
+
+        @keyframes playingDot {
+            0%,100% { opacity: .38; transform: scale(.82); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        /* 미니 플레이어 이퀄라이저 */
+        .mini-eq {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+            width: 18px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .mini-eq span {
+            width: 3px;
+            border-radius: 99px;
+            height: 5px;
+            transform-origin: bottom;
+            animation: eqBounce .72s ease-in-out infinite alternate;
+        }
+
+        .mini-eq span:nth-child(2) { animation-delay: -.24s; }
+        .mini-eq span:nth-child(3) { animation-delay: -.46s; }
+
+        .mini-eq.paused span {
+            animation-play-state: paused;
+            height: 4px;
+            opacity: .45;
+        }
+
+        #mini-player.radio-mini .mini-eq span { background: #3b82f6; }
+        #mini-player.sermon-mini .mini-eq span { background: #d9aa2d; }
+
+        #mini-player.radio-mini #mini-play-btn {
+            background: #172554 !important;
+        }
+
+        #mini-player.sermon-mini #mini-play-btn {
+            background: #b88920 !important;
+        }
+
+        @keyframes eqBounce {
+            0% { height: 4px; opacity: .65; }
+            100% { height: 15px; opacity: 1; }
+        }
+
+        /* 플레이어 진행바: 재생된 구간만 테마색 */
+        #progress-slider {
+            --progress: 0%;
+            --track-color: #e2e8f0;
+            --active-color: #2563eb;
+        }
+
+        #progress-slider::-webkit-slider-runnable-track {
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--active-color) 0%,
+                    var(--active-color) var(--progress),
+                    var(--track-color) var(--progress),
+                    var(--track-color) 100%
+                );
+        }
+
+        #progress-slider::-webkit-slider-thumb {
+            background: var(--active-color);
+        }
+
+        #progress-slider.radio-progress { --active-color: #2563eb; }
+        #progress-slider.sermon-progress { --active-color: #d9aa2d; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .mini-eq span,
+            .playing-dot {
+                animation: none !important;
+            }
+        }
+
+        #search-input {
+            background: rgba(255,255,255,.74) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: background .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+
+        #search-input:focus {
+            background: rgba(255,255,255,.96) !important;
+            box-shadow: 0 0 0 4px rgba(30,58,138,.06);
+        }
+
+        .player-surface {
+            background: transparent !important;
+        }
+
+        .player-art-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.14) !important;
+            box-shadow:
+                0 24px 52px rgba(15,23,42,.22),
+                0 0 0 1px rgba(30,58,138,.10);
+            transition: background .35s ease, box-shadow .35s ease;
+        }
+
+        /* 라디오 엘림: 푸른 파동 */
+        .player-art-card.radio-theme {
+            background:
+                radial-gradient(circle at 50% 38%, rgba(125,211,252,.30), transparent 34%),
+                linear-gradient(150deg, #172554 0%, #2563eb 52%, #0f172a 100%) !important;
+            box-shadow:
+                0 24px 52px rgba(15,23,42,.22),
+                0 0 30px rgba(59,130,246,.15);
+        }
+
+        /* 주일말씀: 따뜻한 금빛/코랄 파동 */
+        .player-art-card.sermon-theme {
+            background:
+                radial-gradient(circle at 50% 38%, rgba(253,224,71,.20), transparent 36%),
+                linear-gradient(150deg, #fffdf5 0%, #f8edc7 54%, #ead58a 100%) !important;
+            color: #5b4212 !important;
+            box-shadow:
+                0 20px 42px rgba(120,90,20,.12),
+                0 0 22px rgba(217,170,45,.12);
+        }
+
+        .player-art-card.sermon-theme .text-white,
+        .player-art-card.sermon-theme .text-white\/75 {
+            color: #5b4212 !important;
+        }
+
+        .player-art-card.sermon-theme .border-white\/80 {
+            border-color: rgba(91,66,18,.72) !important;
+        }
+
+        .player-art-card.sermon-theme .bg-white {
+            background-color: #5b4212 !important;
+        }
+
+        .player-art-card::before,
+        .player-art-card::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            pointer-events: none;
+        }
+
+        .player-art-card.radio-theme::before,
+        .player-art-card.radio-theme::after {
+            border: 1.5px solid rgba(125,211,252,.44);
+            box-shadow: 0 0 14px rgba(56,189,248,.12);
+        }
+
+        .player-art-card.sermon-theme::before,
+        .player-art-card.sermon-theme::after {
+            border: 1.5px solid rgba(217,170,45,.34);
+            box-shadow: 0 0 14px rgba(217,170,45,.10);
+        }
+
+        .player-art-card::before {
+            width: 138px;
+            height: 138px;
+            animation: radioWave 2.0s ease-out infinite;
+        }
+
+        .player-art-card::after {
+            width: 190px;
+            height: 190px;
+            animation: radioWave 2.0s ease-out .72s infinite;
+        }
+
+        @keyframes radioWave {
+            0% { opacity: 0; transform: translate(-50%,-50%) scale(.70); }
+            24% { opacity: .45; }
+            100% { opacity: 0; transform: translate(-50%,-50%) scale(1.15); }
+        }
+
+        .play-main-btn {
+            box-shadow: 0 12px 26px rgba(23,37,84,.25) !important;
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+
+        .play-main-btn:active {
+            transform: scale(.93);
+            box-shadow: 0 7px 18px rgba(23,37,84,.20) !important;
+        }
+
+        button, .cursor-pointer {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148,163,184,.62); border-radius: 999px; }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #cbd5e1, #e2e8f0);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: #172554;
+            margin-top: -5.5px;
+            box-shadow: 0 2px 7px rgba(15,23,42,.25);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #app,
+            #app::before,
+            #app::after,
+            .player-art-card::before,
+            .player-art-card::after {
+                animation: none !important;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: light !important; }
+            body { background-color: #eef2f7 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-full flex flex-col antialiased selection:bg-blue-900 selection:text-white">
+
+    <div id="app" class="theme-radio flex-1 flex flex-col max-w-md mx-auto w-full bg-white shadow-2xl relative overflow-hidden border-x border-slate-200">
+
+        <!-- HEADER (박스 제거 및 ELIM 로고 + 텍스트 복구) -->
+        <header class="px-5 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white/90 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goElim()">
+                <div class="h-7 flex items-center">
+                    <img src="elim_logo.png" alt="ELIM 로고" class="h-full w-auto object-contain" />
+                </div>
+                <div class="border-l border-slate-200 pl-3">
+                    <h1 class="font-bold text-base tracking-tight text-slate-900 leading-tight">라디오 엘림</h1>
+                    <p class="text-[10px] text-blue-950 font-semibold tracking-wide leading-tight">생명의말씀선교회 광주교회</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main id="main-content" class="flex-1 overflow-y-auto pb-24"></main>
+
+        <!-- MINI PLAYER -->
+        <div id="mini-player" class="hidden absolute bottom-16 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+            <div class="flex items-center space-x-3 cursor-pointer flex-1 mr-2 min-w-0" onclick="openPlayerFromMini()">
+                <div id="mini-eq" class="mini-eq paused" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h4 id="mini-title" class="text-sm font-semibold truncate text-slate-800">-</h4>
+                    <p id="mini-date" class="text-xs text-slate-500 truncate">-</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <button onclick="event.stopPropagation(); togglePlayPause()" id="mini-play-btn" class="w-10 h-10 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-md transition-transform active:scale-95">
+                    <i class="fa-solid fa-pause text-sm"></i>
+                </button>
+                <button onclick="event.stopPropagation(); closeMiniPlayer()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 px-2 py-2.5 flex justify-around items-center z-20">
+            <button onclick="goElim()" id="nav-elim" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-tower-broadcast text-lg"></i>
+                <span class="text-[10px] font-medium">엘림</span>
+            </button>
+            <button onclick="goSermon()" id="nav-sermon" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-book-bible text-lg"></i>
+                <span class="text-[10px] font-medium">주일말씀</span>
+            </button>
+            <button onclick="goFavorites()" id="nav-favorites" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-heart text-lg"></i>
+                <span class="text-[10px] font-medium">즐겨찾기</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+    /* ============================================================
+       라디오 엘림 전체 회차 데이터
+       ============================================================ */
+    const radioEpisodes = [
+        { id: "track230", num: 230, title: "광야에서 만난 엘림 8월 3주 - 8월 월간찬양, 특별초대석-강당안내부", date: "2026-08-15", src: "https://file2.jbch.org/2026/board/1/17/17_20260815011636_8486_radioelim.mp3" },
+        { id: "track229", num: 229, title: "광야에서 만난 엘림 8월 1주 - 2026 하계수양회 소감 / 구원간증", date: "2026-08-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260802005136_5265_radioelim.mp3" },
+        { id: "track228", num: 228, title: "광야에서 만난 엘림 7월 1주 - 하계수양회 기도부탁", date: "2026-07-04", src: "https://file2.jbch.org/2026/board/1/17/17_20260704013625_0755_radioelim.mp3" },
+        { id: "track227", num: 227, title: "광야에서 만난 엘림 6월 3주 - 6월 월간찬양, 특별초대석-로뎀나무아래카페", date: "2026-06-20", src: "https://file2.jbch.org/2026/board/1/17/17_2026062009072330723444_radioelim.mp3" },
+        { id: "track226", num: 226, title: "광야에서 만난 엘림 6월 1주 - 방송문서미디어 수련회 후기 / 후아유", date: "2026-06-06", src: "https://file2.jbch.org/2026/board/1/17/17_2026060601355656715772_radioelim.mp3" },
+        { id: "track225", num: 225, title: "광야에서 만난 엘림 5월 5주 - 전지적 부서시점(문서선교부)", date: "2026-05-30", src: "https://file2.jbch.org/2026/board/1/17/17_2026060601315556847838_radioelim.mp3" },
+        { id: "track224", num: 224, title: "광야에서 만난 엘림 5월 3주 - 5월 월간찬양, 특별초대석-박경수P(담양고서집회)", date: "2026-05-16", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001304343027153_radioelim.mp3" },
+        { id: "track223", num: 223, title: "광야에서 만난 엘림 5월 1주 - 춘계수양회 후기 / 베트남 선교 기도부탁 / 후아유", date: "2026-05-02", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001282997458167_radioelim.mp3" },
+        { id: "track222", num: 222, title: "광야에서 만난 엘림 4월 3주 - 4월 월간찬양, 특별초대석-조경부", date: "2026-04-18", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001262665144855_radioelim.mp3" },
+        { id: "track221", num: 221, title: "광야에서 만난 엘림 4월 1주 - 광주무등교회 입당식 인터뷰 / 청년&대학집회 인터뷰 / 후아유", date: "2026-04-04", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001171663837375_radioelim.mp3" },
+        { id: "track220", num: 220, title: "광야에서 만난 엘림 3월 3주 - 3월 월간찬양, 특별초대석-다니엘 학교", date: "2026-03-21", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001162992678900_radioelim.mp3" },
+        { id: "track219", num: 219, title: "광야에서 만난 엘림 3월 1주 - 전국교사수련회 인터뷰 / 전국 농선부 봉사자 수련회 인터뷰 / 다시 듣는 성찬시", date: "2026-03-07", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001145443914249_radioelim.mp3" },
+        { id: "track218", num: 218, title: "광야에서 만난 엘림 2월 3주 - 2월 월간찬양, 특별초대석-중앙아프리카공화국 선교팀", date: "2026-02-21", src: "https://file2.jbch.org/2026/board/1/17/17_2026051401163465526500_radioelim.mp3" },
+        { id: "track217", num: 217, title: "광야에서 만난 엘림 2월 1주 - 중고등부 전도집회 인터뷰 / 대만 선교 후기 / 후아유", date: "2026-02-07", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001132668495165_radioelim.mp3" },
+        { id: "track216", num: 216, title: "광야에서 만난 엘림 1월 5주 - 성경을 중심으로 본 세계 교회사5 - 사데교회: 종교개혁 시대", date: "2026-01-31", src: "https://file2.jbch.org/2026/board/1/17/17_2026020101221799504300_radioelim.mp3" },
+        { id: "track215", num: 215, title: "광야에서 만난 엘림 1월 3주 - 1월 월간찬양, 특별초대석", date: "2026-01-17", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112440974605700_radioelim.mp3" },
+        { id: "track214", num: 214, title: "광야에서 만난 엘림 1월 1주 - 담임목사님 신년인사 / 2026 동계수련회 및 호주 선교 인터뷰 / 후아유", date: "2026-01-03", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112403240845900_radioelim.mp3" },
+        { id: "track213", num: 213, title: "광야에서 만난 엘림 12월 3주 - 12월 월간찬양, 1인초대석-교제의밤", date: "2025-12-20", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112373253933800_radioelim.mp3" },
+        { id: "track212", num: 212, title: "광야에서 만난 엘림 12월 1주 - 대학부 연합별 집회 인터뷰(중부연합/동부) / 다니엘 신규 봉사자 인터뷰", date: "2025-12-06", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111251243556000_radioelim.mp3" },
+        { id: "track211", num: 211, title: "광야에서 만난 엘림 11월 5주 - 아르헨티나 교회 선교소식 (김봉철P)", date: "2025-11-29", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111212553284500_radioelim.mp3" },
+        { id: "track210", num: 210, title: "광야에서 만난 엘림 11월 3주 - 월간찬양, 11월 / 1인초대석 (유태종P)", date: "2025-11-15", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111162701858300_radioelim.mp3" },
+        { id: "track209", num: 209, title: "광야에서 만난 엘림 11월 1주 - 초등부, 중고등부 집회 인터뷰/신임전도인 소개 / 걸어서 성경 속으로 (X~Z)", date: "2025-11-01", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111102025869500_radioelim.mp3" },
+        { id: "track208", num: 208, title: "광야에서 만난 엘림 10월 3주 - 월간찬양, 10월 / 1인초대석 (찬양대)", date: "2025-10-18", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111030391248200_radioelim.mp3" },
+        { id: "track207", num: 207, title: "광야에서 만난 엘림 10월 1주 - 엘림 추수마당 / 대집회 기도부탁 / 걸어서 성경 속으로 (U~W)", date: "2025-10-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025100500270247854500_radioelim.mp3" },
+        { id: "track206", num: 206, title: "광야에서 만난 엘림 9월 3주 - 칭찬릴레이 / 월간찬양, 9월 / 특별초대석 (주차부)", date: "2025-09-20", src: "https://file2.jbch.org/2025/board/1/17/17_2025100500241119196700_radioelim.mp3" },
+        { id: "track205", num: 205, title: "광야에서 만난 엘림 9월 1주 - 대학생 여름 사무엘학교 인터뷰 / 청년회 전도집회 인터뷰 / 걸어서 성경 속으로 (R~T)", date: "2025-09-06", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900445994000100_radioelim.mp3" },
+        { id: "track204", num: 204, title: "광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사4 - 두아디라교회: 중세 가톨릭 시대", date: "2025-08-30", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900431500417200_radioelim.mp3" },
+        { id: "track203", num: 203, title: "광야에서 만난 엘림 8월 3주 - 칭찬릴레이 / 월간찬양, 8월 / 2인 초대석(한몽청년수련회)", date: "2025-08-16", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900004261398300_radioelim.mp3" },
+        { id: "track202", num: 202, title: "광야에서 만난 엘림 8월 1주 - 하계수양회 소식(침례 현장, 캄보디아 집회, 에콰도르 수양회) / 걸어서 성경 속으로", date: "2025-08-02", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823524518166900_radioelim.mp3" },
+        { id: "track201", num: 201, title: "광야에서 만난 엘림 7월 1주 - 2025 하계수양회 기도부탁 / 갈릴리 가는 길 플레이리스트", date: "2025-07-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823491674710000_radioelim.mp3" },
+        { id: "track200", num: 200, title: "광야에서 만난 엘림 6월 3주 - <엘림 200회 특집> 애청자 축전 / 우리구역 자랑대회 / 1인 초대석", date: "2025-06-21", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823423144138500_radioelim.mp3" },
+        { id: "track199", num: 199, title: "광야에서 만난 엘림 6월 1주 - 5월 대전도집회 기도부탁 / 중고등부 특별집회 인터뷰 / 걸어서 성경속으로 (J~M)", date: "2025-06-07", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823364787881200_radioelim.mp3" },
+        { id: "track198", num: 198, title: "광야에서 만난 엘림 5월 5주 - 성경을 중심으로 본 세계 교회사2 - 버가모교회", date: "2025-05-31", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823340325403300_radioelim.mp3" },
+        { id: "track197", num: 197, title: "광야에서 만난 엘림 5월 3주 - 칭찬릴레이 / 월간찬양, 5월 / 1인 초대석", date: "2025-05-17", src: "https://file2.jbch.org/2025/board/1/17/17_2025051712233760852600_radioelim.mp3" },
+        { id: "track196", num: 196, title: "광야에서 만난 엘림 5월 1주 - 유초등부 교사수련회 인터뷰 / 코트디부아르 해외선교 인터뷰 / 걸어서 성경속으로 (F~I)", date: "2025-05-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623372089355500_radioelim.mp3" },
+        { id: "track195", num: 195, title: "광야에서 만난 엘림 4월 3주 - 칭찬릴레이 / 월간찬양, 4월 / 1인 초대석", date: "2025-04-19", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623332851799700_radioelim.mp3" },
+        { id: "track194", num: 194, title: "광야에서 만난 엘림 4월 1주 - 청년대학집회 후기 / 오전전도집회 후기 / 걸어서 성경속으로 (A~E)", date: "2025-04-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623074705068200_radioelim.mp3" },
+        { id: "track193", num: 193, title: "광야에서 만난 엘림 3월 5주 - 자주 듣는 찬양 추천", date: "2025-03-29", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622593773698400_radioelim.mp3" },
+        { id: "track192", num: 192, title: "광야에서 만난 엘림 3월 3주 - 칭찬릴레이 / 월간찬양, 3월 / 1인 초대석", date: "2025-03-15", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622533529965700_radioelim.mp3" },
+        { id: "track191", num: 191, title: "광야에서 만난 엘림 3월 1주 - 상무동림광천 연합집회 후기 / 신입교사 인터뷰 / 기도부탁 사연", date: "2025-03-01", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622453947788200_radioelim.mp3" },
+        { id: "track190", num: 190, title: "광야에서 만난 엘림 2월 3주 - 특별초대석 (신임전도인)", date: "2025-02-15", src: "https://file2.jbch.org/2025/board/1/17/17_2025021616111322654100_radioelim.mp3" },
+        { id: "track189", num: 189, title: "광야에서 만난 엘림 2월 1주 - 대전도집회 인터뷰 / 초등부 수련회 후기 / 기도부탁 사연", date: "2025-02-01", src: "https://file2.jbch.org/2025/board/1/17/17_2025021616082236372900_radioelim.mp3" },
+        { id: "track188", num: 188, title: "광야에서 만난 엘림 1월 3주 - 특별초대석", date: "2025-01-18", src: "https://file2.jbch.org/2025/board/1/17/17_2025011800554787848000_radioelim.mp3" },
+        { id: "track187", num: 187, title: "광야에서 만난 엘림 1월 1주 - 엘림뉴스", date: "2025-01-04", src: "https://file2.jbch.org/2025/board/1/17/17_2025010400533902523800_radioelim.mp3" },
+        { id: "track186", num: 186, title: "광야에서 만난 엘림 12월 3주 - 특별초대석", date: "2024-12-21", src: "https://file2.jbch.org/2024/board/1/17/17_2024122100555643566700_radioelim.mp3" },
+        { id: "track185", num: 185, title: "광야에서 만난 엘림 12월 1주 - 엘림뉴스", date: "2024-12-07", src: "https://file2.jbch.org/2024/board/1/17/17_2024120700281782307100_radioelim.mp3" },
+        { id: "track184", num: 184, title: "광야에서 만난 엘림 11월 5주 - 성경을 중심으로 본 세계 교회사2", date: "2024-11-30", src: "https://file2.jbch.org/2024/board/1/17/17_2024113000403575374800_radioelim.mp3" },
+        { id: "track183", num: 183, title: "광야에서 만난 엘림 11월 3주 - 특별초대석", date: "2024-11-16", src: "https://file2.jbch.org/2024/board/1/17/17_2024111611032907249800_radioelim.mp3" },
+        { id: "track182", num: 182, title: "광야에서 만난 엘림 11월 1주 - 들어보겠니", date: "2024-11-02", src: "https://file2.jbch.org/2024/board/1/17/17_2024110200454322026600_radioelim.mp3" },
+        { id: "track181", num: 181, title: "광야에서 만난 엘림 10월 3주 - 특별초대석", date: "2024-10-19", src: "https://file2.jbch.org/2024/board/1/17/17_2024101901065266239000_radioelim.mp3" },
+        { id: "track180", num: 180, title: "광야에서 만난 엘림 10월 1주 - 들어보겠니", date: "2024-10-05", src: "https://file2.jbch.org/2024/board/1/17/17_2024100500410585716100_radioelim.mp3" },
+        { id: "track179", num: 179, title: "광야에서 만난 엘림 9월 3주 - 특별초대석", date: "2024-09-21", src: "https://file2.jbch.org/2024/board/1/17/17_2024092100515375577100_radioelim.mp3" },
+        { id: "track178", num: 178, title: "광야에서 만난 엘림 9월 1주 - 엘림뉴스", date: "2024-09-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024090623522097665400_radioelim.mp3" },
+        { id: "track177", num: 177, title: "광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사", date: "2024-08-31", src: "https://file2.jbch.org/2024/board/1/17/17_2024083100055736192200_radioelim.mp3" },
+        { id: "track176", num: 176, title: "광야에서 만난 엘림 8월 4주 - 2024 하계수양회", date: "2024-08-23", src: "https://file2.jbch.org/2024/board/1/17/17_2024082322410257030_radioelim.mp3" },
+        { id: "track175", num: 175, title: "광야에서 만난 엘림 7월 1주 - 하계 특별편", date: "2024-07-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024070600222074376_radioelim.mp3" },
+        { id: "track174", num: 174, title: "광야에서 만난 엘림 6월 5주 - 어떤 찬양", date: "2024-06-28", src: "https://file2.jbch.org/2024/board/1/17/17_2024062823572057866_radioelim.mp3" },
+        { id: "track173", num: 173, title: "광야에서 만난 엘림 6월 3주 - 특별초대석(방송부)", date: "2024-06-14", src: "https://file2.jbch.org/2024/board/1/17/17_2024061421334590120_radioelim.mp3" },
+        { id: "track172", num: 172, title: "광야에서 만난 엘림 6월 1주 - 들어보겠니", date: "2024-06-01", src: "https://file2.jbch.org/2024/board/1/17/_2024060100592554126_radioelim.mp3" },
+        { id: "track171", num: 171, title: "광야에서 만난 엘림 5월 3주 - 특별초대석(은빛장년회)", date: "2024-05-18", src: "https://file2.jbch.org/2024/board/1/17/17_2024051801133366521_radioelim.mp3" },
+        { id: "track170", num: 170, title: "광야에서 만난 엘림 5월 1주 - 들어보겠니", date: "2024-05-04", src: "https://file2.jbch.org/2024/board/1/17/17_2024050400204063212_radioelim.mp3" },
+        { id: "track169", num: 169, title: "광야에서 만난 엘림 4월 3주 - 시설부 형제님들 봉사 간증", date: "2024-04-20", src: "https://file2.jbch.org/2024/board/1/17/17_2024042001410075484_radioelim.mp3" },
+        { id: "track168", num: 168, title: "광야에서 만난 엘림 4월 1주 - 들어보겠니", date: "2024-04-05", src: "https://file2.jbch.org/2024/board/1/17/17_2024040523451519394_radioelim.mp3" },
+        { id: "track168_book", num: 168.1, title: "광야에서 만난 엘림 3월 5주 - 백악관을 기도실로 만든 대통령 링컨", date: "2024-03-30", src: "https://file2.jbch.org/2024/board/1/17/17_2024033000354113395_radioelim.mp3" },
+        { id: "track167", num: 167, title: "광야에서 만난 엘림 3월 3주 - 특별초대석(봉사회 집행부)", date: "2024-03-15", src: "https://file2.jbch.org/2024/board/1/17/17_2024031522575524312_radioelim.mp3" },
+        { id: "track166", num: 166, title: "광야에서 만난 엘림 3월 1주 - 들어보겠니", date: "2024-03-01", src: "https://file2.jbch.org/2024/board/1/17/17_2024030123412995001_radioelim.mp3" },
+        { id: "track165", num: 165, title: "광야에서 만난 엘림 2월 3주 - 특별초대석(다니엘학교)", date: "2024-02-16", src: "https://file2.jbch.org/2024/board/1/17/17_2024021622452740333_radioelim.mp3" },
+        { id: "track164", num: 164, title: "광야에서 만난 엘림 2월 1주 - 들어보겠니", date: "2024-02-02", src: "https://file2.jbch.org/2024/board/1/17/17_2024020222464746232_radioelim.mp3" },
+        { id: "track163", num: 163, title: "광야에서 만난 엘림 1월 3주 - 특별초대석(2024 청년대학 동계수련회)", date: "2024-01-20", src: "https://file2.jbch.org/2024/board/1/17/17_2024012001095669924_radioelim.mp3" },
+        { id: "track162", num: 162, title: "광야에서 만난 엘림 1월 1주 - 들어보겠니", date: "2024-01-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024010613493631568_radioelim.mp3" },
+        { id: "track160", num: 160, title: "광야에서 만난 엘림 12월 3주 - 특별초대석(광주 어린이집 교사)", date: "2023-12-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023121523110386389_radioelim.mp3" },
+        { id: "track159", num: 159, title: "광야에서 만난 엘림 12월 1주 - 들어보겠니", date: "2023-12-02", src: "https://file2.jbch.org/2023/board/1/17/17_2023120201281599566_radioelim.mp3" },
+        { id: "track158", num: 158, title: "광야에서 만난 엘림 11월 3주 - 특별초대석(외국인선교부 영어팀)", date: "2023-11-17", src: "https://file2.jbch.org/2023/board/1/17/17_2023111722434533799_radioelim.mp3" },
+        { id: "track155", num: 155, title: "광야에서 만난 엘림 10월 2주 - 로마서 강해6", date: "2023-10-14", src: "https://file2.jbch.org/2023/board/1/17/17_2023101400035902366_radioelim.mp3" },
+        { id: "track154", num: 154, title: "광야에서 만난 엘림 10월 1주 - 들어보겠니", date: "2023-10-06", src: "https://file2.jbch.org/2023/board/1/17/17_2023100622111612314_radioelim.mp3" },
+        { id: "track153", num: 153, title: "광야에서 만난 엘림 9월 5주 - 엘림 오디오북", date: "2023-09-30", src: "https://file2.jbch.org/2023/board/1/17/17_2023093011280268142_radioelim.mp3" },
+        { id: "track151", num: 151, title: "광야에서 만난 엘림 9월 3주 - 로마서 강해5", date: "2023-09-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023091520420311669_radioelim.mp3" },
+        { id: "track150", num: 150, title: "광야에서 만난 엘림 9월 1주 - 클래식 속 찬양", date: "2023-09-01", src: "https://file2.jbch.org/2023/board/1/17/17_2023090121592490311_radioelim.mp3" },
+        { id: "track148", num: 148, title: "광야에서 만난 엘림 8월 3주 - 로마서 강해4", date: "2023-08-20", src: "https://file2.jbch.org/2023/board/1/17/17_2023082019400296919_radioelim.mp3" },
+        { id: "track147", num: 147, title: "광야에서 만난 엘림 8월 2주 - 은혜 가득한 봉사", date: "2023-08-12", src: "https://file2.jbch.org/2023/board/1/17/17_2023081209191373999_radioelim.mp3" },
+        { id: "track145_1", num: 145.1, title: "광야에서 만난 엘림 8월 1주 - 하계수양회 톺아보기", date: "2023-08-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023080508254158872_radioelim.mp3" },
+        { id: "track_extra2", num: 145.2, title: "번외편. 하계가는길 #2 <하계수양회 유감>", date: "2023-07-08", src: "https://file2.jbch.org/2023/board/1/17/17_2023070808031677811_radioelim.mp3" },
+        { id: "track_extra1", num: 145.3, title: "번외편. 하계가는길 #1 <농고 하계수양회>", date: "2023-07-01", src: "https://file2.jbch.org/2023/board/1/17/17_2023070100450447904_radioelim.mp3" },
+        { id: "track145_2", num: 145, title: "광야에서 만난 엘림 6월 4주 - 하계수양회를 기다리며", date: "2023-06-24", src: "https://file2.jbch.org/2023/board/1/17/17_2023062400244737435_radioelim.mp3" },
+        { id: "track144", num: 144, title: "광야에서 만난 엘림 6월 3주 - 로마서 강해3", date: "2023-06-17", src: "https://file2.jbch.org/2023/board/1/17/17_2023061702500610593_radioelim.mp3" },
+        { id: "track143", num: 143, title: "광야에서 만난 엘림 6월 2주 - 구원의 단비가 내리면", date: "2023-06-09", src: "https://file2.jbch.org/2023/board/1/17/17_2023060923581255370_radioelim.mp3" },
+        { id: "track142", num: 142, title: "광야에서 만난 엘림 6월 1주 - 유명 신앙인들의 찬송", date: "2023-06-02", src: "https://file2.jbch.org/2023/board/1/17/17_2023060223420744816_radioelim.mp3" },
+        { id: "track141", num: 141, title: "광야에서 만난 엘림 5월 4주 - 아빠특집", date: "2023-06-09", src: "https://file2.jbch.org/2023/board/1/17/17_2023060923535144705_radioelim.mp3" },
+        { id: "track140", num: 140, title: "광야에서 만난 엘림 5월 3주 - 로마서 강해2", date: "2023-05-19", src: "https://file2.jbch.org/2023/board/1/17/17_2023051923331585411_radioelim.mp3" },
+        { id: "track139", num: 139, title: "광야에서 만난 엘림 5월 2주 - 하나님의 품", date: "2023-05-12", src: "https://file2.jbch.org/2023/board/1/17/17_2023051223540456477_radioelim.mp3" },
+        { id: "track138", num: 138, title: "광야에서 만난 엘림 5월 1주 - 더욱 사랑", date: "2023-05-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023050521214473221_radioelim.mp3" },
+        { id: "track137", num: 137, title: "광야에서 만난 엘림 4월 4주 - 볼리비아 선교", date: "2023-04-29", src: "https://file2.jbch.org/2023/board/1/17/17_2023042914151354199_radioelim.mp3" },
+        { id: "track136", num: 136, title: "광야에서 만난 엘림 4월 3주 - 로마서 강해1:죄와 심판", date: "2023-04-21", src: "https://file2.jbch.org/2023/board/1/17/17_2023042123044701658_radioelim.mp3" },
+        { id: "track135", num: 135, title: "광야에서 만난 엘림 4월 2주 - 감사", date: "2023-04-14", src: "https://file2.jbch.org/2023/board/1/17/17_2023041420270847412_radioelim.mp3" },
+        { id: "track134", num: 134, title: "광야에서 만난 엘림 4월 1주 - 진정한 평안", date: "2023-04-08", src: "https://file2.jbch.org/2023/board/1/17/17_2023040814542903806_radioelim.mp3" },
+        { id: "track133", num: 133, title: "광야에서 만난 엘림 3월 4주 - 청년 전도집회", date: "2023-03-25", src: "https://file2.jbch.org/2023/board/1/17/17_2023032501302337992_radioelim.mp3" },
+        { id: "track132", num: 132, title: "광야에서 만난 엘림 3월 3주 - 세상과 충돌하라", date: "2023-03-18", src: "https://file2.jbch.org/2023/board/1/17/17_2023031810545590395_radioelim.mp3" },
+        { id: "track131", num: 131, title: "광야에서 만난 엘림 3월 2주 - 생명의 빛", date: "2023-03-10", src: "https://file2.jbch.org/2023/board/1/17/17_2023031022494169525_radioelim.mp3" },
+        { id: "track130", num: 130, title: "광야에서 만난 엘림 3월 1주 - Amazing Grace", date: "2023-03-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023030518563646791_radioelim.mp3" },
+        { id: "track129", num: 129, title: "광야에서 만난 엘림 2월 4주 - 사무엘과 다니엘", date: "2023-02-25", src: "https://file2.jbch.org/2023/board/1/17/17_2023022500043399964_radioelim.mp3" },
+        { id: "track128", num: 128, title: "광야에서 만난 엘림 2월 3주 - 내게 복에 복을 더하사", date: "2023-02-18", src: "https://file2.jbch.org/2023/board/1/17/17_2023021812313262514_radioelim.mp3" },
+        { id: "track127", num: 127, title: "광야에서 만난 엘림 2월 2주 - 가장 완벽한 순간", date: "2023-02-10", src: "https://file2.jbch.org/2023/board/1/17/17_2023021023160212747_radioelim.mp3" },
+        { id: "track126", num: 126, title: "광야에서 만난 엘림 2월 1주 - 그 크신 하나님의 사랑", date: "2023-02-03", src: "https://file2.jbch.org/2023/board/1/17/17_2023020323520521526_radioelim.mp3" },
+        { id: "track125", num: 125, title: "광야에서 만난 엘림 1월 4주 - 우리는 온 디모데 2반", date: "2023-01-28", src: "https://file2.jbch.org/2023/board/1/17/17_2023012821153264878_radioelim.mp3" },
+        { id: "track124", num: 124, title: "광야에서 만난 엘림 1월 3주 - 당신은 한번도 혼자가 아니었다", date: "2023-01-21", src: "https://file2.jbch.org/2023/board/1/17/17_2023012100243593788_radioelim.mp3" },
+        { id: "track123", num: 123, title: "광야에서 만난 엘림 1월 2주 - 우리의 삶", date: "2023-01-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023011521572897288_radioelim.mp3" },
+        { id: "track122", num: 122, title: "광야에서 만난 엘림 1월 1주 - 새해 맞이", date: "2023-01-06", src: "https://file2.jbch.org/2023/board/1/17/17_2023010621482570371_radioelim.mp3" },
+        { id: "track121", num: 121, title: "광야에서 만난 엘림 12월 4주 - 2022 교제의 밤 미리보기", date: "2022-12-23", src: "https://file2.jbch.org/2022/board/1/17/17_2022122320415370678_radioelim.mp3" },
+        { id: "track120", num: 120, title: "광야에서 만난 엘림 12월 3주 - 고통은 헛되지 않아요", date: "2022-12-16", src: "https://file2.jbch.org/2022/board/1/17/17_2022121813460539684_radioelim.mp3" },
+        { id: "track119", num: 119, title: "광야에서 만난 엘림 12월 2주 - 우리가 걷는 이 길", date: "2022-12-10", src: "https://file2.jbch.org/2022/board/1/17/17_2022121013021591654_radioelim.mp3" },
+        { id: "track118", num: 118, title: "광야에서 만난 엘림 12월 1주 - 기쁘다 구주 오셨네", date: "2022-12-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022120521580182688_radioelim.mp3" },
+        { id: "track117", num: 117, title: "광야에서 만난 엘림 11월 4주 - 소리없는 찬양들을 위하여", date: "2022-11-25", src: "https://file2.jbch.org/2022/board/1/17/17_2022112523492070460_radioelim.mp3" },
+        { id: "track116", num: 116, title: "광야에서 만난 엘림 11월 3주 - 죽음을 이긴 사람들", date: "2022-11-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022111900065699626_radioelim.mp3" },
+        { id: "track115", num: 115, title: "광야에서 만난 엘림 11월 2주 - 더욱 사랑하기", date: "2022-11-12", src: "https://file2.jbch.org/2022/board/1/17/17_2022111215441224460_radioelim.mp3" },
+        { id: "track114", num: 114, title: "광야에서 만난 엘림 11월 1주 - 믿음에 대하여", date: "2022-11-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022110503150414998_radioelim.mp3" },
+        { id: "track113", num: 113, title: "광야에서 만난 엘림 10월 4주 - 할렐루야! 광주교회 찬양의 밤", date: "2022-10-21", src: "https://file2.jbch.org/2022/board/1/17/17_2022102123165322348_radioelim.mp3" },
+        { id: "track112", num: 112, title: "광야에서 만난 엘림 10월 3주 - 마귀에 맞서 싸우는 방법", date: "2022-10-14", src: "https://file2.jbch.org/2022/board/1/17/17_2022101423464631639_radioelim.mp3" },
+        { id: "track111", num: 111, title: "광야에서 만난 엘림 10월 2주 - 어서와! 교구는 처음이지?", date: "2022-10-08", src: "https://file2.jbch.org/2022/board/1/17/17_2022100800050974703_radioelim.mp3" },
+        { id: "track110", num: 110, title: "광야에서 만난 엘림 10월 1주 - 수확의 계절", date: "2022-10-01", src: "https://file2.jbch.org/2022/board/1/17/17_2022093023502025455_radioelim.mp3" },
+        { id: "track109", num: 109, title: "광야에서 만난 엘림 8월 넷째주&lt;사연,한줄감사,특별초대석&gt;", date: "2022-08-27", src: "https://file2.jbch.org/2022/board/1/17/17_2022082709432832316_radioelim.mp3" },
+        { id: "track108", num: 108, title: "광야에서 만난 엘림 8월 셋째주&lt;후아유,갈릴리학교&gt;", date: "2022-08-20", src: "https://file2.jbch.org/2022/board/1/17/17_2022082009414616171_radioelim.mp3" },
+        { id: "track107", num: 107, title: "광야에서 만난 엘림 8월 둘째주&lt;하계뉴스,사연&gt;", date: "2022-08-13", src: "https://file2.jbch.org/2022/board/1/17/17_2022081311170871909_radioelim.mp3" },
+        { id: "track106", num: 106, title: "광야에서 만난 엘림 8월 첫째주&lt;엘림뉴스,선곡의 정석&gt;", date: "2022-08-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022080522550584548_radioelim.mp3" },
+        { id: "track105", num: 105, title: "광야에서 만난 엘림 7월 둘째주&lt;하계수양회 특집2&gt;", date: "2022-07-09", src: "https://file2.jbch.org/2022/board/1/17/17_2022070901121134877_radioelim.mp3" },
+        { id: "track104", num: 104, title: "광야에서 만난 엘림 7월 첫째주&lt;하계수양회 특집1&gt;", date: "2022-07-03", src: "https://file2.jbch.org/2022/board/1/17/17_2022070319174137656_radioelim.mp3" },
+        { id: "track103", num: 103, title: "광야에서 만난 엘림 6월 넷째주&lt;생명의 빛,사연,특별초대석&gt;", date: "2022-06-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022062611361391167_radioelim.mp3" },
+        { id: "track102", num: 102, title: "광야에서 만난 엘림 6월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-06-18", src: "https://file2.jbch.org/2022/board/1/17/17_2022061810042428259_radioelim.mp3" },
+        { id: "track101", num: 101, title: "광야에서 만난 엘림 6월 둘째주&lt;교제되새김,조각말씀,해외선교&gt;", date: "2022-06-11", src: "https://file2.jbch.org/2022/board/1/17/17_2022061100310476746_radioelim.mp3" },
+        { id: "track100", num: 100, title: "광야에서 만난 엘림 6월 첫째주&lt;축하메시지,특별초대석,설문추첨식&gt;", date: "2022-06-04", src: "https://file2.jbch.org/2022/board/1/17/17_2022060323595851351_radioelim.mp3" },
+        { id: "track99", num: 99, title: "광야에서 만난 엘림 5월 넷째주&lt;특별초대석&gt;", date: "2022-05-28", src: "https://file2.jbch.org/2022/board/1/17/17_2022052809155429933_radioelim.mp3" },
+        { id: "track98", num: 98, title: "광야에서 만난 엘림 5월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-05-20", src: "https://file2.jbch.org/2022/board/1/17/17_2022052022463700046_radioelim.mp3" },
+        { id: "track97", num: 97, title: "광야에서 만난 엘림 5월 둘째주&lt;선곡의정석,해외선교,갈릴리학교&gt;", date: "2022-05-14", src: "https://file2.jbch.org/2022/board/1/17/17_2022051408130423578_radioelim.mp3" },
+        { id: "track96", num: 96, title: "광야에서 만난 엘림 5월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-05-06", src: "https://file2.jbch.org/2022/board/1/17/17_2022050621105153998_radioelim.mp3" },
+        { id: "track95", num: 95, title: "광야에서 만난 엘림 4월 다섯째주&lt;특별초대석,찬양대&gt;", date: "2022-04-23", src: "https://file2.jbch.org/2022/board/1/17/17_2022042310304619802_radioelim.mp3" },
+        { id: "track94", num: 94, title: "광야에서 만난 엘림 4월 넷째주&lt;후아유,특별간증,시각선교부&gt;", date: "2022-04-15", src: "https://file2.jbch.org/2022/board/1/17/17_2022041523214025297_radioelim.mp3" },
+        { id: "track93", num: 93, title: "광야에서 만난 엘림 4월 둘째주&lt;선곡의 정석, 해외선교&gt;", date: "2022-04-09", src: "https://file2.jbch.org/2022/board/1/17/17_2022040912153252732_radioelim.mp3" },
+        { id: "track92", num: 92, title: "광야에서 만난 엘림 4월 첫째주&lt;엘림뉴스,교제되새김,조각말씀&gt;", date: "2022-04-02", src: "https://file2.jbch.org/2022/board/1/17/17_2022040209592680033_radioelim.mp3" },
+        { id: "track91", num: 91, title: "광야에서 만난 엘림 3월 넷째주&lt;특별초대석,찬양대&gt;", date: "2022-03-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022032611174343613_radioelim.mp3" },
+        { id: "track90", num: 90, title: "광야에서 만난 엘림 3월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-03-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022031910473762582_radioelim.mp3" },
+        { id: "track89", num: 89, title: "광야에서 만난 엘림 3월 둘째주&lt;선곡의정석,해외선교,갈릴리학교&gt;", date: "2022-03-12", src: "https://file2.jbch.org/2022/board/1/17/17_2022031211220382974_radioelim.mp3" },
+        { id: "track88", num: 88, title: "광야에서 만난 엘림 3월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-03-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022030510044497582_radioelim.mp3" },
+        { id: "track87", num: 87, title: "광야에서 만난 엘림 2월 넷째주&lt;칭찬합시다,특별초대석,찬양대&gt;", date: "2022-02-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022022610163974610_radioelim.mp3" },
+        { id: "track86", num: 86, title: "광야에서 만난 엘림 2월 셋째주&lt;후아유,특별초대석&gt;", date: "2022-02-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022021911533899301_radioelim.mp3" },
+        { id: "track85", num: 85, title: "광야에서 만난 엘림 2월 둘째주&lt;선곡의 정석,해외선교,갈릴리학교&gt;", date: "2022-02-11", src: "https://file2.jbch.org/2022/board/1/17/17_2022021122161504927_radioelim.mp3" },
+        { id: "track84", num: 84, title: "광야에서 만난 엘림 2월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-02-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022020509521009228_radioelim.mp3" },
+        { id: "track83", num: 83, title: "광야에서 만난 엘림 1월 다섯째주&lt;특별초대석,해외선교&gt;", date: "2022-01-28", src: "https://file2.jbch.org/2022/board/1/17/17_2022012822075786916_radioelim.mp3" },
+        { id: "track82", num: 82, title: "광야에서 만난 엘림 1월 넷째주&lt;칭찬합시다,후아유,갈릴리학교&gt;", date: "2022-01-22", src: "https://file2.jbch.org/2022/board/1/17/17_2022012200401012091_radioelim.mp3" },
+        { id: "track81", num: 81, title: "광야에서 만난 엘림 12월 넷째주&lt;교제되새김,해외선교,특별초대석&gt;", date: "2021-12-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021122422180843965_radioelim.mp3" },
+        { id: "track80", num: 80, title: "광야에서 만난 엘림 12월 셋째주&lt;칭찬합시다,특별초대석,갈릴리학교&gt;", date: "2021-12-17", src: "https://file2.jbch.org/2021/board/1/17/17_2021121723325764003_radioelim.mp3" },
+        { id: "track79", num: 79, title: "광야에서 만난 엘림 12월 둘째주&lt;선곡의정석,후아유,교회학교&gt;", date: "2021-12-10", src: "https://file2.jbch.org/2021/board/1/17/17_2021121022442321914_radioelim.mp3" },
+        { id: "track78", num: 78, title: "광야에서 만난 엘림 12월 첫째주&lt;엘림뉴스,회원코너,조각말씀&gt;", date: "2021-12-03", src: "https://file2.jbch.org/2021/board/1/17/17_2021120321544149546_radioelim.mp3" },
+        { id: "track77", num: 77, title: "광야에서 만난 엘림 11월 넷째주&lt;교제되새김, 은빛청년회&gt;", date: "2021-11-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021112700232857215_radioelim.mp3" },
+        { id: "track76", num: 76, title: "광야에서 만난 엘림 11월 셋째주&lt;갈릴리학교, 특별초대석, 칭찬합시다&gt;", date: "2021-11-19", src: "https://file2.jbch.org/2021/board/1/17/17_2021111922430585641_radioelim.mp3" },
+        { id: "track75", num: 75, title: "광야에서 만난 엘림 11월 둘째주&lt;청년회,후아유,선곡의 정석&gt;", date: "2021-11-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021111222412582025_radioelim.mp3" },
+        { id: "track74", num: 74, title: "광야에서 만난 엘림 11월 첫째주&lt;엘림뉴스,교회학교,조각말씀&gt;", date: "2021-11-05", src: "https://file2.jbch.org/2021/board/1/17/17_2021110617151959655_oyster.mp3" },
+        { id: "track73", num: 73, title: "광야에서 만난 엘림 10월 넷째주&lt;교제 되새김,은상회,해외선교&gt;", date: "2021-10-22", src: "https://file2.jbch.org/2021/board/1/17/17_2021102223075991733_radioelim.mp3" },
+        { id: "track72", num: 72, title: "광야에서 만난 엘림 10월 셋째주&lt;기도부탁,칭찬합시다,갈릴리학교,특별초대석&gt;", date: "2021-10-15", src: "https://file2.jbch.org/2021/board/1/17/17_2021101523314554553_radioelim.mp3" },
+        { id: "track71", num: 71, title: "광야에서 만난 엘림 10월 둘째주&lt;후아유,교회학교,선곡의정석&gt;", date: "2021-10-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021100823300093068_radioelim.mp3" },
+        { id: "track70", num: 70, title: "광야에서 만난 엘림 10월 첫째주&lt;엘림뉴스,청년회,조각말씀&gt;", date: "2021-10-02", src: "https://file2.jbch.org/2021/board/1/17/17_2021100200134365408_radioelim.mp3" },
+        { id: "track69", num: 69, title: "광야에서 만난 엘림 9월 넷째주&lt;후아유,은정회,갈릴리학교&gt;", date: "2021-09-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021092423461726107_radioelim.mp3" },
+        { id: "track68", num: 68, title: "광야에서 만난 엘림 9월 셋째주&lt;추석특집 선곡의 정석&gt;", date: "2021-09-18", src: "https://file2.jbch.org/2021/board/1/17/17_2021091801161554825_radioelim.mp3" },
+        { id: "track67", num: 67, title: "광야에서 만난 엘림 9월 둘째주&lt;특별초대석,칭찬합시다,청년회&gt;", date: "2021-09-10", src: "https://file2.jbch.org/2021/board/1/17/17_2021091022191246731_radioelim.mp3" },
+        { id: "track66", num: 66, title: "광야에서 만난 엘림 9월 첫째주&lt;엘림뉴스,교회학교,조각말씀&gt;", date: "2021-09-04", src: "https://file2.jbch.org/2021/board/1/17/17_2021090400504927573_radioelim.mp3" },
+        { id: "track65", num: 65, title: "광야에서 만난 엘림 8월 넷째주&lt;하계밀착취재,은장회,엘림의책방&gt;", date: "2021-08-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021082723274415950_radioelim.mp3" },
+        { id: "track64", num: 64, title: "광야에서 만난 엘림 8월 셋째주&lt;하계초대석,칭찬합시다,갈릴리학교&gt;", date: "2021-08-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021082022452581730_radioelim.mp3" },
+        { id: "track63", num: 63, title: "광야에서 만난 엘림 8월 둘째주&lt;청년회,선곡의정석,하계초대석2&gt;", date: "2021-08-13", src: "https://file2.jbch.org/2021/board/1/17/17_2021081323444078294_radioelim.mp3" },
+        { id: "track62", num: 62, title: "광야에서 만난 엘림 8월 첫째주&lt;엘림뉴스,교회학교,하계초대석,주말말씀&gt;", date: "2021-08-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021080622231226888_radioelim.mp3" },
+        { id: "track61", num: 61, title: "광야에서 만난 엘림 7월 넷째주&lt;해외선교,은빛청년회&gt;", date: "2021-07-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021072400022771192_radioelim.mp3" },
+        { id: "track60", num: 60, title: "광야에서 만난 엘림 7월 셋째주&lt;하계수양회 인터뷰,특별초대석,갈릴리학교&gt;", date: "2021-07-16", src: "https://file2.jbch.org/2021/board/1/17/17_2021071623532942513_radioelim.mp3" },
+        { id: "track59", num: 59, title: "광야에서 만난 엘림 7월 둘째주&lt;청년회,하계수양회 인터뷰,선곡의 정석&gt;", date: "2021-07-09", src: "https://file2.jbch.org/2021/board/1/17/17_2021071012441145629_radioelim.mp3" },
+        { id: "track58", num: 58, title: "광야에서 만난 엘림 7월 첫째주&lt;엘림뉴스,조각말씀,교회학교&gt;", date: "2021-07-02", src: "https://file2.jbch.org/2021/board/1/17/17_2021070223244392783_radioelim.mp3" },
+        { id: "track57", num: 57, title: "광야에서 만난 엘림 6월 넷째주&lt;엘림의 책방,은빛장년회&gt;", date: "2021-06-25", src: "https://file2.jbch.org/2021/board/1/17/17_2021062522592487388_radioelim.mp3" },
+        { id: "track56", num: 56, title: "광야에서 만난 엘림 6월 3주&lt;특별초대석,갈릴리학교&gt;", date: "2021-06-18", src: "https://file2.jbch.org/2021/board/1/17/17_2021061822464097283_radioelim.mp3" },
+        { id: "track55", num: 55, title: "광야에서 만난 엘림 6월 2주&lt;청년회코너 후아유,선곡의정석&gt;", date: "2021-06-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021061218490197480_radioelim.mp3" },
+        { id: "track54", num: 54, title: "광야에서 만난 엘림 6월 1주&lt;엘림뉴스,밀착취재,회원코너(초등부),조각말씀&gt;", date: "2021-06-05", src: "https://file2.jbch.org/2021/board/1/17/17_2021060502420262724_radioelim.mp3" },
+        { id: "track53", num: 53, title: "광야에서 만난 엘림 5월 넷째주&lt;대집회 기도부탁,엘림의 책방&gt;", date: "2021-05-21", src: "https://file2.jbch.org/2021/board/1/17/17_2021052122571354973_radioelim.mp3" },
+        { id: "track52", num: 52, title: "광야에서 만난 엘림 5월 셋째주&lt;선곡의 정석&gt;", date: "2021-05-15", src: "https://file2.jbch.org/2021/board/1/17/17_2021051510235157984_radioelim.mp3" },
+        { id: "track51", num: 51, title: "광야에서 만난 엘림 5월 둘째주&lt;조각말씀,사연&gt;", date: "2021-05-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021050821090357679_radioelim.mp3" },
+        { id: "track50", num: 50, title: "광야에서 만난 엘림 5월 첫째주&lt;엘림뉴스,후대유2021&gt;", date: "2021-04-30", src: "https://file2.jbch.org/2021/board/1/17/17_2021043023103781348_radioelim.mp3" },
+        { id: "track49", num: 49, title: "광야에서 만난 엘림 4월 넷째주&lt;성찬시,엘림의 책방&gt;", date: "2021-04-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021042400034486432_radioelim.mp3" },
+        { id: "track48", num: 48, title: "광야에서 만난 엘림 4월 셋째주&lt;조각말씀,한줄감사,사연&gt;", date: "2021-04-17", src: "https://file2.jbch.org/2021/board/1/17/17_2021041700264671123_radioelim.mp3" },
+        { id: "track47", num: 47, title: "광야에서 만난 엘림 4월 둘째주&lt;이비에스,선곡의정석&gt;", date: "2021-04-09", src: "https://file2.jbch.org/2021/board/1/17/17_2021040923132550695_radioelim.mp3" },
+        { id: "track46", num: 46, title: "광야에서 만난 엘림 4월 첫째주&lt;엘림뉴스,특별초대석'로뎀나무'&gt;", date: "2021-04-03", src: "https://file2.jbch.org/2021/board/1/17/17_2021040300300339292_radioelim.mp3" },
+        { id: "track45", num: 45, title: "광야에서 만난 엘림 3월 넷째주&lt;엘림의 책방&gt;", date: "2021-03-26", src: "https://file2.jbch.org/2021/board/1/17/17_2021032623444654119_radioelim.mp3" },
+        { id: "track44", num: 44, title: "광야에서 만난 엘림 3월 셋째주&lt;조각말씀,특별초대석'공주어린이집 졸업생'&gt;", date: "2021-03-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021032000571904148_radioelim.mp3" },
+        { id: "track43", num: 43, title: "광야에서 만난 엘림 3월 둘째주&lt;이비에스,선곡의정석&gt;", date: "2021-03-13", src: "https://file2.jbch.org/2021/board/1/17/17_2021031321481689677_radioelim.mp3" },
+        { id: "track42", num: 42, title: "광야에서 만난 엘림 3월 첫째주&lt;엘림뉴스,한줄감사,사연&gt;", date: "2021-03-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021030609504590938_radioelim.mp3" },
+        { id: "track41", num: 41, title: "광야에서 만난 엘림 2월 네째주&lt;성찬시,엘림의책방&gt;", date: "2021-02-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021022700141151794_radioelim.mp3" },
+        { id: "track40", num: 40, title: "광야에서 만난 엘림 2월 셋째주&lt;특별초대석 '아트선교부'&gt;", date: "2021-02-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021022000315757987_radioelim.mp3" },
+        { id: "track39", num: 39, title: "광야에서 만난 엘림 2월 둘째주&lt;조각말씀,선곡의정석&gt;", date: "2021-02-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021021222353010529_radioelim.mp3" },
+        { id: "track38", num: 38, title: "광야에서 만난 엘림 2월 첫째주 &lt;엘림뉴스, 한줄감사, 사연&gt;", date: "2021-02-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021020601060369296_radioelim.mp3" },
+        { id: "track37", num: 37, title: "광야에서 만난 엘림 1월 네째주", date: "2021-01-30", src: "https://file2.jbch.org/2021/board/1/17/17_2021013009554384323_radioelim.mp3" },
+        { id: "track36", num: 36, title: "광야에서 만난 엘림 1월 셋째주", date: "2021-01-23", src: "https://file2.jbch.org/2021/board/1/17/17_2021012301281863041_radioelim.mp3" },
+        { id: "track35", num: 35, title: "광야에서 만난 엘림 1월 첫째주", date: "2021-01-16", src: "https://file2.jbch.org/2021/board/1/17/17_2021011609254522921_radioelim.mp3" },
+        { id: "track34", num: 34, title: "광야에서 만난 엘림 1월 첫째주", date: "2021-01-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021010822334574409_radioelim.mp3" },
+        { id: "track33", num: 33, title: "광야에서 만난 엘림 12월 네째주", date: "2020-12-25", src: "https://file2.jbch.org/2020/board/1/17/17_2020122609373241825_radioelim.mp3" },
+        { id: "track32", num: 32, title: "광야에서 만난 엘림 12월 셋째주", date: "2020-12-19", src: "https://file2.jbch.org/2020/board/1/17/17_2020121909145509899_radioelim.mp3" },
+        { id: "track31", num: 31, title: "광야에서 만난 엘림 12월 둘째주", date: "2020-12-11", src: "https://file2.jbch.org/2020/board/1/17/17_2020121118431619921_radioelim.mp3" },
+        { id: "track30", num: 30, title: "광야에서 만난 엘림 1주년 특집", date: "2020-12-05", src: "https://file2.jbch.org/2020/board/1/17/17_2020120510251925012_radioelim.mp3" },
+        { id: "track29", num: 29, title: "광야에서 만난 엘림 11월 네째주", date: "2020-11-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020112800493718549_radioelim.mp3" },
+        { id: "track28", num: 28, title: "광야에서 만난 엘림 11월 셋째주", date: "2020-11-20", src: "https://file2.jbch.org/2020/board/1/17/17_2020112022071744840_radioelim.mp3" },
+        { id: "track27", num: 27, title: "광야에서 만난 엘림 11월 둘째주", date: "2020-11-14", src: "https://file2.jbch.org/2020/board/1/17/17_2020111401151742089_radioelim.mp3" },
+        { id: "track26", num: 26, title: "광야에서 만난 엘림 11월 첫째주", date: "2020-11-07", src: "https://file2.jbch.org/2020/board/1/17/17_2020110710245226541_radioelim.mp3" },
+        { id: "track_extra_youth", num: 25.1, title: "번외. 광야에서 만난 엘림 <청년집회>", date: "2020-10-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020102815000246945_radioelim.mp3" },
+        { id: "track25", num: 25, title: "광야에서 만난 엘림 10월 네째주", date: "2020-10-23", src: "https://file2.jbch.org/2020/board/1/17/17_2020102322395198869_radioelim.mp3" },
+        { id: "track24", num: 24, title: "광야에서 만난 엘림 10월 셋째주", date: "2020-10-17", src: "https://file2.jbch.org/2020/board/1/17/17_2020101708210888192_radioelim.mp3" },
+        { id: "track23", num: 23, title: "광야에서 만난 엘림 10월 둘째주", date: "2020-10-09", src: "https://file2.jbch.org/2020/board/1/17/17_2020100923584710865_radioelim.mp3" },
+        { id: "track22", num: 22, title: "광야에서 만난 엘림 10월 첫째주", date: "2020-10-03", src: "https://file2.jbch.org/2020/board/1/17/17_2020100309275422421_radioelim.mp3" },
+        { id: "track21", num: 21, title: "광야에서 만난 엘림 9월 네째주", date: "2020-09-26", src: "https://file2.jbch.org/2020/board/1/17/17_2020092613550618972_radioelim.mp3" },
+        { id: "track20", num: 20, title: "광야에서 만난 엘림 9월 셋째주", date: "2020-09-19", src: "https://file2.jbch.org/2020/board/1/17/17_2020091909432595582_radioelim.mp3" },
+        { id: "track19", num: 19, title: "광야에서 만난 엘림 19회", date: "2020-09-11", src: "https://file2.jbch.org/2020/board/1/17/17_2020091120542525948_radioelim.mp3" },
+        { id: "track18", num: 18, title: "광야에서 만난 엘림 18회", date: "2020-08-23", src: "https://file2.jbch.org/2020/board/1/17/17_2020082318232775730_radioelim.mp3" },
+        { id: "track_extra_3", num: 17.3, title: "번외3. 광야에서 만난 엘림 - 농고 하계수양회", date: "2020-08-14", src: "https://file2.jbch.org/2020/board/1/17/17_2020081422395724234_radioelim.mp3" },
+        { id: "track17", num: 17, title: "광야에서 만난 엘림 17회", date: "2020-08-08", src: "https://file2.jbch.org/2020/board/1/17/17_2020080912530193728_radioelim.mp3" },
+        { id: "track16", num: 16, title: "광야에서 만난 엘림 16회", date: "2020-07-25", src: "https://file2.jbch.org/2020/board/1/17/17_2020072519470948359_radioelim.mp3" },
+        { id: "track_extra_2", num: 15.2, title: "번외2. 광야에서 만난 엘림 - 집사 심재희", date: "2020-07-18", src: "https://file2.jbch.org/2020/board/1/17/17_2020071911512045174_radioelim.mp3" },
+        { id: "track15", num: 15, title: "광야에서 만난 엘림 15회", date: "2020-07-12", src: "https://file2.jbch.org/2020/board/1/17/17_2020071215263644596_radioelim.mp3" },
+        { id: "track14", num: 14, title: "광야에서 만난 엘림 14회", date: "2020-06-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020062910083313516_oyster.mp3" },
+        { id: "track13", num: 13, title: "광야에서 만난 엘림 13회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617290366145_radioelim.mp3" },
+        { id: "track12", num: 12, title: "광야에서 만난 엘림 12회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617251524712_radioelim.mp3" },
+        { id: "track11", num: 11, title: "광야에서 만난 엘림 11회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617211459351_radioelim.mp3" },
+        { id: "track10", num: 10, title: "광야에서 만난 엘림 10회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617050902455_radioelim.mp3" },
+        { id: "track9", num: 9, title: "광야에서 만난 엘림 9회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616593986180_radioelim.mp3" },
+        { id: "track8", num: 8, title: "광야에서 만난 엘림 8회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616451761876_radioelim.mp3" },
+        { id: "track7", num: 7, title: "광야에서 만난 엘림 7회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616353617729_radioelim.mp3" },
+        { id: "track6", num: 6, title: "광야에서 만난 엘림 6회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616151964386_radioelim.mp3" },
+        { id: "track5", num: 5, title: "광야에서 만난 엘림 5회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616073318043_radioelim.mp3" },
+        { id: "track4", num: 4, title: "광야에서 만난 엘림 4회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020221180395093_pigflower4.mp3" },
+        { id: "track3", num: 3, title: "광야에서 만난 엘림 3회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020220423792307_pigflower4.mp3" },
+        { id: "track2", num: 2, title: "광야에서 만난 엘림 2회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020220391848638_pigflower4.mp3" },
+        { id: "track1", num: 1, title: "엘림 1회", date: "2019-12-07", src: "https://file2.jbch.org/2019/board/1/17/17_2019120812000968217_oyster.mp3" }
+    ];
+
+    const sermonEpisodes = [
+        { id: "track31", num: 31, title: "그 중에 제일은 사랑이라 - 박경수 목사", date: "2026-08-16", src: "https://file2.jbch.org/2026/board/1/17/17_20260823002556_6542_kjcmedia.mp3" },
+        { id: "track30", num: 30, title: "내 삶이 마라를 지날 때 - 박종욱 목사", date: "2026-08-09", src: "https://file2.jbch.org/2026/board/1/17/17_20260823002244_6761_kjcmedia.mp3" },
+        { id: "track29", num: 29, title: "징계와 시험 - 박수휘 목사", date: "2026-08-02", src: "https://file2.jbch.org/2026/board/1/17/17_20260823001334_0951_kjcmedia.mp3" },
+        { id: "track28", num: 28, title: "은혜와 고난 후 영광 - 김병헌 목사", date: "2026-07-26", src: "https://file2.jbch.org/2026/board/1/17/17_20260823001108_1212_kjcmedia.mp3" },
+        { id: "track27", num: 27, title: "일을 숨기시는 하나님 - 양현준 목사", date: "2026-07-19", src: "https://file2.jbch.org/2026/board/1/17/17_20260823000841_9321_kjcmedia.mp3" },
+        { id: "track26", num: 26, title: "심지가 견고한 자 - 공성수 목사", date: "2026-07-12", src: "https://file2.jbch.org/2026/board/1/17/17_20260823000257_1515_kjcmedia.mp3" },
+        { id: "track25", num: 25, title: "빈손으로 보이지 말라 - 이상민 목사", date: "2026-07-05", src: "https://file2.jbch.org/2026/board/1/17/17_20260821164612_3715_kjcmedia.mp3" },
+        { id: "track24", num: 24, title: "네 형제의 찬송이 될찌라 - 조윤구 목사", date: "2026-06-28", src: "https://file2.jbch.org/2026/board/1/17/17_20260821164203_3344_kjcmedia.mp3" },
+        { id: "track23", num: 23, title: "금향로에 담긴 기도 - 이상민 목사", date: "2026-06-21", src: "https://file2.jbch.org/2026/board/1/17/17_20260821163557_9641_kjcmedia.mp3" },
+        { id: "track22", num: 22, title: "충성되고 지혜있는 종 - 박경수 목사", date: "2026-06-14", src: "https://file2.jbch.org/2026/board/1/17/17_20260821163050_0231_kjcmedia.mp3" },
+        { id: "track21", num: 21, title: "진리 앞에서 - 이영림 목사", date: "2026-06-07", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162511_7683_kjcmedia.mp3" },
+        { id: "track20", num: 20, title: "오직 나와 내 집은 - 이상민 목사", date: "2026-05-31", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162241_2234_kjcmedia.mp3" },
+        { id: "track19", num: 19, title: "제사장들이 궤를 메니라 - 이종혁 목사", date: "2026-05-24", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162025_6690_kjcmedia.mp3" },
+        { id: "track18", num: 18, title: "깨달은 날부터 자라가라 - 임승환 목사", date: "2026-05-17", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161838_0397_kjcmedia.mp3" },
+        { id: "track17", num: 17, title: "지금이 바로 이때라 - 이상민 목사", date: "2026-05-10", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161710_1742_kjcmedia.mp3" },
+        { id: "track16", num: 16, title: "비용 - 유태종 목사", date: "2026-05-03", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161346_7248_kjcmedia.mp3" },
+        { id: "track15", num: 15, title: "선한 청지기 - 이상민 목사", date: "2026-04-26", src: "https://file2.jbch.org/2026/board/1/17/17_20260820135613_3949_kjcmedia.mp3" },
+        { id: "track14", num: 14, title: "복음전파의 사명 - 김종천 목사", date: "2026-04-19", src: "https://file2.jbch.org/2026/board/1/17/17_20260820094353_7129_kjcmedia.mp3" },
+        { id: "track13", num: 13, title: "영적 전쟁에서 이기는 삶 - 이상민 목사", date: "2026-04-12", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092911_0947_kjcmedia.mp3" },
+        { id: "track12", num: 12, title: "밤중에 노래하게 하시는 하나님 - 박경수 목사", date: "2026-04-05", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092851_5586_kjcmedia.mp3" },
+        { id: "track11", num: 11, title: "무익한 종 - 신창훈 목사", date: "2026-03-29", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092747_2285_kjcmedia.mp3" },
+        { id: "track10", num: 10, title: "광야의 길 - 이정익 목사", date: "2026-03-22", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092546_1460_kjcmedia.mp3" },
+        { id: "track9", num: 9, title: "이삭의 순종과 하나님께 받은 축복 - 이성기 목사", date: "2026-03-08", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092409_5610_kjcmedia.mp3" },
+        { id: "track8", num: 8, title: "모퉁이에 남겨둔 사랑 - 이상민 목사", date: "2026-03-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091720_0297_kjcmedia.mp3" },
+        { id: "track7", num: 7, title: "은나팔 둘 - 강명수 목사", date: "2026-02-22", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091433_7776_kjcmedia.mp3" },
+        { id: "track6", num: 6, title: "우리 집 믿음으로 - 이상민 목사", date: "2026-02-15", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091135_3963_kjcmedia.mp3" },
+        { id: "track5", num: 5, title: "기념책을 기억하라 - 박경수 목사", date: "2026-02-08", src: "https://file2.jbch.org/2026/board/1/17/17_20260820090514_5457_kjcmedia.mp3" },
+        { id: "track4", num: 4, title: "흰옷 입은 자들 - 이상민 목사", date: "2026-02-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260820090212_2586_kjcmedia.mp3" },
+        { id: "track3", num: 3, title: "한 사람이 중요하다 - 이기천 목사", date: "2026-01-25", src: "https://file2.jbch.org/2026/board/1/17/17_20260820085916_2223_kjcmedia.mp3" },
+        { id: "track2", num: 2, title: "초실절 - 이상민 목사", date: "2026-01-18", src: "https://file2.jbch.org/2026/board/1/17/17_20260818160757_7822_kjcmedia.mp3" },
+        { id: "track1", num: 1, title: "이요한Pa_눅17_구원받은 후의 삶", date: "2026-01-11", src: "https://file2.jbch.org/2026/board/1/17/17_20260818152622_1516_kjcmedia.mp3" }
+    ];
+
+    // ---------------- State ----------------
+    let currentRoute = 'home';
+    let currentTab = 'radio'; // 'radio' | 'sermon'
+    let sortAscending = false; // false = 최신순
+    let searchKeyword = '';
+    let currentEpisode = null;
+    let currentEpisodeTab = 'radio';
+    let isPlaying = false;
+    let favorites = [];
+    let currentSpeed = 1.0;
+    
+    // 오디오 객체 전역 싱글톤 선언 및 설정
+    let audioEl = window.audioEl || new Audio();
+    window.audioEl = audioEl;
+
+    // 잠금화면 / 제어센터에 현재 회차명을 표시
+    function decodeHtml(text) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text || '';
+        return textarea.value;
+    }
+
+    function updateNowPlayingInfo(ep) {
+        if (!ep) return;
+
+        const episodeTitle = decodeHtml(ep.title);
+        const sectionName = currentEpisodeTab === 'radio' ? '라디오 엘림' : '주일말씀';
+
+        // iOS WKWebView는 웹페이지 제목을 잠금화면 재생 제목으로 사용하는 경우가 있어
+        // 재생 직전에 현재 회차명으로 페이지 제목과 audio title을 모두 갱신한다.
+        document.title = episodeTitle;
+        audioEl.title = episodeTitle;
+        audioEl.setAttribute('title', episodeTitle);
+        audioEl.setAttribute('aria-label', episodeTitle);
+
+        // Media Session API를 지원하는 환경에서는 더 자세한 메타데이터도 함께 전달한다.
+        if ('mediaSession' in navigator && 'MediaMetadata' in window) {
+            try {
+                const thumb = getEpisodeThumbnail(ep, currentEpisodeTab);
+
+                const metadata = {
+                    title: episodeTitle,
+                    artist: sectionName,
+                    album: '생명의말씀선교회 광주교회'
+                };
+
+                // 라디오 엘림은 각 회차의 YouTube 썸네일을 잠금화면에도 사용
+                // 썸네일이 아직 준비되지 않았다면 artwork 자체를 넣지 않아
+                // iOS 네이티브 Now Playing artwork를 덮어쓰지 않게 한다.
+                if (thumb) {
+                    metadata.artwork = [
+                        {
+                            src: thumb,
+                            type: 'image/jpeg'
+                        }
+                    ];
+                }
+
+                navigator.mediaSession.metadata = new MediaMetadata(metadata);
+            } catch (e) {
+                console.log('Media Session metadata 설정 불가:', e);
+            }
+        }
+    }
+
+    // 오디오 이벤트 바인딩
+    audioEl.onended = () => { playAdjacent(1); };
+    audioEl.ontimeupdate = () => { updatePlayerProgress(); };
+    audioEl.onloadedmetadata = () => {
+        updatePlayerProgress();
+        if (currentEpisode) updateNowPlayingInfo(currentEpisode);
+    };
+    audioEl.ondurationchange = () => { updatePlayerProgress(); };
+    audioEl.onplay = () => {
+        if (currentEpisode) updateNowPlayingInfo(currentEpisode);
+        isPlaying = true;
+        syncPlayingUI();
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'playing'; } catch (e) {}
+        }
+    };
+    audioEl.onpause = () => {
+        isPlaying = false;
+        syncPlayingUI();
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch (e) {}
+        }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+        render();
+        loadYouTubeThumbnails();
+    });
+
+    function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
+    function formatTime(totalSeconds) {
+        if (!isFinite(totalSeconds) || totalSeconds < 0) totalSeconds = 0;
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = Math.floor(totalSeconds % 60);
+        if (h > 0) {
+            return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+        }
+        return `${pad2(m)}:${pad2(s)}`;
+    }
+
+    function updatePlayerProgress() {
+        const slider = document.getElementById('progress-slider');
+        const curLabel = document.getElementById('current-time-label');
+        const durLabel = document.getElementById('duration-time-label');
+        if (!slider || !curLabel || !durLabel) return;
+        
+        const dur = audioEl.duration || 0;
+        slider.max = dur || 100;
+        slider.value = audioEl.currentTime || 0;
+
+        const percent = dur > 0 ? Math.max(0, Math.min(100, (audioEl.currentTime / dur) * 100)) : 0;
+        slider.style.setProperty('--progress', `${percent}%`);
+
+        curLabel.innerText = formatTime(audioEl.currentTime || 0);
+        durLabel.innerText = formatTime(dur);
+    }
+
+    function onSeekInput(val) {
+        audioEl.currentTime = parseFloat(val);
+        updatePlayerProgress();
+    }
+
+    // ---------------- YouTube 썸네일 자동 연결 ----------------
+    let radioThumbnailMap = {};
+    let sermonThumbnailMap = {};
+
+    async function loadYouTubeThumbnails() {
+        // 라디오 엘림: 기존 youtube_thumbnails.json 그대로 사용
+        try {
+            const radioRes = await fetch(`youtube_thumbnails.json?v=${Date.now()}`, {
+                cache: 'no-store'
+            });
+
+            if (radioRes.ok) {
+                const radioData = await radioRes.json();
+
+                // 혹시 통합형 JSON이 남아 있어도 radio만 안전하게 읽음
+                if (radioData && typeof radioData === 'object' && radioData.radio) {
+                    radioThumbnailMap = radioData.radio;
+                } else {
+                    radioThumbnailMap = radioData && typeof radioData === 'object'
+                        ? radioData
+                        : {};
+                }
+            }
+        } catch (e) {
+            console.log('라디오 엘림 썸네일 목록을 불러오지 못했습니다:', e);
+        }
+
+        // 주일말씀: 별도 sermon_thumbnails.json 사용
+        try {
+            const sermonRes = await fetch(`sermon_thumbnails.json?v=${Date.now()}`, {
+                cache: 'no-store'
+            });
+
+            if (sermonRes.ok) {
+                const sermonData = await sermonRes.json();
+                sermonThumbnailMap = sermonData && typeof sermonData === 'object'
+                    ? sermonData
+                    : {};
+            }
+        } catch (e) {
+            console.log('주일말씀 썸네일 목록을 불러오지 못했습니다:', e);
+        }
+
+        render();
+    }
+
+    function getEpisodeThumbnail(ep, tab) {
+        if (!ep) return '';
+
+        if (ep.thumbnail) return ep.thumbnail;
+
+        if (tab === 'radio') {
+            const item = radioThumbnailMap[String(ep.num)];
+
+            if (item && typeof item === 'object' && item.thumbnail) {
+                return item.thumbnail;
+            }
+
+            if (typeof item === 'string') {
+                return item;
+            }
+        }
+
+        if (tab === 'sermon') {
+            // 1순위: sermon episode id로 매칭
+            let item = sermonThumbnailMap[String(ep.id)];
+
+            // 2순위: 날짜로 매칭
+            if (!item && ep.date) {
+                item = sermonThumbnailMap[String(ep.date)];
+            }
+
+            // 3순위: title + date 조합키도 지원
+            if (!item && ep.title && ep.date) {
+                item = sermonThumbnailMap[`${ep.date}|${ep.title}`];
+            }
+
+            if (item && typeof item === 'object' && item.thumbnail) {
+                return item.thumbnail;
+            }
+
+            if (typeof item === 'string') {
+                return item;
+            }
+        }
+
+        return '';
+    }
+
+    function thumbFallback(img, label) {
+        const fallback = document.createElement('div');
+        fallback.className = `${img.className} thumb-placeholder`;
+        fallback.textContent = label || 'ELIM';
+        img.replaceWith(fallback);
+    }
+
+    function thumbMarkup(ep, tab, className, fallbackLabel) {
+        const src = getEpisodeThumbnail(ep, tab);
+        const label = fallbackLabel || (String(ep.num).includes('.') ? '번외' : String(ep.num));
+
+        if (!src) {
+            return `<div class="${className} thumb-placeholder">${label}</div>`;
+        }
+
+        return `
+            <img
+                src="${src}"
+                alt="${ep.title}"
+                class="${className}"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+                onerror="thumbFallback(this, '${label}')"
+            />
+        `;
+    }
+
+    function listFor(tab) { return tab === 'radio' ? radioEpisodes : sermonEpisodes; }
+    function tabLabel(tab) { return tab === 'radio' ? '라디오 엘림' : '주일 말씀'; }
+    function formatDateKo(d) {
+        const [y, m, day] = d.split('-');
+        return `${y}.${m}.${day}`;
+    }
+
+    function isNewEpisode(dateString) {
+        const episodeDate = new Date(`${dateString}T00:00:00`);
+        const now = new Date();
+        const diffMs = now - episodeDate;
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        return diffMs >= 0 && diffMs <= sevenDays;
+    }
+
+    function getFilteredSorted() {
+        let items = listFor(currentTab).slice();
+        if (searchKeyword.trim()) {
+            const kw = searchKeyword.trim().toLowerCase();
+            items = items.filter(ep => ep.title.toLowerCase().includes(kw) || String(ep.num).includes(kw));
+        }
+        items.sort((a, b) => sortAscending ? a.num - b.num : b.num - a.num);
+        return items;
+    }
+
+    // ---------------- Navigation ----------------
+    function navigate(route) { 
+        currentRoute = route; 
+        render(); 
+    }
+
+    function goElim() { currentTab = 'radio'; searchKeyword = ''; navigate('home'); }
+    function goSermon() { currentTab = 'sermon'; searchKeyword = ''; navigate('home'); }
+    function goFavorites() { navigate('favorites'); }
+
+    function backToList() { 
+        currentTab = currentEpisodeTab; 
+        navigate('home'); 
+    }
+
+    function openPlayer(tab, id) {
+        const ep = listFor(tab).find(e => e.id === id);
+        if (!ep) return;
+        currentEpisode = ep;
+        currentEpisodeTab = tab;
+        updateNowPlayingInfo(ep);
+        navigate('player');
+        playEpisode(ep);
+    }
+    function openPlayerFromMini() { if (currentEpisode) navigate('player'); }
+
+    // ---------------- Render ----------------
+    function render() {
+        const relevantThemeTab = currentRoute === 'player' ? currentEpisodeTab : currentTab;
+        const appEl = document.getElementById('app');
+
+        if (appEl) {
+            const isFavorites = currentRoute === 'favorites';
+            const isSermonTheme = !isFavorites && relevantThemeTab === 'sermon';
+            const isRadioTheme = !isFavorites && !isSermonTheme;
+
+            appEl.classList.toggle('theme-radio', isRadioTheme);
+            appEl.classList.toggle('theme-sermon', isSermonTheme);
+            appEl.classList.toggle('theme-neutral', isFavorites);
+        }
+
+        updateNavStyles();
+        document.getElementById('main-content').innerHTML =
+            currentRoute === 'home' ? renderHomeView() :
+            currentRoute === 'player' ? renderPlayerView() :
+            renderFavoritesView();
+        updateMiniPlayer();
+        attachHomeEvents();
+        if (currentRoute === 'player') {
+            updatePlayerProgress();
+        }
+    }
+
+    function updateNavStyles() {
+        const relevantTab = currentRoute === 'player' ? currentEpisodeTab : currentTab;
+        const activeId =
+            currentRoute === 'favorites' ? 'nav-favorites' :
+            relevantTab === 'sermon' ? 'nav-sermon' : 'nav-elim';
+        ['nav-elim', 'nav-sermon', 'nav-favorites'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.className = "flex flex-col items-center space-y-1 px-4 py-1 transition-colors " +
+                    (id === activeId ? "text-blue-950 font-bold" : "text-slate-400 hover:text-slate-600");
+            }
+        });
+    }
+
+    function renderHomeView() {
+        const latest = listFor(currentTab).slice().sort((a, b) => b.num - a.num)[0];
+        const items = getFilteredSorted();
+        return `
+            <div class="p-5 space-y-5">
+                <!-- HERO / LATEST -->
+                <div class="hero-card relative rounded-2xl overflow-hidden bg-white border border-slate-200 text-slate-800 p-5 cursor-pointer hover:border-blue-900/30 transition-all shadow-sm" onclick="openPlayer('${currentTab}','${latest.id}')">
+                    ${thumbMarkup(latest, currentTab, 'hero-thumb', currentTab === 'sermon' ? '말씀' : 'ELIM')}
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-950 text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-blue-900 animate-pulse"></span>
+                            <span>${currentTab === 'radio' ? '최신 회차' : '최신 말씀'}</span>
+                            ${isNewEpisode(latest.date) ? '<span class="new-badge">NEW</span>' : ''}
+                        </span>
+                        <span class="text-xs text-slate-400">${formatDateKo(latest.date)}</span>
+                    </div>
+                    <h2 class="text-lg font-bold mb-1 leading-snug text-slate-900">${latest.title}</h2>
+                    <div class="flex items-center space-x-2 mt-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-950 text-white flex items-center justify-center text-xs shadow-sm">
+                            <i class="fa-solid fa-play ml-0.5"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-blue-950">지금 바로 듣기</span>
+                    </div>
+                </div>
+
+                <!-- SEARCH & SORT -->
+                <div class="space-y-2">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input id="search-input" type="text" placeholder="제목이나 회차 번호로 검색해 보세요" value="${searchKeyword}"
+                            class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-900 focus:bg-white shadow-sm" />
+                    </div>
+                    <div class="flex justify-end space-x-3 text-xs font-semibold">
+                        <button onclick="setSort(false)" class="${!sortAscending ? 'text-blue-950 underline font-bold' : 'text-slate-400'}">최신 순</button>
+                        <button onclick="setSort(true)" class="${sortAscending ? 'text-blue-950 underline font-bold' : 'text-slate-400'}">오래된 순</button>
+                    </div>
+                </div>
+
+                <!-- LIST -->
+                <div>
+                    <h3 class="font-bold text-sm text-slate-700 mb-3 flex items-center">
+                        <i class="fa-solid fa-list-ul text-blue-950 mr-2"></i>${tabLabel(currentTab)} 전체 (${listFor(currentTab).length}개)
+                    </h3>
+                    <div class="space-y-2.5">
+                        ${items.length === 0 ? `<p class="text-center text-slate-400 text-sm py-10">검색 결과가 없습니다 🙇</p>` :
+                        items.map(ep => {
+                            const isFav = favorites.includes(ep.id);
+                            const isCurrentPlaying = currentEpisode && currentEpisode.id === ep.id && currentEpisodeTab === currentTab;
+                            return `
+                                <div onclick="openPlayer('${currentTab}','${ep.id}')" class="episode-card ${isCurrentPlaying ? 'now-playing' : ''} flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer transition-all group">
+                                    <div class="flex items-center space-x-3 min-w-0">
+                                        ${thumbMarkup(ep, currentTab, 'episode-thumb', String(ep.num).includes('.') ? '번외' : String(ep.num))}
+                                        <div class="min-w-0">
+                                            <div class="flex items-center min-w-0">
+                                                <h4 class="font-semibold text-sm text-slate-800 truncate">${ep.title}</h4>
+                                                ${isNewEpisode(ep.date) ? '<span class="new-badge flex-shrink-0">NEW</span>' : ''}
+                                            </div>
+                                            <p class="text-xs text-slate-500 truncate">
+                                                ${String(ep.num).includes('.') ? '번외' : `${ep.num}회`} · ${formatDateKo(ep.date)}
+                                            </p>
+                                            ${isCurrentPlaying ? `<div class="playing-label"><span class="playing-dot"></span>${isPlaying ? '재생 중' : '선택된 회차'}</div>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1 pl-2 flex-shrink-0">
+                                        <button onclick="event.stopPropagation(); toggleFavorite('${ep.id}')" class="text-slate-300 hover:text-rose-500 p-2 transition-colors">
+                                            <i class="${isFav ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'} text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachHomeEvents() {
+        const input = document.getElementById('search-input');
+        if (input) {
+            input.addEventListener('input', (e) => {
+                searchKeyword = e.target.value;
+                const cursorPos = e.target.selectionStart;
+                render();
+                const newInput = document.getElementById('search-input');
+                if (newInput) { newInput.focus(); newInput.setSelectionRange(cursorPos, cursorPos); }
+            });
+        }
+    }
+
+    function setSort(asc) { sortAscending = asc; render(); }
+
+    function renderPlayerView() {
+        if (!currentEpisode) return '';
+        const ep = currentEpisode;
+        const isFav = favorites.includes(ep.id);
+        const isSermon = currentEpisodeTab === 'sermon';
+        const playerTheme = isSermon ? 'sermon-theme' : 'radio-theme';
+        const playerTopLabel = isSermon ? '주일말씀' : '라디오 엘림';
+        const playerSmallLabel = isSermon ? 'SUNDAY MESSAGE' : 'RADIO';
+        const playerMainLabel = isSermon ? '말씀' : 'ELIM';
+        return `
+            <div id="player-card" class="player-surface p-5 flex flex-col items-center justify-between min-h-full space-y-4 bg-white">
+                <!-- 상단 뒤로가기 & 즐겨찾기 버튼 -->
+                <div class="w-full flex items-center justify-between">
+                    <button onclick="backToList()" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 shadow-sm">
+                        <i class="fa-solid fa-chevron-down text-sm"></i>
+                    </button>
+                    <div class="text-center">
+                        <span class="text-xs font-semibold text-slate-700">${playerTopLabel}</span>
+                    </div>
+                    <button onclick="toggleFavorite('${ep.id}')" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 shadow-sm">
+                        <i class="${isFav ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'} text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- 라디오 비주얼 카드 -->
+                <div class="w-full flex justify-center my-1">
+                    <div class="player-art-card ${playerTheme} bg-blue-950 rounded-3xl shadow-2xl text-white relative overflow-hidden flex flex-col items-center justify-center border border-blue-900">
+                        ${thumbMarkup(ep, currentEpisodeTab, 'player-thumb', currentEpisodeTab === 'sermon' ? '말씀' : 'ELIM')}
+                        <div class="player-thumb-overlay"></div>
+                        <div class="player-thumb-content flex flex-col items-center justify-center p-6 w-full h-full">
+                            <div class="w-12 h-12 rounded-full border-2 border-white/80 flex items-center justify-center mb-4 ${isPlaying ? 'animate-pulse' : ''}">
+                                <div class="w-4 h-4 rounded-full bg-white shadow-sm"></div>
+                            </div>
+                            <span class="text-[11px] font-semibold text-white/75 tracking-widest mb-1">${playerSmallLabel}</span>
+                            <h3 class="text-lg font-bold tracking-tight text-white">${playerMainLabel}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 타이틀 및 날짜 정보 -->
+                <div class="text-center w-full px-2">
+                    <p class="text-xs font-semibold text-slate-400 mb-1">${tabLabel(currentEpisodeTab)}</p>
+                    <h2 class="text-lg font-bold text-slate-900 mb-1 leading-snug px-2 line-clamp-2">${ep.title}</h2>
+                    <p class="text-xs text-slate-400 font-medium">${formatDateKo(ep.date)}</p>
+                </div>
+
+                <!-- PLAYBACK BAR & CONTROLS -->
+                <div class="w-full space-y-4 px-1 pb-2">
+                    <div>
+                        <input id="progress-slider" type="range" min="0" max="100" value="0" step="0.1"
+                            oninput="onSeekInput(this.value)"
+                            class="${isSermon ? 'sermon-progress' : 'radio-progress'} w-full h-1.5 rounded-lg cursor-pointer">
+                        <div class="flex items-center justify-between mt-2 text-xs font-semibold text-slate-400">
+                            <span id="current-time-label">00:00</span>
+                            <span id="duration-time-label">00:00</span>
+                        </div>
+                    </div>
+
+                    <!-- 재생 컨트롤 버튼 레이아웃 -->
+                    <div class="flex items-center justify-around px-2">
+                        <button onclick="skipSeconds(-15)" class="relative text-slate-500 hover:text-slate-800 p-2 flex flex-col items-center" title="15초 뒤로">
+                            <i class="fa-solid fa-rotate-left text-base"></i>
+                            <span class="text-[9px] font-bold -mt-0.5">15</span>
+                        </button>
+                        <button onclick="playAdjacent(-1)" class="text-slate-700 hover:text-blue-950 p-2 text-lg" title="이전 회차">
+                            <i class="fa-solid fa-backward-step"></i>
+                        </button>
+                        <button onclick="togglePlayPause()" class="play-main-btn w-16 h-16 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-lg shadow-blue-950/30 text-xl active:scale-95">
+                            <i id="player-main-icon" class="fa-solid ${isPlaying ? 'fa-pause' : 'fa-play ml-0.5'}"></i>
+                        </button>
+                        <button onclick="playAdjacent(1)" class="text-slate-700 hover:text-blue-950 p-2 text-lg" title="다음 회차">
+                            <i class="fa-solid fa-forward-step"></i>
+                        </button>
+                        <button onclick="skipSeconds(15)" class="relative text-slate-500 hover:text-slate-800 p-2 flex flex-col items-center" title="15초 앞으로">
+                            <i class="fa-solid fa-rotate-right text-base"></i>
+                            <span class="text-[9px] font-bold -mt-0.5">15</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full pb-1"></div>
+            </div>
+        `;
+    }
+
+    function renderFavoritesView() {
+        const all = [...radioEpisodes.map(e => ({ ...e, tab: 'radio' })), ...sermonEpisodes.map(e => ({ ...e, tab: 'sermon' }))];
+        const favEps = all.filter(e => favorites.includes(e.id));
+        return `
+            <div class="p-6 space-y-4">
+                <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center">
+                    <i class="fa-solid fa-heart text-rose-500 mr-2"></i>즐겨찾기
+                </h2>
+                ${favEps.length === 0 ? `
+                    <div class="text-center py-20 text-slate-400">
+                        <i class="fa-regular fa-heart text-4xl mb-3"></i>
+                        <p class="text-sm">즐겨찾기한 회차가 없습니다.</p>
+                    </div>
+                ` : `
+                    <div class="space-y-2.5">
+                        ${favEps.map(ep => `
+                            <div onclick="openPlayer('${ep.tab}','${ep.id}')" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer shadow-sm">
+                                <div class="flex items-center space-x-3 min-w-0">
+                                    ${thumbMarkup(ep, ep.tab, 'favorite-thumb', String(ep.num).includes('.') ? '번외' : String(ep.num))}
+                                    <div class="min-w-0">
+                                        <span class="text-[10px] text-blue-900 font-semibold px-1.5 py-0.5 rounded bg-blue-50">${tabLabel(ep.tab)}</span>
+                                        <h4 class="font-semibold text-sm text-slate-800 truncate mt-0.5">${ep.title}</h4>
+                                        <p class="text-xs text-slate-500 truncate">
+                                            ${String(ep.num).includes('.') ? '번외' : `${ep.num}회`} · ${formatDateKo(ep.date)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <button onclick="event.stopPropagation(); toggleFavorite('${ep.id}')" class="text-rose-500 p-2 flex-shrink-0">
+                                    <i class="fa-solid fa-heart text-base"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `}
+            </div>
+        `;
+    }
+
+    // ---------------- Player logic ----------------
+    function playEpisode(ep) {
+        // 중요: 오디오를 재생하기 전에 제목을 먼저 바꿔야
+        // iPhone 잠금화면이 "라디오 엘림" 대신 현재 회차명을 잡기 쉽다.
+        updateNowPlayingInfo(ep);
+
+        if (audioEl.src !== ep.src) {
+            audioEl.src = ep.src;
+            audioEl.load();
+        }
+
+        // src/load 뒤에도 한 번 더 적용
+        updateNowPlayingInfo(ep);
+
+        audioEl.playbackRate = currentSpeed;
+        const p = audioEl.play();
+        if (p !== undefined) {
+            p.then(() => { 
+                updateNowPlayingInfo(ep);
+                isPlaying = true; 
+                syncPlayingUI();
+            }).catch((err) => { 
+                console.log("재생 오류 방어:", err);
+                isPlaying = false; 
+                syncPlayingUI(); 
+            });
+        }
+    }
+
+    function togglePlayPause() {
+        if (!currentEpisode) {
+            if (radioEpisodes.length) openPlayer('radio', radioEpisodes[0].id);
+            return;
+        }
+        if (audioEl.paused) { 
+            audioEl.play().catch(() => {}); 
+            isPlaying = true; 
+        } else { 
+            audioEl.pause(); 
+            isPlaying = false; 
+        }
+        syncPlayingUI();
+    }
+
+    function syncPlayingUI() {
+        updateMiniPlayer();
+        if (currentRoute === 'player') {
+            const playIcon = document.getElementById('player-main-icon');
+            if (playIcon) {
+                playIcon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play ml-0.5';
+            }
+        }
+    }
+
+    function skipSeconds(delta) {
+        if (!audioEl) return;
+        let newTime = audioEl.currentTime + delta;
+        audioEl.currentTime = Math.max(0, Math.min(audioEl.duration || 0, newTime));
+        updatePlayerProgress();
+    }
+
+    function setSpeed(s) {
+        currentSpeed = s;
+        audioEl.playbackRate = s;
+    }
+
+    function playAdjacent(delta) {
+        if (!currentEpisode) return;
+        const list = listFor(currentEpisodeTab).slice().sort((a, b) => sortAscending ? a.num - b.num : b.num - a.num);
+        const idx = list.findIndex(e => e.id === currentEpisode.id);
+        if (idx === -1) return;
+        const nextIdx = (idx + delta + list.length) % list.length;
+        openPlayer(currentEpisodeTab, list[nextIdx].id);
+    }
+
+    function toggleFavorite(id) {
+        favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
+        render();
+    }
+
+    function updateMiniPlayer() {
+        const mini = document.getElementById('mini-player');
+        const eq = document.getElementById('mini-eq');
+
+        if (currentEpisode && (isPlaying || currentRoute !== 'player')) {
+            mini.classList.remove('hidden');
+            mini.classList.toggle('radio-mini', currentEpisodeTab === 'radio');
+            mini.classList.toggle('sermon-mini', currentEpisodeTab === 'sermon');
+
+            if (eq) {
+                eq.classList.toggle('paused', !isPlaying);
+            }
+
+            document.getElementById('mini-title').innerText = currentEpisode.title;
+            document.getElementById('mini-date').innerText = formatDateKo(currentEpisode.date);
+            document.querySelector('#mini-play-btn i').className = isPlaying ? 'fa-solid fa-pause text-sm' : 'fa-solid fa-play text-sm ml-0.5';
+        } else {
+            mini.classList.add('hidden');
+        }
+    }
+
+    function closeMiniPlayer() {
+        audioEl.pause();
+        isPlaying = false;
+        currentEpisode = null;
+        document.title = '라디오 엘림';
+        updateMiniPlayer();
+    }
+
+    // 잠금화면 / 제어센터 버튼 제어
+    if ('mediaSession' in navigator) {
+        try {
+            navigator.mediaSession.setActionHandler('play', () => {
+                if (!currentEpisode) return;
+                updateNowPlayingInfo(currentEpisode);
+                audioEl.play().catch(() => {});
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                audioEl.pause();
+            });
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                skipSeconds(-(details.seekOffset || 10));
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                skipSeconds(details.seekOffset || 10);
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                playAdjacent(-1);
+            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                playAdjacent(1);
+            });
+        } catch (e) {
+            console.log('Media Session 버튼 설정 불가:', e);
+        }
+    }
+    </script>
+</body>
+</html>
