@@ -1,4 +1,4 @@
-name: Update Sermon thumbnails exact
+name: Update Sermon thumbnails fixed
 
 on:
   workflow_dispatch:
@@ -30,27 +30,21 @@ jobs:
       - name: Install yt-dlp
         run: python -m pip install --upgrade yt-dlp
 
-      - name: Match sermon titles exactly
+      - name: Match sermon titles
         shell: bash
         run: |
           python - <<'PY'
           import json
           import re
           import subprocess
-          import sys
           from pathlib import Path
 
           CHANNEL = "https://www.youtube.com/@kwangjuChurch/videos"
           INDEX = Path("index.html")
           OUT = Path("sermon_thumbnails.json")
 
-          if not INDEX.exists():
-              print("index.html 없음")
-              sys.exit(1)
-
           html = INDEX.read_text(encoding="utf-8")
 
-          # sermonEpisodes 배열만 잘라냄
           m = re.search(
               r'const\s+sermonEpisodes\s*=\s*\[(.*?)\n\s*\];',
               html,
@@ -58,13 +52,11 @@ jobs:
           )
 
           if not m:
-              print("sermonEpisodes 배열을 찾지 못함")
-              sys.exit(1)
+              raise SystemExit("sermonEpisodes 배열을 찾지 못했습니다.")
 
           block = m.group(1)
-
-          # 객체 안에서 id/title/date만 가져오므로 num 형식이나 다른 필드 변화에 덜 민감함
           episodes = []
+
           for obj in re.finditer(r'\{(.*?)\}', block, flags=re.S):
               body = obj.group(1)
 
@@ -81,7 +73,6 @@ jobs:
 
           print("앱 주일말씀 수:", len(episodes))
 
-          # 유튜브 채널 영상 정보
           result = subprocess.run(
               [
                   "yt-dlp",
@@ -98,6 +89,7 @@ jobs:
           )
 
           videos = []
+
           for line in result.stdout.splitlines():
               try:
                   videos.append(json.loads(line))
@@ -107,30 +99,55 @@ jobs:
           print("유튜브 영상 수:", len(videos))
 
           def clean_title(s):
-              s = s or ""
+              s = (s or "").strip()
 
-              # 앞의 "1. ", "31. " 같은 번호는 양쪽 모두 무시
+              # 앱 쪽 "31. 제목" 같은 번호 제거
               s = re.sub(r'^\s*\d+(?:\.\d+)?\.\s*', '', s)
 
-              # [주일말씀], (주일말씀), 주일말씀 같은 흔한 접두어 제거
-              s = re.sub(r'^\s*[\[\(]?\s*주일\s*말씀\s*[\]\)]?\s*[-_:|]?\s*', '', s, flags=re.I)
+              # 유튜브 쪽 "[08.09]" / "[2026.08.09]" / "(08.09)" 같은 날짜 제거
+              s = re.sub(
+                  r'^\s*[\[\(]\s*(?:20\d{2}[./-])?\d{1,2}[./-]\d{1,2}\s*[\]\)]\s*',
+                  '',
+                  s
+              )
 
-              # 목사/목사님, Pa/P 표기 차이는 최대한 동일 취급
-              s = re.sub(r'목사님', '목사', s)
+              # "[주일말씀]" 접두어 제거
+              s = re.sub(
+                  r'^\s*[\[\(]?\s*주일\s*말씀\s*[\]\)]?\s*[-_:|]?\s*',
+                  '',
+                  s,
+                  flags=re.I
+              )
+
+              # 혹시 날짜/주일말씀 순서가 반복돼도 한 번 더 정리
+              s = re.sub(
+                  r'^\s*[\[\(]\s*(?:20\d{2}[./-])?\d{1,2}[./-]\d{1,2}\s*[\]\)]\s*',
+                  '',
+                  s
+              )
+              s = re.sub(
+                  r'^\s*[\[\(]?\s*주일\s*말씀\s*[\]\)]?\s*[-_:|]?\s*',
+                  '',
+                  s,
+                  flags=re.I
+              )
+
+              # 표기 차이 정리
+              s = s.replace('목사님', '목사')
               s = re.sub(r'(?i)\bpa\b', '목사', s)
               s = re.sub(r'(?i)\bp\b', '목사', s)
 
-              # 구분기호/공백 차이 제거
+              # 공백/특수문자 무시
               s = s.lower()
               s = re.sub(r'[^0-9a-z가-힣]+', '', s)
+
               return s
 
-          # 유튜브 제목 정규화 맵
-          yt_by_title = {}
+          yt_by_clean_title = {}
 
-          for v in videos:
-              vid = v.get("id")
-              title = v.get("title") or ""
+          for video in videos:
+              vid = video.get("id")
+              title = video.get("title") or ""
 
               if not vid:
                   continue
@@ -138,9 +155,10 @@ jobs:
               key = clean_title(title)
 
               if key:
-                  yt_by_title[key] = v
+                  yt_by_clean_title[key] = video
 
           existing = {}
+
           if OUT.exists():
               try:
                   existing = json.loads(OUT.read_text(encoding="utf-8"))
@@ -154,10 +172,10 @@ jobs:
 
           for ep in episodes:
               key = clean_title(ep["title"])
-              video = yt_by_title.get(key)
+              video = yt_by_clean_title.get(key)
 
               if not video:
-                  misses.append(ep["title"])
+                  misses.append((ep["title"], key))
                   continue
 
               vid = video["id"]
@@ -165,12 +183,10 @@ jobs:
               item = {
                   "videoId": vid,
                   "title": video.get("title") or "",
-                  # 웹 목록용으로 안정적인 hqdefault 사용
                   "thumbnail": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
                   "youtube": f"https://www.youtube.com/watch?v={vid}"
               }
 
-              # 현재 index.html이 조회하는 키들을 모두 기록
               found[ep["id"]] = item
 
               if ep["date"]:
@@ -179,7 +195,6 @@ jobs:
 
               print("MATCH:", ep["title"], "=>", item["title"])
 
-          # 기존 데이터는 유지하고 새 매칭만 덮어씀
           merged = dict(existing)
           merged.update(found)
 
@@ -189,18 +204,18 @@ jobs:
           )
 
           print("")
-          print("매칭 성공 키:", len(found))
+          print("매칭 성공 말씀 수:", len(found) // 3 if found else 0)
           print("매칭 실패 말씀 수:", len(misses))
 
           if misses:
               print("---- 매칭 실패 제목 ----")
-              for title in misses:
-                  print(title)
+              for title, key in misses:
+                  print(title, "=>", key)
 
-          # 하나도 못 찾은 경우 workflow를 실패시켜 원인을 로그에서 바로 보이게 함
+          # 매칭이 일부라도 되면 정상 종료.
+          # 0개인 경우에만 실패 처리해 로그에서 바로 알 수 있게 함.
           if episodes and not found:
-              print("주일말씀 썸네일을 하나도 매칭하지 못했습니다.")
-              sys.exit(1)
+              raise SystemExit("주일말씀 썸네일을 하나도 매칭하지 못했습니다.")
           PY
 
       - name: Commit sermon thumbnails
