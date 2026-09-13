@@ -1,4 +1,4 @@
-name: Update Sermon thumbnails only
+name: Update Sermon thumbnails exact
 
 on:
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Install yt-dlp
         run: python -m pip install --upgrade yt-dlp
 
-      - name: Match sermon thumbnails
+      - name: Match sermon titles exactly
         shell: bash
         run: |
           python - <<'PY'
@@ -39,100 +39,106 @@ jobs:
           import subprocess
           import sys
           from pathlib import Path
-          from datetime import datetime
-          from difflib import SequenceMatcher
 
-          SERMON_URL = "https://www.youtube.com/@kwangjuChurch/videos"
+          CHANNEL = "https://www.youtube.com/@kwangjuChurch/videos"
           INDEX = Path("index.html")
           OUT = Path("sermon_thumbnails.json")
 
-          def yt_detailed(url, limit=220):
-              result = subprocess.run(
-                  [
-                      "yt-dlp",
-                      "--skip-download",
-                      "--dump-json",
-                      "--ignore-errors",
-                      "--no-warnings",
-                      "--playlist-end", str(limit),
-                      url,
-                  ],
-                  text=True,
-                  capture_output=True,
-                  check=False,
-              )
-
-              items = []
-              for line in result.stdout.splitlines():
-                  try:
-                      items.append(json.loads(line))
-                  except Exception:
-                      pass
-              return items
-
-          def normalize_text(s):
-              s = (s or "").lower()
-              s = re.sub(r"(?i)\bpa\b", "", s)
-              s = re.sub(r"[^0-9a-z가-힣]+", "", s)
-              return s
-
-          def parse_sermon_title(raw):
-              t = re.sub(r"^\s*\d+\s*[.)-]\s*", "", raw or "")
-              parts = [p.strip() for p in t.split("_") if p.strip()]
-
-              speaker = re.sub(r"(?i)pa$", "", parts[0]).strip() if parts else ""
-              scripture = parts[1] if len(parts) >= 2 else ""
-              subject = " ".join(parts[2:]) if len(parts) >= 3 else (parts[1] if len(parts) == 2 else "")
-
-              return speaker, scripture, subject
-
-          def extract_sermon_episodes(index_text):
-              m = re.search(
-                  r"const\s+sermonEpisodes\s*=\s*\[(.*?)\n\s*\];",
-                  index_text,
-                  flags=re.S,
-              )
-
-              if not m:
-                  print("index.html에서 sermonEpisodes를 찾지 못했습니다.")
-                  return []
-
-              block = m.group(1)
-              episodes = []
-
-              pattern = re.compile(
-                  r'\{\s*id:\s*"([^"]+)"\s*,\s*num:\s*([^,]+)\s*,\s*title:\s*"([^"]*)"\s*,\s*date:\s*"([^"]+)"\s*,\s*src:\s*"([^"]+)"\s*\}'
-              )
-
-              for mm in pattern.finditer(block):
-                  speaker, scripture, subject = parse_sermon_title(mm.group(3))
-
-                  episodes.append({
-                      "id": mm.group(1),
-                      "num": mm.group(2).strip(),
-                      "title": mm.group(3),
-                      "date": mm.group(4),
-                      "speaker": speaker,
-                      "scripture": scripture,
-                      "subject": subject,
-                  })
-
-              return episodes
-
-          def date_distance_days(index_date, yt_date):
-              try:
-                  a = datetime.strptime(index_date, "%Y-%m-%d")
-                  b = datetime.strptime(yt_date, "%Y%m%d")
-                  return abs((a - b).days)
-              except Exception:
-                  return 999
-
           if not INDEX.exists():
-              print("index.html이 없습니다.")
+              print("index.html 없음")
               sys.exit(1)
 
-          sermons = extract_sermon_episodes(INDEX.read_text(encoding="utf-8"))
-          videos = yt_detailed(SERMON_URL)
+          html = INDEX.read_text(encoding="utf-8")
+
+          # sermonEpisodes 배열만 잘라냄
+          m = re.search(
+              r'const\s+sermonEpisodes\s*=\s*\[(.*?)\n\s*\];',
+              html,
+              flags=re.S
+          )
+
+          if not m:
+              print("sermonEpisodes 배열을 찾지 못함")
+              sys.exit(1)
+
+          block = m.group(1)
+
+          # 객체 안에서 id/title/date만 가져오므로 num 형식이나 다른 필드 변화에 덜 민감함
+          episodes = []
+          for obj in re.finditer(r'\{(.*?)\}', block, flags=re.S):
+              body = obj.group(1)
+
+              id_m = re.search(r'id:\s*"([^"]+)"', body)
+              title_m = re.search(r'title:\s*"([^"]*)"', body)
+              date_m = re.search(r'date:\s*"([^"]+)"', body)
+
+              if id_m and title_m:
+                  episodes.append({
+                      "id": id_m.group(1),
+                      "title": title_m.group(1),
+                      "date": date_m.group(1) if date_m else ""
+                  })
+
+          print("앱 주일말씀 수:", len(episodes))
+
+          # 유튜브 채널 영상 정보
+          result = subprocess.run(
+              [
+                  "yt-dlp",
+                  "--skip-download",
+                  "--dump-json",
+                  "--ignore-errors",
+                  "--no-warnings",
+                  "--playlist-end", "300",
+                  CHANNEL
+              ],
+              text=True,
+              capture_output=True,
+              check=False
+          )
+
+          videos = []
+          for line in result.stdout.splitlines():
+              try:
+                  videos.append(json.loads(line))
+              except Exception:
+                  pass
+
+          print("유튜브 영상 수:", len(videos))
+
+          def clean_title(s):
+              s = s or ""
+
+              # 앞의 "1. ", "31. " 같은 번호는 양쪽 모두 무시
+              s = re.sub(r'^\s*\d+(?:\.\d+)?\.\s*', '', s)
+
+              # [주일말씀], (주일말씀), 주일말씀 같은 흔한 접두어 제거
+              s = re.sub(r'^\s*[\[\(]?\s*주일\s*말씀\s*[\]\)]?\s*[-_:|]?\s*', '', s, flags=re.I)
+
+              # 목사/목사님, Pa/P 표기 차이는 최대한 동일 취급
+              s = re.sub(r'목사님', '목사', s)
+              s = re.sub(r'(?i)\bpa\b', '목사', s)
+              s = re.sub(r'(?i)\bp\b', '목사', s)
+
+              # 구분기호/공백 차이 제거
+              s = s.lower()
+              s = re.sub(r'[^0-9a-z가-힣]+', '', s)
+              return s
+
+          # 유튜브 제목 정규화 맵
+          yt_by_title = {}
+
+          for v in videos:
+              vid = v.get("id")
+              title = v.get("title") or ""
+
+              if not vid:
+                  continue
+
+              key = clean_title(title)
+
+              if key:
+                  yt_by_title[key] = v
 
           existing = {}
           if OUT.exists():
@@ -144,92 +150,57 @@ jobs:
                   existing = {}
 
           found = {}
+          misses = []
 
-          for ep in sermons:
-              best = None
-              best_score = -1.0
+          for ep in episodes:
+              key = clean_title(ep["title"])
+              video = yt_by_title.get(key)
 
-              speaker_norm = normalize_text(ep["speaker"])
-              subject_norm = normalize_text(ep["subject"])
-              full_norm = normalize_text(ep["title"])
+              if not video:
+                  misses.append(ep["title"])
+                  continue
 
-              for video in videos:
-                  video_id = video.get("id")
-                  yt_title = video.get("title") or ""
-                  upload_date = video.get("upload_date") or ""
+              vid = video["id"]
 
-                  if not video_id or not yt_title:
-                      continue
+              item = {
+                  "videoId": vid,
+                  "title": video.get("title") or "",
+                  # 웹 목록용으로 안정적인 hqdefault 사용
+                  "thumbnail": f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg",
+                  "youtube": f"https://www.youtube.com/watch?v={vid}"
+              }
 
-                  days = date_distance_days(ep["date"], upload_date)
+              # 현재 index.html이 조회하는 키들을 모두 기록
+              found[ep["id"]] = item
 
-                  if days > 14:
-                      continue
-
-                  yt_norm = normalize_text(yt_title)
-                  score = 0.0
-
-                  if days == 0:
-                      score += 60
-                  elif days <= 1:
-                      score += 52
-                  elif days <= 3:
-                      score += 42
-                  elif days <= 7:
-                      score += 28
-                  else:
-                      score += 12
-
-                  if speaker_norm and speaker_norm in yt_norm:
-                      score += 45
-
-                  if subject_norm:
-                      score += SequenceMatcher(None, subject_norm, yt_norm).ratio() * 55
-                      if len(subject_norm) >= 4 and subject_norm in yt_norm:
-                          score += 35
-
-                  score += SequenceMatcher(None, full_norm, yt_norm).ratio() * 15
-
-                  if score > best_score:
-                      best_score = score
-                      best = video
-
-              if best and best_score >= 58:
-                  video_id = best["id"]
-
-                  item = {
-                      "videoId": video_id,
-                      "title": best.get("title") or "",
-                      "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
-                      "youtube": f"https://www.youtube.com/watch?v={video_id}",
-                      "matchedDate": best.get("upload_date") or "",
-                      "score": round(best_score, 1),
-                  }
-
-                  found[ep["id"]] = item
+              if ep["date"]:
                   found[ep["date"]] = item
                   found[f'{ep["date"]}|{ep["title"]}'] = item
 
-                  print(
-                      "MATCH:",
-                      ep["date"],
-                      ep["speaker"],
-                      ep["subject"],
-                      "=>",
-                      item["title"],
-                      "score=",
-                      round(best_score, 1),
-                  )
+              print("MATCH:", ep["title"], "=>", item["title"])
 
+          # 기존 데이터는 유지하고 새 매칭만 덮어씀
           merged = dict(existing)
           merged.update(found)
 
           OUT.write_text(
               json.dumps(merged, ensure_ascii=False, indent=2) + "\n",
-              encoding="utf-8",
+              encoding="utf-8"
           )
 
-          print("주일말씀 매칭 키:", len(found))
+          print("")
+          print("매칭 성공 키:", len(found))
+          print("매칭 실패 말씀 수:", len(misses))
+
+          if misses:
+              print("---- 매칭 실패 제목 ----")
+              for title in misses:
+                  print(title)
+
+          # 하나도 못 찾은 경우 workflow를 실패시켜 원인을 로그에서 바로 보이게 함
+          if episodes and not found:
+              print("주일말씀 썸네일을 하나도 매칭하지 못했습니다.")
+              sys.exit(1)
           PY
 
       - name: Commit sermon thumbnails
