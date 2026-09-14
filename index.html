@@ -15,9 +15,25 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Pretendard (한글 최적화 폰트) -->
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 
     <style>
+        html { height: 100%; }
+        body { margin:0; height:100vh; height:100dvh; overflow:hidden; }
+        #app { height:100%; min-height:0; }
+        header { padding-top:calc(0.875rem + env(safe-area-inset-top)); flex-shrink:0; }
+        #main-content { min-height:0; padding-bottom:calc(90px + env(safe-area-inset-bottom)); scroll-behavior:smooth; }
+        #app.has-mini #main-content { padding-bottom:calc(168px + env(safe-area-inset-bottom)); }
+        nav { padding-bottom:calc(0.625rem + env(safe-area-inset-bottom)); }
+        #mini-player { bottom:calc(64px + env(safe-area-inset-bottom)); }
+        button,a,input,select { touch-action:manipulation; }
+        button:focus-visible,a:focus-visible { outline:3px solid #60a5fa; outline-offset:3px; }
+        .cover { height:auto; display:block; aspect-ratio:16/9; object-fit:cover; background:#172554; border-radius:12px; }
+        .cover-small { width:96px; flex-shrink:0; }
+        .cover-large { width:100%; }
+        .cover-mini { width:64px; margin-right:10px; }
+        @media(max-width:360px) { .cover-small { width:76px; } }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; scroll-behavior:auto!important; } }
         body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
         @media (prefers-color-scheme: dark) {
             :root { color-scheme: light !important; }
@@ -44,7 +60,7 @@
         <header class="px-5 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white/90 backdrop-blur-md sticky top-0 z-30">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="goElim()">
                 <div class="h-7 flex items-center">
-                    <img src="elim_logo.png" alt="ELIM 로고" class="h-full w-auto object-contain" />
+                    <img src="elim_logo.png" alt="ELIM 로고" onerror="this.outerHTML='<strong>ELIM</strong>'" class="h-full w-auto object-contain" />
                 </div>
                 <div class="border-l border-slate-200 pl-3">
                     <h1 class="font-bold text-base tracking-tight text-slate-900 leading-tight">라디오 엘림</h1>
@@ -59,13 +75,14 @@
         <!-- MINI PLAYER -->
         <div id="mini-player" class="hidden absolute bottom-16 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
             <div class="flex items-center space-x-3 cursor-pointer flex-1 mr-2 min-w-0" onclick="openPlayerFromMini()">
+                <div id="mini-art"></div>
                 <div class="min-w-0 flex-1">
                     <h4 id="mini-title" class="text-sm font-semibold truncate text-slate-800">-</h4>
                     <p id="mini-date" class="text-xs text-slate-500 truncate">-</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2 flex-shrink-0">
-                <button onclick="event.stopPropagation(); togglePlayPause()" id="mini-play-btn" class="w-10 h-10 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-md transition-transform active:scale-95">
+                <button onclick="event.stopPropagation(); togglePlayPause()" aria-label="재생 또는 일시정지" id="mini-play-btn" class="w-10 h-10 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-md transition-transform active:scale-95">
                     <i class="fa-solid fa-pause text-sm"></i>
                 </button>
                 <button onclick="event.stopPropagation(); closeMiniPlayer()" class="text-slate-400 hover:text-slate-600 p-2">
@@ -96,272 +113,2106 @@
        라디오 엘림 전체 회차 데이터
        ============================================================ */
     const radioEpisodes = [
-        { id: "track230", num: 230, title: "230. 광야에서 만난 엘림 8월 3주 - 8월 월간찬양, 특별초대석-강당안내부", date: "2026-08-15", src: "https://file2.jbch.org/2026/board/1/17/17_20260815011636_8486_radioelim.mp3" },
-        { id: "track229", num: 229, title: "229. 광야에서 만난 엘림 8월 1주 - 2026 하계수양회 소감 / 구원간증", date: "2026-08-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260802005136_5265_radioelim.mp3" },
-        { id: "track228", num: 228, title: "228. 광야에서 만난 엘림 7월 1주 - 하계수양회 기도부탁", date: "2026-07-04", src: "https://file2.jbch.org/2026/board/1/17/17_20260704013625_0755_radioelim.mp3" },
-        { id: "track227", num: 227, title: "227. 광야에서 만난 엘림 6월 3주 - 6월 월간찬양, 특별초대석-로뎀나무아래카페", date: "2026-06-20", src: "https://file2.jbch.org/2026/board/1/17/17_2026062009072330723444_radioelim.mp3" },
-        { id: "track226", num: 226, title: "226. 광야에서 만난 엘림 6월 1주 - 방송문서미디어 수련회 후기 / 후아유", date: "2026-06-06", src: "https://file2.jbch.org/2026/board/1/17/17_2026060601355656715772_radioelim.mp3" },
-        { id: "track225", num: 225, title: "225. 광야에서 만난 엘림 5월 5주 - 전지적 부서시점(문서선교부)", date: "2026-05-30", src: "https://file2.jbch.org/2026/board/1/17/17_2026060601315556847838_radioelim.mp3" },
-        { id: "track224", num: 224, title: "224. 광야에서 만난 엘림 5월 3주 - 5월 월간찬양, 특별초대석-박경수P(담양고서집회)", date: "2026-05-16", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001304343027153_radioelim.mp3" },
-        { id: "track223", num: 223, title: "223. 광야에서 만난 엘림 5월 1주 - 춘계수양회 후기 / 베트남 선교 기도부탁 / 후아유", date: "2026-05-02", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001282997458167_radioelim.mp3" },
-        { id: "track222", num: 222, title: "222. 광야에서 만난 엘림 4월 3주 - 4월 월간찬양, 특별초대석-조경부", date: "2026-04-18", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001262665144855_radioelim.mp3" },
-        { id: "track221", num: 221, title: "221. 광야에서 만난 엘림 4월 1주 - 광주무등교회 입당식 인터뷰 / 청년&대학집회 인터뷰 / 후아유", date: "2026-04-04", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001171663837375_radioelim.mp3" },
-        { id: "track220", num: 220, title: "220. 광야에서 만난 엘림 3월 3주 - 3월 월간찬양, 특별초대석-다니엘 학교", date: "2026-03-21", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001162992678900_radioelim.mp3" },
-        { id: "track219", num: 219, title: "219. 광야에서 만난 엘림 3월 1주 - 전국교사수련회 인터뷰 / 전국 농선부 봉사자 수련회 인터뷰 / 다시 듣는 성찬시", date: "2026-03-07", src: "https://file2.jbch.org/2ㄴ026/board/1/17/17_2026053001145443914249_radioelim.mp3" },
-        { id: "track218", num: 218, title: "218. 광야에서 만난 엘림 2월 3주 - 2월 월간찬양, 특별초대석-중앙아프리카공화국 선교팀", date: "2026-02-21", src: "https://file2.jbch.org/2026/board/1/17/17_2026051401163465526500_radioelim.mp3" },
-        { id: "track217", num: 217, title: "217. 광야에서 만난 엘림 2월 1주 - 중고등부 전도집회 인터뷰 / 대만 선교 후기 / 후아유", date: "2026-02-07", src: "https://file2.jbch.org/2026/board/1/17/17_2026053001132668495165_radioelim.mp3" },
-        { id: "track216", num: 216, title: "216. 광야에서 만난 엘림 1월 5주 - 성경을 중심으로 본 세계 교회사5 - 사데교회: 종교개혁 시대", date: "2026-01-31", src: "https://file2.jbch.org/2026/board/1/17/17_2026020101221799504300_radioelim.mp3" },
-        { id: "track215", num: 215, title: "215. 광야에서 만난 엘림 1월 3주 - 1월 월간찬양, 특별초대석", date: "2026-01-17", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112440974605700_radioelim.mp3" },
-        { id: "track214", num: 214, title: "214. 광야에서 만난 엘림 1월 1주 - 담임목사님 신년인사 / 2026 동계수련회 및 호주 선교 인터뷰 / 후아유", date: "2026-01-03", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112403240845900_radioelim.mp3" },
-        { id: "track213", num: 213, title: "213. 광야에서 만난 엘림 12월 3주 - 12월 월간찬양, 1인초대석-교제의밤", date: "2025-12-20", src: "https://file2.jbch.org/2026/board/1/17/17_2026012112373253933800_radioelim.mp3" },
-        { id: "track212", num: 212, title: "212. 광야에서 만난 엘림 12월 1주 - 대학부 연합별 집회 인터뷰(중부연합/동부) / 다니엘 신규 봉사자 인터뷰", date: "2025-12-06", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111251243556000_radioelim.mp3" },
-        { id: "track211", num: 211, title: "211. 광야에서 만난 엘림 11월 5주 - 아르헨티나 교회 선교소식 (김봉철P)", date: "2025-11-29", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111212553284500_radioelim.mp3" },
-        { id: "track210", num: 210, title: "210. 광야에서 만난 엘림 11월 3주 - 월간찬양, 11월 / 1인초대석 (유태종P)", date: "2025-11-15", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111162701858300_radioelim.mp3" },
-        { id: "track209", num: 209, title: "209. 광야에서 만난 엘림 11월 1주 - 초등부, 중고등부 집회 인터뷰/신임전도인 소개 / 걸어서 성경 속으로 (X~Z)", date: "2025-11-01", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111102025869500_radioelim.mp3" },
-        { id: "track208", num: 208, title: "208. 광야에서 만난 엘림 10월 3주 - 월간찬양, 10월 / 1인초대석 (찬양대)", date: "2025-10-18", src: "https://file2.jbch.org/2026/board/1/17/17_2026012111030391248200_radioelim.mp3" },
-        { id: "track207", num: 207, title: "207. 광야에서 만난 엘림 10월 1주 - 엘림 추수마당 / 대집회 기도부탁 / 걸어서 성경 속으로 (U~W)", date: "2025-10-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025100500270247854500_radioelim.mp3" },
-        { id: "track206", num: 206, title: "206. 광야에서 만난 엘림 9월 3주 - 칭찬릴레이 / 월간찬양, 9월 / 특별초대석 (주차부)", date: "2025-09-20", src: "https://file2.jbch.org/2025/board/1/17/17_2025100500241119196700_radioelim.mp3" },
-        { id: "track205", num: 205, title: "205. 광야에서 만난 엘림 9월 1주 - 대학생 여름 사무엘학교 인터뷰 / 청년회 전도집회 인터뷰 / 걸어서 성경 속으로 (R~T)", date: "2025-09-06", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900445994000100_radioelim.mp3" },
-        { id: "track204", num: 204, title: "204. 광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사4 - 두아디라교회: 중세 가톨릭 시대", date: "2025-08-30", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900431500417200_radioelim.mp3" },
-        { id: "track203", num: 203, title: "203. 광야에서 만난 엘림 8월 3주 - 칭찬릴레이 / 월간찬양, 8월 / 2인 초대석(한몽청년수련회)", date: "2025-08-16", src: "https://file2.jbch.org/2025/board/1/17/17_2025091900004261398300_radioelim.mp3" },
-        { id: "track202", num: 202, title: "202. 광야에서 만난 엘림 8월 1주 - 하계수양회 소식(침례 현장, 캄보디아 집회, 에콰도르 수양회) / 걸어서 성경 속으로", date: "2025-08-02", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823524518166900_radioelim.mp3" },
-        { id: "track201", num: 201, title: "201. 광야에서 만난 엘림 7월 1주 - 2025 하계수양회 기도부탁 / 갈릴리 가는 길 플레이리스트", date: "2025-07-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823491674710000_radioelim.mp3" },
-        { id: "track200", num: 200, title: "200. 광야에서 만난 엘림 6월 3주 - <엘림 200회 특집> 애청자 축전 / 우리구역 자랑대회 / 1인 초대석", date: "2025-06-21", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823423144138500_radioelim.mp3" },
-        { id: "track199", num: 199, title: "199. 광야에서 만난 엘림 6월 1주 - 5월 대전도집회 기도부탁 / 중고등부 특별집회 인터뷰 / 걸어서 성경속으로 (J~M)", date: "2025-06-07", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823364787881200_radioelim.mp3" },
-        { id: "track198", num: 198, title: "198. 광야에서 만난 엘림 5월 5주 - 성경을 중심으로 본 세계 교회사2 - 버가모교회", date: "2025-05-31", src: "https://file2.jbch.org/2025/board/1/17/17_2025091823340325403300_radioelim.mp3" },
-        { id: "track197", num: 197, title: "197. 광야에서 만난 엘림 5월 3주 - 칭찬릴레이 / 월간찬양, 5월 / 1인 초대석", date: "2025-05-17", src: "https://file2.jbch.org/2025/board/1/17/17_2025051712233760852600_radioelim.mp3" },
-        { id: "track196", num: 196, title: "196. 광야에서 만난 엘림 5월 1주 - 유초등부 교사수련회 인터뷰 / 코트디부아르 해외선교 인터뷰 / 걸어서 성경속으로 (F~I)", date: "2025-05-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623372089355500_radioelim.mp3" },
-        { id: "track195", num: 195, title: "195. 광야에서 만난 엘림 4월 3주 - 칭찬릴레이 / 월간찬양, 4월 / 1인 초대석", date: "2025-04-19", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623332851799700_radioelim.mp3" },
-        { id: "track194", num: 194, title: "194. 광야에서 만난 엘림 4월 1주 - 청년대학집회 후기 / 오전전도집회 후기 / 걸어서 성경속으로 (A~E)", date: "2025-04-05", src: "https://file2.jbch.org/2025/board/1/17/17_2025051623074705068200_radioelim.mp3" },
-        { id: "track193", num: 193, title: "193. 광야에서 만난 엘림 3월 5주 - 자주 듣는 찬양 추천", date: "2025-03-29", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622593773698400_radioelim.mp3" },
-        { id: "track192", num: 192, title: "192. 광야에서 만난 엘림 3월 3주 - 칭찬릴레이 / 월간찬양, 3월 / 1인 초대석", date: "2025-03-15", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622533529965700_radioelim.mp3" },
-        { id: "track191", num: 191, title: "191. 광야에서 만난 엘림 3월 1주 - 상무동림광천 연합집회 후기 / 신입교사 인터뷰 / 기도부탁 사연", date: "2025-03-01", src: "https://file2.jbch.org/2025/board/1/17/17_2025051622453947788200_radioelim.mp3" },
-        { id: "track190", num: 190, title: "190. 광야에서 만난 엘림 2월 3주 - 특별초대석 (신임전도인)", date: "2025-02-15", src: "https://file2.jbch.org/2025/board/1/17/17_2025021616111322654100_radioelim.mp3" },
-        { id: "track189", num: 189, title: "189. 광야에서 만난 엘림 2월 1주 - 대전도집회 인터뷰 / 초등부 수련회 후기 / 기도부탁 사연", date: "2025-02-01", src: "https://file2.jbch.org/2025/board/1/17/17_2025021616082236372900_radioelim.mp3" },
-        { id: "track188", num: 188, title: "188. 광야에서 만난 엘림 1월 3주 - 특별초대석", date: "2025-01-18", src: "https://file2.jbch.org/2025/board/1/17/17_2025011800554787848000_radioelim.mp3" },
-        { id: "track187", num: 187, title: "187. 광야에서 만난 엘림 1월 1주 - 엘림뉴스", date: "2025-01-04", src: "https://file2.jbch.org/2025/board/1/17/17_2025010400533902523800_radioelim.mp3" },
-        { id: "track186", num: 186, title: "186. 광야에서 만난 엘림 12월 3주 - 특별초대석", date: "2024-12-21", src: "https://file2.jbch.org/2024/board/1/17/17_2024122100555643566700_radioelim.mp3" },
-        { id: "track185", num: 185, title: "185. 광야에서 만난 엘림 12월 1주 - 엘림뉴스", date: "2024-12-07", src: "https://file2.jbch.org/2024/board/1/17/17_2024120700281782307100_radioelim.mp3" },
-        { id: "track184", num: 184, title: "184. 광야에서 만난 엘림 11월 5주 - 성경을 중심으로 본 세계 교회사2", date: "2024-11-30", src: "https://file2.jbch.org/2024/board/1/17/17_2024113000403575374800_radioelim.mp3" },
-        { id: "track183", num: 183, title: "183. 광야에서 만난 엘림 11월 3주 - 특별초대석", date: "2024-11-16", src: "https://file2.jbch.org/2024/board/1/17/17_2024111611032907249800_radioelim.mp3" },
-        { id: "track182", num: 182, title: "182. 광야에서 만난 엘림 11월 1주 - 들어보겠니", date: "2024-11-02", src: "https://file2.jbch.org/2024/board/1/17/17_2024110200454322026600_radioelim.mp3" },
-        { id: "track181", num: 181, title: "181. 광야에서 만난 엘림 10월 3주 - 특별초대석", date: "2024-10-19", src: "https://file2.jbch.org/2024/board/1/17/17_2024101901065266239000_radioelim.mp3" },
-        { id: "track180", num: 180, title: "180. 광야에서 만난 엘림 10월 1주 - 들어보겠니", date: "2024-10-05", src: "https://file2.jbch.org/2024/board/1/17/17_2024100500410585716100_radioelim.mp3" },
-        { id: "track179", num: 179, title: "179. 광야에서 만난 엘림 9월 3주 - 특별초대석", date: "2024-09-21", src: "https://file2.jbch.org/2024/board/1/17/17_2024092100515375577100_radioelim.mp3" },
-        { id: "track178", num: 178, title: "178. 광야에서 만난 엘림 9월 1주 - 엘림뉴스", date: "2024-09-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024090623522097665400_radioelim.mp3" },
-        { id: "track177", num: 177, title: "177. 광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사", date: "2024-08-31", src: "https://file2.jbch.org/2024/board/1/17/17_2024083100055736192200_radioelim.mp3" },
-        { id: "track176", num: 176, title: "176. 광야에서 만난 엘림 8월 4주 - 2024 하계수양회", date: "2024-08-23", src: "https://file2.jbch.org/2024/board/1/17/17_2024082322410257030_radioelim.mp3" },
-        { id: "track175", num: 175, title: "175. 광야에서 만난 엘림 7월 1주 - 하계 특별편", date: "2024-07-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024070600222074376_radioelim.mp3" },
-        { id: "track174", num: 174, title: "174. 광야에서 만난 엘림 6월 5주 - 어떤 찬양", date: "2024-06-28", src: "https://file2.jbch.org/2024/board/1/17/17_2024062823572057866_radioelim.mp3" },
-        { id: "track173", num: 173, title: "173. 광야에서 만난 엘림 6월 3주 - 특별초대석(방송부)", date: "2024-06-14", src: "https://file2.jbch.org/2024/board/1/17/17_2024061421334590120_radioelim.mp3" },
-        { id: "track172", num: 172, title: "172. 광야에서 만난 엘림 6월 1주 - 들어보겠니", date: "2024-06-01", src: "https://file2.jbch.org/2024/board/1/17/_2024060100592554126_radioelim.mp3" },
-        { id: "track171", num: 171, title: "171. 광야에서 만난 엘림 5월 3주 - 특별초대석(은빛장년회)", date: "2024-05-18", src: "https://file2.jbch.org/2024/board/1/17/17_2024051801133366521_radioelim.mp3" },
-        { id: "track170", num: 170, title: "170. 광야에서 만난 엘림 5월 1주 - 들어보겠니", date: "2024-05-04", src: "https://file2.jbch.org/2024/board/1/17/17_2024050400204063212_radioelim.mp3" },
-        { id: "track169", num: 169, title: "169. 광야에서 만난 엘림 4월 3주 - 시설부 형제님들 봉사 간증", date: "2024-04-20", src: "https://file2.jbch.org/2024/board/1/17/17_2024042001410075484_radioelim.mp3" },
-        { id: "track168", num: 168, title: "168. 광야에서 만난 엘림 4월 1주 - 들어보겠니", date: "2024-04-05", src: "https://file2.jbch.org/2024/board/1/17/17_2024040523451519394_radioelim.mp3" },
-        { id: "track168_book", num: 168.1, title: "168. 광야에서 만난 엘림 3월 5주 - 백악관을 기도실로 만든 대통령 링컨", date: "2024-03-30", src: "https://file2.jbch.org/2024/board/1/17/17_2024033000354113395_radioelim.mp3" },
-        { id: "track167", num: 167, title: "167. 광야에서 만난 엘림 3월 3주 - 특별초대석(봉사회 집행부)", date: "2024-03-15", src: "https://file2.jbch.org/2024/board/1/17/17_2024031522575524312_radioelim.mp3" },
-        { id: "track166", num: 166, title: "166. 광야에서 만난 엘림 3월 1주 - 들어보겠니", date: "2024-03-01", src: "https://file2.jbch.org/2024/board/1/17/17_2024030123412995001_radioelim.mp3" },
-        { id: "track165", num: 165, title: "165. 광야에서 만난 엘림 2월 3주 - 특별초대석(다니엘학교)", date: "2024-02-16", src: "https://file2.jbch.org/2024/board/1/17/17_2024021622452740333_radioelim.mp3" },
-        { id: "track164", num: 164, title: "164. 광야에서 만난 엘림 2월 1주 - 들어보겠니", date: "2024-02-02", src: "https://file2.jbch.org/2024/board/1/17/17_2024020222464746232_radioelim.mp3" },
-        { id: "track163", num: 163, title: "163. 광야에서 만난 엘림 1월 3주 - 특별초대석(2024 청년대학 동계수련회)", date: "2024-01-20", src: "https://file2.jbch.org/2024/board/1/17/17_2024012001095669924_radioelim.mp3" },
-        { id: "track162", num: 162, title: "162. 광야에서 만난 엘림 1월 1주 - 들어보겠니", date: "2024-01-06", src: "https://file2.jbch.org/2024/board/1/17/17_2024010613493631568_radioelim.mp3" },
-        { id: "track160", num: 160, title: "160. 광야에서 만난 엘림 12월 3주 - 특별초대석(광주 어린이집 교사)", date: "2023-12-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023121523110386389_radioelim.mp3" },
-        { id: "track159", num: 159, title: "159. 광야에서 만난 엘림 12월 1주 - 들어보겠니", date: "2023-12-02", src: "https://file2.jbch.org/2023/board/1/17/17_2023120201281599566_radioelim.mp3" },
-        { id: "track158", num: 158, title: "158. 광야에서 만난 엘림 11월 3주 - 특별초대석(외국인선교부 영어팀)", date: "2023-11-17", src: "https://file2.jbch.org/2023/board/1/17/17_2023111722434533799_radioelim.mp3" },
-        { id: "track155", num: 155, title: "155. 광야에서 만난 엘림 10월 2주 - 로마서 강해6", date: "2023-10-14", src: "https://file2.jbch.org/2023/board/1/17/17_2023101400035902366_radioelim.mp3" },
-        { id: "track154", num: 154, title: "154. 광야에서 만난 엘림 10월 1주 - 들어보겠니", date: "2023-10-06", src: "https://file2.jbch.org/2023/board/1/17/17_2023100622111612314_radioelim.mp3" },
-        { id: "track153", num: 153, title: "153. 광야에서 만난 엘림 9월 5주 - 엘림 오디오북", date: "2023-09-30", src: "https://file2.jbch.org/2023/board/1/17/17_2023093011280268142_radioelim.mp3" },
-        { id: "track151", num: 151, title: "151. 광야에서 만난 엘림 9월 3주 - 로마서 강해5", date: "2023-09-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023091520420311669_radioelim.mp3" },
-        { id: "track150", num: 150, title: "150. 광야에서 만난 엘림 9월 1주 - 클래식 속 찬양", date: "2023-09-01", src: "https://file2.jbch.org/2023/board/1/17/17_2023090121592490311_radioelim.mp3" },
-        { id: "track148", num: 148, title: "148. 광야에서 만난 엘림 8월 3주 - 로마서 강해4", date: "2023-08-20", src: "https://file2.jbch.org/2023/board/1/17/17_2023082019400296919_radioelim.mp3" },
-        { id: "track147", num: 147, title: "147. 광야에서 만난 엘림 8월 2주 - 은혜 가득한 봉사", date: "2023-08-12", src: "https://file2.jbch.org/2023/board/1/17/17_2023081209191373999_radioelim.mp3" },
-        { id: "track145_1", num: 145.1, title: "145. 광야에서 만난 엘림 8월 1주 - 하계수양회 톺아보기", date: "2023-08-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023080508254158872_radioelim.mp3" },
-        { id: "track_extra2", num: 145.2, title: "번외편. 하계가는길 #2 <하계수양회 유감>", date: "2023-07-08", src: "https://file2.jbch.org/2023/board/1/17/17_2023070808031677811_radioelim.mp3" },
-        { id: "track_extra1", num: 145.3, title: "번외편. 하계가는길 #1 <농고 하계수양회>", date: "2023-07-01", src: "https://file2.jbch.org/2023/board/1/17/17_2023070100450447904_radioelim.mp3" },
-        { id: "track145_2", num: 145, title: "145. 광야에서 만난 엘림 6월 4주 - 하계수양회를 기다리며", date: "2023-06-24", src: "https://file2.jbch.org/2023/board/1/17/17_2023062400244737435_radioelim.mp3" },
-        { id: "track144", num: 144, title: "144. 광야에서 만난 엘림 6월 3주 - 로마서 강해3", date: "2023-06-17", src: "https://file2.jbch.org/2023/board/1/17/17_2023061702500610593_radioelim.mp3" },
-        { id: "track143", num: 143, title: "143. 광야에서 만난 엘림 6월 2주 - 구원의 단비가 내리면", date: "2023-06-09", src: "https://file2.jbch.org/2023/board/1/17/17_2023060923581255370_radioelim.mp3" },
-        { id: "track142", num: 142, title: "142. 광야에서 만난 엘림 6월 1주 - 유명 신앙인들의 찬송", date: "2023-06-02", src: "https://file2.jbch.org/2023/board/1/17/17_2023060223420744816_radioelim.mp3" },
-        { id: "track141", num: 141, title: "141. 광야에서 만난 엘림 5월 4주 - 아빠특집", date: "2023-06-09", src: "https://file2.jbch.org/2023/board/1/17/17_2023060923535144705_radioelim.mp3" },
-        { id: "track140", num: 140, title: "140. 광야에서 만난 엘림 5월 3주 - 로마서 강해2", date: "2023-05-19", src: "https://file2.jbch.org/2023/board/1/17/17_2023051923331585411_radioelim.mp3" },
-        { id: "track139", num: 139, title: "139. 광야에서 만난 엘림 5월 2주 - 하나님의 품", date: "2023-05-12", src: "https://file2.jbch.org/2023/board/1/17/17_2023051223540456477_radioelim.mp3" },
-        { id: "track138", num: 138, title: "138. 광야에서 만난 엘림 5월 1주 - 더욱 사랑", date: "2023-05-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023050521214473221_radioelim.mp3" },
-        { id: "track137", num: 137, title: "137. 광야에서 만난 엘림 4월 4주 - 볼리비아 선교", date: "2023-04-29", src: "https://file2.jbch.org/2023/board/1/17/17_2023042914151354199_radioelim.mp3" },
-        { id: "track136", num: 136, title: "136. 광야에서 만난 엘림 4월 3주 - 로마서 강해1:죄와 심판", date: "2023-04-21", src: "https://file2.jbch.org/2023/board/1/17/17_2023042123044701658_radioelim.mp3" },
-        { id: "track135", num: 135, title: "135. 광야에서 만난 엘림 4월 2주 - 감사", date: "2023-04-14", src: "https://file2.jbch.org/2023/board/1/17/17_2023041420270847412_radioelim.mp3" },
-        { id: "track134", num: 134, title: "134. 광야에서 만난 엘림 4월 1주 - 진정한 평안", date: "2023-04-08", src: "https://file2.jbch.org/2023/board/1/17/17_2023040814542903806_radioelim.mp3" },
-        { id: "track133", num: 133, title: "133. 광야에서 만난 엘림 3월 4주 - 청년 전도집회", date: "2023-03-25", src: "https://file2.jbch.org/2023/board/1/17/17_2023032501302337992_radioelim.mp3" },
-        { id: "track132", num: 132, title: "132. 광야에서 만난 엘림 3월 3주 - 세상과 충돌하라", date: "2023-03-18", src: "https://file2.jbch.org/2023/board/1/17/17_2023031810545590395_radioelim.mp3" },
-        { id: "track131", num: 131, title: "131. 광야에서 만난 엘림 3월 2주 - 생명의 빛", date: "2023-03-10", src: "https://file2.jbch.org/2023/board/1/17/17_2023031022494169525_radioelim.mp3" },
-        { id: "track130", num: 130, title: "130. 광야에서 만난 엘림 3월 1주 - Amazing Grace", date: "2023-03-05", src: "https://file2.jbch.org/2023/board/1/17/17_2023030518563646791_radioelim.mp3" },
-        { id: "track129", num: 129, title: "129. 광야에서 만난 엘림 2월 4주 - 사무엘과 다니엘", date: "2023-02-25", src: "https://file2.jbch.org/2023/board/1/17/17_2023022500043399964_radioelim.mp3" },
-        { id: "track128", num: 128, title: "128. 광야에서 만난 엘림 2월 3주 - 내게 복에 복을 더하사", date: "2023-02-18", src: "https://file2.jbch.org/2023/board/1/17/17_2023021812313262514_radioelim.mp3" },
-        { id: "track127", num: 127, title: "127. 광야에서 만난 엘림 2월 2주 - 가장 완벽한 순간", date: "2023-02-10", src: "https://file2.jbch.org/2023/board/1/17/17_2023021023160212747_radioelim.mp3" },
-        { id: "track126", num: 126, title: "126. 광야에서 만난 엘림 2월 1주 - 그 크신 하나님의 사랑", date: "2023-02-03", src: "https://file2.jbch.org/2023/board/1/17/17_2023020323520521526_radioelim.mp3" },
-        { id: "track125", num: 125, title: "125. 광야에서 만난 엘림 1월 4주 - 우리는 온 디모데 2반", date: "2023-01-28", src: "https://file2.jbch.org/2023/board/1/17/17_2023012821153264878_radioelim.mp3" },
-        { id: "track124", num: 124, title: "124. 광야에서 만난 엘림 1월 3주 - 당신은 한번도 혼자가 아니었다", date: "2023-01-21", src: "https://file2.jbch.org/2023/board/1/17/17_2023012100243593788_radioelim.mp3" },
-        { id: "track123", num: 123, title: "123. 광야에서 만난 엘림 1월 2주 - 우리의 삶", date: "2023-01-15", src: "https://file2.jbch.org/2023/board/1/17/17_2023011521572897288_radioelim.mp3" },
-        { id: "track122", num: 122, title: "122. 광야에서 만난 엘림 1월 1주 - 새해 맞이", date: "2023-01-06", src: "https://file2.jbch.org/2023/board/1/17/17_2023010621482570371_radioelim.mp3" },
-        { id: "track121", num: 121, title: "121. 광야에서 만난 엘림 12월 4주 - 2022 교제의 밤 미리보기", date: "2022-12-23", src: "https://file2.jbch.org/2022/board/1/17/17_2022122320415370678_radioelim.mp3" },
-        { id: "track120", num: 120, title: "120. 광야에서 만난 엘림 12월 3주 - 고통은 헛되지 않아요", date: "2022-12-16", src: "https://file2.jbch.org/2022/board/1/17/17_2022121813460539684_radioelim.mp3" },
-        { id: "track119", num: 119, title: "119. 광야에서 만난 엘림 12월 2주 - 우리가 걷는 이 길", date: "2022-12-10", src: "https://file2.jbch.org/2022/board/1/17/17_2022121013021591654_radioelim.mp3" },
-        { id: "track118", num: 118, title: "118. 광야에서 만난 엘림 12월 1주 - 기쁘다 구주 오셨네", date: "2022-12-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022120521580182688_radioelim.mp3" },
-        { id: "track117", num: 117, title: "117. 광야에서 만난 엘림 11월 4주 - 소리없는 찬양들을 위하여", date: "2022-11-25", src: "https://file2.jbch.org/2022/board/1/17/17_2022112523492070460_radioelim.mp3" },
-        { id: "track116", num: 116, title: "116. 광야에서 만난 엘림 11월 3주 - 죽음을 이긴 사람들", date: "2022-11-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022111900065699626_radioelim.mp3" },
-        { id: "track115", num: 115, title: "115. 광야에서 만난 엘림 11월 2주 - 더욱 사랑하기", date: "2022-11-12", src: "https://file2.jbch.org/2022/board/1/17/17_2022111215441224460_radioelim.mp3" },
-        { id: "track114", num: 114, title: "114. 광야에서 만난 엘림 11월 1주 - 믿음에 대하여", date: "2022-11-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022110503150414998_radioelim.mp3" },
-        { id: "track113", num: 113, title: "113. 광야에서 만난 엘림 10월 4주 - 할렐루야! 광주교회 찬양의 밤", date: "2022-10-21", src: "https://file2.jbch.org/2022/board/1/17/17_2022102123165322348_radioelim.mp3" },
-        { id: "track112", num: 112, title: "112. 광야에서 만난 엘림 10월 3주 - 마귀에 맞서 싸우는 방법", date: "2022-10-14", src: "https://file2.jbch.org/2022/board/1/17/17_2022101423464631639_radioelim.mp3" },
-        { id: "track111", num: 111, title: "111. 광야에서 만난 엘림 10월 2주 - 어서와! 교구는 처음이지?", date: "2022-10-08", src: "https://file2.jbch.org/2022/board/1/17/17_2022100800050974703_radioelim.mp3" },
-        { id: "track110", num: 110, title: "110. 광야에서 만난 엘림 10월 1주 - 수확의 계절", date: "2022-10-01", src: "https://file2.jbch.org/2022/board/1/17/17_2022093023502025455_radioelim.mp3" },
-        { id: "track109", num: 109, title: "109. 광야에서 만난 엘림 8월 넷째주&lt;사연,한줄감사,특별초대석&gt;", date: "2022-08-27", src: "https://file2.jbch.org/2022/board/1/17/17_2022082709432832316_radioelim.mp3" },
-        { id: "track108", num: 108, title: "108. 광야에서 만난 엘림 8월 셋째주&lt;후아유,갈릴리학교&gt;", date: "2022-08-20", src: "https://file2.jbch.org/2022/board/1/17/17_2022082009414616171_radioelim.mp3" },
-        { id: "track107", num: 107, title: "107. 광야에서 만난 엘림 8월 둘째주&lt;하계뉴스,사연&gt;", date: "2022-08-13", src: "https://file2.jbch.org/2022/board/1/17/17_2022081311170871909_radioelim.mp3" },
-        { id: "track106", num: 106, title: "106. 광야에서 만난 엘림 8월 첫째주&lt;엘림뉴스,선곡의 정석&gt;", date: "2022-08-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022080522550584548_radioelim.mp3" },
-        { id: "track105", num: 105, title: "105. 광야에서 만난 엘림 7월 둘째주&lt;하계수양회 특집2&gt;", date: "2022-07-09", src: "https://file2.jbch.org/2022/board/1/17/17_2022070901121134877_radioelim.mp3" },
-        { id: "track104", num: 104, title: "104. 광야에서 만난 엘림 7월 첫째주&lt;하계수양회 특집1&gt;", date: "2022-07-03", src: "https://file2.jbch.org/2022/board/1/17/17_2022070319174137656_radioelim.mp3" },
-        { id: "track103", num: 103, title: "103. 광야에서 만난 엘림 6월 넷째주&lt;생명의 빛,사연,특별초대석&gt;", date: "2022-06-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022062611361391167_radioelim.mp3" },
-        { id: "track102", num: 102, title: "102. 광야에서 만난 엘림 6월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-06-18", src: "https://file2.jbch.org/2022/board/1/17/17_2022061810042428259_radioelim.mp3" },
-        { id: "track101", num: 101, title: "101. 광야에서 만난 엘림 6월 둘째주&lt;교제되새김,조각말씀,해외선교&gt;", date: "2022-06-11", src: "https://file2.jbch.org/2022/board/1/17/17_2022061100310476746_radioelim.mp3" },
-        { id: "track100", num: 100, title: "100. 광야에서 만난 엘림 6월 첫째주&lt;축하메시지,특별초대석,설문추첨식&gt;", date: "2022-06-04", src: "https://file2.jbch.org/2022/board/1/17/17_2022060323595851351_radioelim.mp3" },
-        { id: "track99", num: 99, title: "99. 광야에서 만난 엘림 5월 넷째주&lt;특별초대석&gt;", date: "2022-05-28", src: "https://file2.jbch.org/2022/board/1/17/17_2022052809155429933_radioelim.mp3" },
-        { id: "track98", num: 98, title: "98. 광야에서 만난 엘림 5월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-05-20", src: "https://file2.jbch.org/2022/board/1/17/17_2022052022463700046_radioelim.mp3" },
-        { id: "track97", num: 97, title: "97. 광야에서 만난 엘림 5월 둘째주&lt;선곡의정석,해외선교,갈릴리학교&gt;", date: "2022-05-14", src: "https://file2.jbch.org/2022/board/1/17/17_2022051408130423578_radioelim.mp3" },
-        { id: "track96", num: 96, title: "96. 광야에서 만난 엘림 5월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-05-06", src: "https://file2.jbch.org/2022/board/1/17/17_2022050621105153998_radioelim.mp3" },
-        { id: "track95", num: 95, title: "95. 광야에서 만난 엘림 4월 다섯째주&lt;특별초대석,찬양대&gt;", date: "2022-04-23", src: "https://file2.jbch.org/2022/board/1/17/17_2022042310304619802_radioelim.mp3" },
-        { id: "track94", num: 94, title: "94. 광야에서 만난 엘림 4월 넷째주&lt;후아유,특별간증,시각선교부&gt;", date: "2022-04-15", src: "https://file2.jbch.org/2022/board/1/17/17_2022041523214025297_radioelim.mp3" },
-        { id: "track93", num: 93, title: "93. 광야에서 만난 엘림 4월 둘째주&lt;선곡의 정석, 해외선교&gt;", date: "2022-04-09", src: "https://file2.jbch.org/2022/board/1/17/17_2022040912153252732_radioelim.mp3" },
-        { id: "track92", num: 92, title: "92. 광야에서 만난 엘림 4월 첫째주&lt;엘림뉴스,교제되새김,조각말씀&gt;", date: "2022-04-02", src: "https://file2.jbch.org/2022/board/1/17/17_2022040209592680033_radioelim.mp3" },
-        { id: "track91", num: 91, title: "91. 광야에서 만난 엘림 3월 넷째주&lt;특별초대석,찬양대&gt;", date: "2022-03-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022032611174343613_radioelim.mp3" },
-        { id: "track90", num: 90, title: "90. 광야에서 만난 엘림 3월 셋째주&lt;후아유,시각선교부&gt;", date: "2022-03-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022031910473762582_radioelim.mp3" },
-        { id: "track89", num: 89, title: "89. 광야에서 만난 엘림 3월 둘째주&lt;선곡의정석,해외선교,갈릴리학교&gt;", date: "2022-03-12", src: "https://file2.jbch.org/2022/board/1/17/17_2022031211220382974_radioelim.mp3" },
-        { id: "track88", num: 88, title: "88. 광야에서 만난 엘림 3월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-03-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022030510044497582_radioelim.mp3" },
-        { id: "track87", num: 87, title: "87. 광야에서 만난 엘림 2월 넷째주&lt;칭찬합시다,특별초대석,찬양대&gt;", date: "2022-02-26", src: "https://file2.jbch.org/2022/board/1/17/17_2022022610163974610_radioelim.mp3" },
-        { id: "track86", num: 86, title: "86. 광야에서 만난 엘림 2월 셋째주&lt;후아유,특별초대석&gt;", date: "2022-02-19", src: "https://file2.jbch.org/2022/board/1/17/17_2022021911533899301_radioelim.mp3" },
-        { id: "track85", num: 85, title: "85. 광야에서 만난 엘림 2월 둘째주&lt;선곡의 정석,해외선교,갈릴리학교&gt;", date: "2022-02-11", src: "https://file2.jbch.org/2022/board/1/17/17_2022021122161504927_radioelim.mp3" },
-        { id: "track84", num: 84, title: "84. 광야에서 만난 엘림 2월 첫째주&lt;엘림뉴스,교제되새김,조각말씀,교회학교&gt;", date: "2022-02-05", src: "https://file2.jbch.org/2022/board/1/17/17_2022020509521009228_radioelim.mp3" },
-        { id: "track83", num: 83, title: "83. 광야에서 만난 엘림 1월 다섯째주&lt;특별초대석,해외선교&gt;", date: "2022-01-28", src: "https://file2.jbch.org/2022/board/1/17/17_2022012822075786916_radioelim.mp3" },
-        { id: "track82", num: 82, title: "82. 광야에서 만난 엘림 1월 넷째주&lt;칭찬합시다,후아유,갈릴리학교&gt;", date: "2022-01-22", src: "https://file2.jbch.org/2022/board/1/17/17_2022012200401012091_radioelim.mp3" },
-        { id: "track81", num: 81, title: "81. 광야에서 만난 엘림 12월 넷째주&lt;교제되새김,해외선교,특별초대석&gt;", date: "2021-12-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021122422180843965_radioelim.mp3" },
-        { id: "track80", num: 80, title: "80. 광야에서 만난 엘림 12월 셋째주&lt;칭찬합시다,특별초대석,갈릴리학교&gt;", date: "2021-12-17", src: "https://file2.jbch.org/2021/board/1/17/17_2021121723325764003_radioelim.mp3" },
-        { id: "track79", num: 79, title: "79. 광야에서 만난 엘림 12월 둘째주&lt;선곡의정석,후아유,교회학교&gt;", date: "2021-12-10", src: "https://file2.jbch.org/2021/board/1/17/17_2021121022442321914_radioelim.mp3" },
-        { id: "track78", num: 78, title: "78. 광야에서 만난 엘림 12월 첫째주&lt;엘림뉴스,회원코너,조각말씀&gt;", date: "2021-12-03", src: "https://file2.jbch.org/2021/board/1/17/17_2021120321544149546_radioelim.mp3" },
-        { id: "track77", num: 77, title: "77. 광야에서 만난 엘림 11월 넷째주&lt;교제되새김, 은빛청년회&gt;", date: "2021-11-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021112700232857215_radioelim.mp3" },
-        { id: "track76", num: 76, title: "76. 광야에서 만난 엘림 11월 셋째주&lt;갈릴리학교, 특별초대석, 칭찬합시다&gt;", date: "2021-11-19", src: "https://file2.jbch.org/2021/board/1/17/17_2021111922430585641_radioelim.mp3" },
-        { id: "track75", num: 75, title: "75. 광야에서 만난 엘림 11월 둘째주&lt;청년회,후아유,선곡의 정석&gt;", date: "2021-11-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021111222412582025_radioelim.mp3" },
-        { id: "track74", num: 74, title: "74. 광야에서 만난 엘림 11월 첫째주&lt;엘림뉴스,교회학교,조각말씀&gt;", date: "2021-11-05", src: "https://file2.jbch.org/2021/board/1/17/17_2021110617151959655_oyster.mp3" },
-        { id: "track73", num: 73, title: "73. 광야에서 만난 엘림 10월 넷째주&lt;교제 되새김,은상회,해외선교&gt;", date: "2021-10-22", src: "https://file2.jbch.org/2021/board/1/17/17_2021102223075991733_radioelim.mp3" },
-        { id: "track72", num: 72, title: "72. 광야에서 만난 엘림 10월 셋째주&lt;기도부탁,칭찬합시다,갈릴리학교,특별초대석&gt;", date: "2021-10-15", src: "https://file2.jbch.org/2021/board/1/17/17_2021101523314554553_radioelim.mp3" },
-        { id: "track71", num: 71, title: "71. 광야에서 만난 엘림 10월 둘째주&lt;후아유,교회학교,선곡의정석&gt;", date: "2021-10-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021100823300093068_radioelim.mp3" },
-        { id: "track70", num: 70, title: "70. 광야에서 만난 엘림 10월 첫째주&lt;엘림뉴스,청년회,조각말씀&gt;", date: "2021-10-02", src: "https://file2.jbch.org/2021/board/1/17/17_2021100200134365408_radioelim.mp3" },
-        { id: "track69", num: 69, title: "69. 광야에서 만난 엘림 9월 넷째주&lt;후아유,은정회,갈릴리학교&gt;", date: "2021-09-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021092423461726107_radioelim.mp3" },
-        { id: "track68", num: 68, title: "68. 광야에서 만난 엘림 9월 셋째주&lt;추석특집 선곡의 정석&gt;", date: "2021-09-18", src: "https://file2.jbch.org/2021/board/1/17/17_2021091801161554825_radioelim.mp3" },
-        { id: "track67", num: 67, title: "67. 광야에서 만난 엘림 9월 둘째주&lt;특별초대석,칭찬합시다,청년회&gt;", date: "2021-09-10", src: "https://file2.jbch.org/2021/board/1/17/17_2021091022191246731_radioelim.mp3" },
-        { id: "track66", num: 66, title: "66. 광야에서 만난 엘림 9월 첫째주&lt;엘림뉴스,교회학교,조각말씀&gt;", date: "2021-09-04", src: "https://file2.jbch.org/2021/board/1/17/17_2021090400504927573_radioelim.mp3" },
-        { id: "track65", num: 65, title: "65. 광야에서 만난 엘림 8월 넷째주&lt;하계밀착취재,은장회,엘림의책방&gt;", date: "2021-08-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021082723274415950_radioelim.mp3" },
-        { id: "track64", num: 64, title: "64. 광야에서 만난 엘림 8월 셋째주&lt;하계초대석,칭찬합시다,갈릴리학교&gt;", date: "2021-08-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021082022452581730_radioelim.mp3" },
-        { id: "track63", num: 63, title: "63. 광야에서 만난 엘림 8월 둘째주&lt;청년회,선곡의정석,하계초대석2&gt;", date: "2021-08-13", src: "https://file2.jbch.org/2021/board/1/17/17_2021081323444078294_radioelim.mp3" },
-        { id: "track62", num: 62, title: "62. 광야에서 만난 엘림 8월 첫째주&lt;엘림뉴스,교회학교,하계초대석,주말말씀&gt;", date: "2021-08-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021080622231226888_radioelim.mp3" },
-        { id: "track61", num: 61, title: "61. 광야에서 만난 엘림 7월 넷째주&lt;해외선교,은빛청년회&gt;", date: "2021-07-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021072400022771192_radioelim.mp3" },
-        { id: "track60", num: 60, title: "60. 광야에서 만난 엘림 7월 셋째주&lt;하계수양회 인터뷰,특별초대석,갈릴리학교&gt;", date: "2021-07-16", src: "https://file2.jbch.org/2021/board/1/17/17_2021071623532942513_radioelim.mp3" },
-        { id: "track59", num: 59, title: "59. 광야에서 만난 엘림 7월 둘째주&lt;청년회,하계수양회 인터뷰,선곡의 정석&gt;", date: "2021-07-09", src: "https://file2.jbch.org/2021/board/1/17/17_2021071012441145629_radioelim.mp3" },
-        { id: "track58", num: 58, title: "58. 광야에서 만난 엘림 7월 첫째주&lt;엘림뉴스,조각말씀,교회학교&gt;", date: "2021-07-02", src: "https://file2.jbch.org/2021/board/1/17/17_2021070223244392783_radioelim.mp3" },
-        { id: "track57", num: 57, title: "57. 광야에서 만난 엘림 6월 넷째주&lt;엘림의 책방,은빛장년회&gt;", date: "2021-06-25", src: "https://file2.jbch.org/2021/board/1/17/17_2021062522592487388_radioelim.mp3" },
-        { id: "track56", num: 56, title: "56. 광야에서 만난 엘림 6월 3주&lt;특별초대석,갈릴리학교&gt;", date: "2021-06-18", src: "https://file2.jbch.org/2021/board/1/17/17_2021061822464097283_radioelim.mp3" },
-        { id: "track55", num: 55, title: "55. 광야에서 만난 엘림 6월 2주&lt;청년회코너 후아유,선곡의정석&gt;", date: "2021-06-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021061218490197480_radioelim.mp3" },
-        { id: "track54", num: 54, title: "54. 광야에서 만난 엘림 6월 1주&lt;엘림뉴스,밀착취재,회원코너(초등부),조각말씀&gt;", date: "2021-06-05", src: "https://file2.jbch.org/2021/board/1/17/17_2021060502420262724_radioelim.mp3" },
-        { id: "track53", num: 53, title: "53. 광야에서 만난 엘림 5월 넷째주&lt;대집회 기도부탁,엘림의 책방&gt;", date: "2021-05-21", src: "https://file2.jbch.org/2021/board/1/17/17_2021052122571354973_radioelim.mp3" },
-        { id: "track52", num: 52, title: "52. 광야에서 만난 엘림 5월 셋째주&lt;선곡의 정석&gt;", date: "2021-05-15", src: "https://file2.jbch.org/2021/board/1/17/17_2021051510235157984_radioelim.mp3" },
-        { id: "track51", num: 51, title: "51. 광야에서 만난 엘림 5월 둘째주&lt;조각말씀,사연&gt;", date: "2021-05-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021050821090357679_radioelim.mp3" },
-        { id: "track50", num: 50, title: "50. 광야에서 만난 엘림 5월 첫째주&lt;엘림뉴스,후대유2021&gt;", date: "2021-04-30", src: "https://file2.jbch.org/2021/board/1/17/17_2021043023103781348_radioelim.mp3" },
-        { id: "track49", num: 49, title: "49. 광야에서 만난 엘림 4월 넷째주&lt;성찬시,엘림의 책방&gt;", date: "2021-04-24", src: "https://file2.jbch.org/2021/board/1/17/17_2021042400034486432_radioelim.mp3" },
-        { id: "track48", num: 48, title: "48. 광야에서 만난 엘림 4월 셋째주&lt;조각말씀,한줄감사,사연&gt;", date: "2021-04-17", src: "https://file2.jbch.org/2021/board/1/17/17_2021041700264671123_radioelim.mp3" },
-        { id: "track47", num: 47, title: "47. 광야에서 만난 엘림 4월 둘째주&lt;이비에스,선곡의정석&gt;", date: "2021-04-09", src: "https://file2.jbch.org/2021/board/1/17/17_2021040923132550695_radioelim.mp3" },
-        { id: "track46", num: 46, title: "46. 광야에서 만난 엘림 4월 첫째주&lt;엘림뉴스,특별초대석'로뎀나무'&gt;", date: "2021-04-03", src: "https://file2.jbch.org/2021/board/1/17/17_2021040300300339292_radioelim.mp3" },
-        { id: "track45", num: 45, title: "45. 광야에서 만난 엘림 3월 넷째주&lt;엘림의 책방&gt;", date: "2021-03-26", src: "https://file2.jbch.org/2021/board/1/17/17_2021032623444654119_radioelim.mp3" },
-        { id: "track44", num: 44, title: "44. 광야에서 만난 엘림 3월 셋째주&lt;조각말씀,특별초대석'공주어린이집 졸업생'&gt;", date: "2021-03-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021032000571904148_radioelim.mp3" },
-        { id: "track43", num: 43, title: "43. 광야에서 만난 엘림 3월 둘째주&lt;이비에스,선곡의정석&gt;", date: "2021-03-13", src: "https://file2.jbch.org/2021/board/1/17/17_2021031321481689677_radioelim.mp3" },
-        { id: "track42", num: 42, title: "42. 광야에서 만난 엘림 3월 첫째주&lt;엘림뉴스,한줄감사,사연&gt;", date: "2021-03-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021030609504590938_radioelim.mp3" },
-        { id: "track41", num: 41, title: "41. 광야에서 만난 엘림 2월 네째주&lt;성찬시,엘림의책방&gt;", date: "2021-02-27", src: "https://file2.jbch.org/2021/board/1/17/17_2021022700141151794_radioelim.mp3" },
-        { id: "track40", num: 40, title: "40. 광야에서 만난 엘림 2월 셋째주&lt;특별초대석 '아트선교부'&gt;", date: "2021-02-20", src: "https://file2.jbch.org/2021/board/1/17/17_2021022000315757987_radioelim.mp3" },
-        { id: "track39", num: 39, title: "39. 광야에서 만난 엘림 2월 둘째주&lt;조각말씀,선곡의정석&gt;", date: "2021-02-12", src: "https://file2.jbch.org/2021/board/1/17/17_2021021222353010529_radioelim.mp3" },
-        { id: "track38", num: 38, title: "38. 광야에서 만난 엘림 2월 첫째주 &lt;엘림뉴스, 한줄감사, 사연&gt;", date: "2021-02-06", src: "https://file2.jbch.org/2021/board/1/17/17_2021020601060369296_radioelim.mp3" },
-        { id: "track37", num: 37, title: "37. 광야에서 만난 엘림 1월 네째주", date: "2021-01-30", src: "https://file2.jbch.org/2021/board/1/17/17_2021013009554384323_radioelim.mp3" },
-        { id: "track36", num: 36, title: "36. 광야에서 만난 엘림 1월 셋째주", date: "2021-01-23", src: "https://file2.jbch.org/2021/board/1/17/17_2021012301281863041_radioelim.mp3" },
-        { id: "track35", num: 35, title: "35. 광야에서 만난 엘림 1월 첫째주", date: "2021-01-16", src: "https://file2.jbch.org/2021/board/1/17/17_2021011609254522921_radioelim.mp3" },
-        { id: "track34", num: 34, title: "34. 광야에서 만난 엘림 1월 첫째주", date: "2021-01-08", src: "https://file2.jbch.org/2021/board/1/17/17_2021010822334574409_radioelim.mp3" },
-        { id: "track33", num: 33, title: "33. 광야에서 만난 엘림 12월 네째주", date: "2020-12-25", src: "https://file2.jbch.org/2020/board/1/17/17_2020122609373241825_radioelim.mp3" },
-        { id: "track32", num: 32, title: "32. 광야에서 만난 엘림 12월 셋째주", date: "2020-12-19", src: "https://file2.jbch.org/2020/board/1/17/17_2020121909145509899_radioelim.mp3" },
-        { id: "track31", num: 31, title: "31. 광야에서 만난 엘림 12월 둘째주", date: "2020-12-11", src: "https://file2.jbch.org/2020/board/1/17/17_2020121118431619921_radioelim.mp3" },
-        { id: "track30", num: 30, title: "30. 광야에서 만난 엘림 1주년 특집", date: "2020-12-05", src: "https://file2.jbch.org/2020/board/1/17/17_2020120510251925012_radioelim.mp3" },
-        { id: "track29", num: 29, title: "29. 광야에서 만난 엘림 11월 네째주", date: "2020-11-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020112800493718549_radioelim.mp3" },
-        { id: "track28", num: 28, title: "28. 광야에서 만난 엘림 11월 셋째주", date: "2020-11-20", src: "https://file2.jbch.org/2020/board/1/17/17_2020112022071744840_radioelim.mp3" },
-        { id: "track27", num: 27, title: "27. 광야에서 만난 엘림 11월 둘째주", date: "2020-11-14", src: "https://file2.jbch.org/2020/board/1/17/17_2020111401151742089_radioelim.mp3" },
-        { id: "track26", num: 26, title: "26. 광야에서 만난 엘림 11월 첫째주", date: "2020-11-07", src: "https://file2.jbch.org/2020/board/1/17/17_2020110710245226541_radioelim.mp3" },
-        { id: "track_extra_youth", num: 25.1, title: "번외. 광야에서 만난 엘림 <청년집회>", date: "2020-10-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020102815000246945_radioelim.mp3" },
-        { id: "track25", num: 25, title: "25. 광야에서 만난 엘림 10월 네째주", date: "2020-10-23", src: "https://file2.jbch.org/2020/board/1/17/17_2020102322395198869_radioelim.mp3" },
-        { id: "track24", num: 24, title: "24. 광야에서 만난 엘림 10월 셋째주", date: "2020-10-17", src: "https://file2.jbch.org/2020/board/1/17/17_2020101708210888192_radioelim.mp3" },
-        { id: "track23", num: 23, title: "23. 광야에서 만난 엘림 10월 둘째주", date: "2020-10-09", src: "https://file2.jbch.org/2020/board/1/17/17_2020100923584710865_radioelim.mp3" },
-        { id: "track22", num: 22, title: "22. 광야에서 만난 엘림 10월 첫째주", date: "2020-10-03", src: "https://file2.jbch.org/2020/board/1/17/17_2020100309275422421_radioelim.mp3" },
-        { id: "track21", num: 21, title: "21. 광야에서 만난 엘림 9월 네째주", date: "2020-09-26", src: "https://file2.jbch.org/2020/board/1/17/17_2020092613550618972_radioelim.mp3" },
-        { id: "track20", num: 20, title: "20. 광야에서 만난 엘림 9월 셋째주", date: "2020-09-19", src: "https://file2.jbch.org/2020/board/1/17/17_2020091909432595582_radioelim.mp3" },
-        { id: "track19", num: 19, title: "19. 광야에서 만난 엘림 19회", date: "2020-09-11", src: "https://file2.jbch.org/2020/board/1/17/17_2020091120542525948_radioelim.mp3" },
-        { id: "track18", num: 18, title: "18. 광야에서 만난 엘림 18회", date: "2020-08-23", src: "https://file2.jbch.org/2020/board/1/17/17_2020082318232775730_radioelim.mp3" },
-        { id: "track_extra_3", num: 17.3, title: "번외3. 광야에서 만난 엘림 - 농고 하계수양회", date: "2020-08-14", src: "https://file2.jbch.org/2020/board/1/17/17_2020081422395724234_radioelim.mp3" },
-        { id: "track17", num: 17, title: "17. 광야에서 만난 엘림 17회", date: "2020-08-08", src: "https://file2.jbch.org/2020/board/1/17/17_2020080912530193728_radioelim.mp3" },
-        { id: "track16", num: 16, title: "16. 광야에서 만난 엘림 16회", date: "2020-07-25", src: "https://file2.jbch.org/2020/board/1/17/17_2020072519470948359_radioelim.mp3" },
-        { id: "track_extra_2", num: 15.2, title: "번외2. 광야에서 만난 엘림 - 집사 심재희", date: "2020-07-18", src: "https://file2.jbch.org/2020/board/1/17/17_2020071911512045174_radioelim.mp3" },
-        { id: "track15", num: 15, title: "15. 광야에서 만난 엘림 15회", date: "2020-07-12", src: "https://file2.jbch.org/2020/board/1/17/17_2020071215263644596_radioelim.mp3" },
-        { id: "track14", num: 14, title: "14. 광야에서 만난 엘림 14회", date: "2020-06-28", src: "https://file2.jbch.org/2020/board/1/17/17_2020062910083313516_oyster.mp3" },
-        { id: "track13", num: 13, title: "13. 광야에서 만난 엘림 13회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617290366145_radioelim.mp3" },
-        { id: "track12", num: 12, title: "12. 광야에서 만난 엘림 12회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617251524712_radioelim.mp3" },
-        { id: "track11", num: 11, title: "11. 광야에서 만난 엘림 11회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617211459351_radioelim.mp3" },
-        { id: "track10", num: 10, title: "10. 광야에서 만난 엘림 10회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061617050902455_radioelim.mp3" },
-        { id: "track9", num: 9, title: "9. 광야에서 만난 엘림 9회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616593986180_radioelim.mp3" },
-        { id: "track8", num: 8, title: "8. 광야에서 만난 엘림 8회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616451761876_radioelim.mp3" },
-        { id: "track7", num: 7, title: "7. 광야에서 만난 엘림 7회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616353617729_radioelim.mp33" },
-        { id: "track6", num: 6, title: "6. 광야에서 만난 엘림 6회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616151964386_radioelim.mp3" },
-        { id: "track5", num: 5, title: "5. 광야에서 만난 엘림 5회", date: "2020-06-16", src: "https://file2.jbch.org/2020/board/1/17/17_2020061616073318043_radioelim.mp3" },
-        { id: "track4", num: 4, title: "4. 광야에서 만난 엘림 4회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020221180395093_pigflower4.mp3" },
-        { id: "track3", num: 3, title: "3. 광야에서 만난 엘림 3회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020220423792307_pigflower4.mp3" },
-        { id: "track2", num: 2, title: "2. 광야에서 만난 엘림 2회", date: "2020-02-02", src: "https://file2.jbch.org/2020/board/1/17/17_2020020220391848638_pigflower4.mp3" },
-        { id: "track1", num: 1, title: "1. 엘림 1회", date: "2019-12-07", src: "https://file2.jbch.org/2019/board/1/17/17_2019120812000968217_oyster.mp3" }
-    ];
+  {
+    "id": "track230",
+    "num": 230,
+    "title": "230. 광야에서 만난 엘림 8월 3주 - 8월 월간찬양, 특별초대석-강당안내부",
+    "date": "2026-08-15",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260815011636_8486_radioelim.mp3",
+    "youtubeId": "BX29vmvP3lc"
+  },
+  {
+    "id": "track229",
+    "num": 229,
+    "title": "229. 광야에서 만난 엘림 8월 1주 - 2026 하계수양회 소감 / 구원간증",
+    "date": "2026-08-01",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260802005136_5265_radioelim.mp3",
+    "youtubeId": "Rk0xxdKx48I"
+  },
+  {
+    "id": "track228",
+    "num": 228,
+    "title": "228. 광야에서 만난 엘림 7월 1주 - 하계수양회 기도부탁",
+    "date": "2026-07-04",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260704013625_0755_radioelim.mp3",
+    "youtubeId": "SF21zdqp41w"
+  },
+  {
+    "id": "track227",
+    "num": 227,
+    "title": "227. 광야에서 만난 엘림 6월 3주 - 6월 월간찬양, 특별초대석-로뎀나무아래카페",
+    "date": "2026-06-20",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026062009072330723444_radioelim.mp3",
+    "youtubeId": "SPU6P5IuByA"
+  },
+  {
+    "id": "track226",
+    "num": 226,
+    "title": "226. 광야에서 만난 엘림 6월 1주 - 방송문서미디어 수련회 후기 / 후아유",
+    "date": "2026-06-06",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026060601355656715772_radioelim.mp3",
+    "youtubeId": "Nzcf-7umjd8"
+  },
+  {
+    "id": "track225",
+    "num": 225,
+    "title": "225. 광야에서 만난 엘림 5월 5주 - 전지적 부서시점(문서선교부)",
+    "date": "2026-05-30",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026060601315556847838_radioelim.mp3",
+    "youtubeId": "wJeZVDJ2flw"
+  },
+  {
+    "id": "track224",
+    "num": 224,
+    "title": "224. 광야에서 만난 엘림 5월 3주 - 5월 월간찬양, 특별초대석-박경수P(담양고서집회)",
+    "date": "2026-05-16",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001304343027153_radioelim.mp3",
+    "youtubeId": "2p7qWcmUMDI"
+  },
+  {
+    "id": "track223",
+    "num": 223,
+    "title": "223. 광야에서 만난 엘림 5월 1주 - 춘계수양회 후기 / 베트남 선교 기도부탁 / 후아유",
+    "date": "2026-05-02",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001282997458167_radioelim.mp3",
+    "youtubeId": "PrNTd1Wz4Do"
+  },
+  {
+    "id": "track222",
+    "num": 222,
+    "title": "222. 광야에서 만난 엘림 4월 3주 - 4월 월간찬양, 특별초대석-조경부",
+    "date": "2026-04-18",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001262665144855_radioelim.mp3",
+    "youtubeId": "hdUFFst0o6U"
+  },
+  {
+    "id": "track221",
+    "num": 221,
+    "title": "221. 광야에서 만난 엘림 4월 1주 - 광주무등교회 입당식 인터뷰 / 청년&대학집회 인터뷰 / 후아유",
+    "date": "2026-04-04",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001171663837375_radioelim.mp3",
+    "youtubeId": "3q1v4mLr3nk"
+  },
+  {
+    "id": "track220",
+    "num": 220,
+    "title": "220. 광야에서 만난 엘림 3월 3주 - 3월 월간찬양, 특별초대석-다니엘 학교",
+    "date": "2026-03-21",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001162992678900_radioelim.mp3",
+    "youtubeId": "vEQdGpriEUA"
+  },
+  {
+    "id": "track219",
+    "num": 219,
+    "title": "219. 광야에서 만난 엘림 3월 1주 - 전국교사수련회 인터뷰 / 전국 농선부 봉사자 수련회 인터뷰 / 다시 듣는 성찬시",
+    "date": "2026-03-07",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001145443914249_radioelim.mp3",
+    "youtubeId": "z3yK4RoKpa0"
+  },
+  {
+    "id": "track218",
+    "num": 218,
+    "title": "218. 광야에서 만난 엘림 2월 3주 - 2월 월간찬양, 특별초대석-중앙아프리카공화국 선교팀",
+    "date": "2026-02-21",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026051401163465526500_radioelim.mp3",
+    "youtubeId": "0hwflR8AtUU"
+  },
+  {
+    "id": "track217",
+    "num": 217,
+    "title": "217. 광야에서 만난 엘림 2월 1주 - 중고등부 전도집회 인터뷰 / 대만 선교 후기 / 후아유",
+    "date": "2026-02-07",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026053001132668495165_radioelim.mp3",
+    "youtubeId": "zS0pTJtai14"
+  },
+  {
+    "id": "track216",
+    "num": 216,
+    "title": "216. 광야에서 만난 엘림 1월 5주 - 성경을 중심으로 본 세계 교회사5 - 사데교회: 종교개혁 시대",
+    "date": "2026-01-31",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026020101221799504300_radioelim.mp3",
+    "youtubeId": "doUb1X7_-Xo"
+  },
+  {
+    "id": "track215",
+    "num": 215,
+    "title": "215. 광야에서 만난 엘림 1월 3주 - 1월 월간찬양, 특별초대석",
+    "date": "2026-01-17",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012112440974605700_radioelim.mp3",
+    "youtubeId": "Bzlx6Ak7XgU"
+  },
+  {
+    "id": "track214",
+    "num": 214,
+    "title": "214. 광야에서 만난 엘림 1월 1주 - 담임목사님 신년인사 / 2026 동계수련회 및 호주 선교 인터뷰 / 후아유",
+    "date": "2026-01-03",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012112403240845900_radioelim.mp3",
+    "youtubeId": "MVgPffn8eeI"
+  },
+  {
+    "id": "track213",
+    "num": 213,
+    "title": "213. 광야에서 만난 엘림 12월 3주 - 12월 월간찬양, 1인초대석-교제의밤",
+    "date": "2025-12-20",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012112373253933800_radioelim.mp3",
+    "youtubeId": "yeCYSLXlulI"
+  },
+  {
+    "id": "track212",
+    "num": 212,
+    "title": "212. 광야에서 만난 엘림 12월 1주 - 대학부 연합별 집회 인터뷰(중부연합/동부) / 다니엘 신규 봉사자 인터뷰",
+    "date": "2025-12-06",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012111251243556000_radioelim.mp3",
+    "youtubeId": "Eu5oLB5fkWE"
+  },
+  {
+    "id": "track211",
+    "num": 211,
+    "title": "211. 광야에서 만난 엘림 11월 5주 - 아르헨티나 교회 선교소식 (김봉철P)",
+    "date": "2025-11-29",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012111212553284500_radioelim.mp3",
+    "youtubeId": "DUEj4sZXwOE"
+  },
+  {
+    "id": "track210",
+    "num": 210,
+    "title": "210. 광야에서 만난 엘림 11월 3주 - 월간찬양, 11월 / 1인초대석 (유태종P)",
+    "date": "2025-11-15",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012111162701858300_radioelim.mp3",
+    "youtubeId": "4IfizIu7NMM"
+  },
+  {
+    "id": "track209",
+    "num": 209,
+    "title": "209. 광야에서 만난 엘림 11월 1주 - 초등부, 중고등부 집회 인터뷰/신임전도인 소개 / 걸어서 성경 속으로 (X~Z)",
+    "date": "2025-11-01",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012111102025869500_radioelim.mp3",
+    "youtubeId": "wAWfBLUnoLs"
+  },
+  {
+    "id": "track208",
+    "num": 208,
+    "title": "208. 광야에서 만난 엘림 10월 3주 - 월간찬양, 10월 / 1인초대석 (찬양대)",
+    "date": "2025-10-18",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_2026012111030391248200_radioelim.mp3",
+    "youtubeId": "Ue3D-cGxrRs"
+  },
+  {
+    "id": "track207",
+    "num": 207,
+    "title": "207. 광야에서 만난 엘림 10월 1주 - 엘림 추수마당 / 대집회 기도부탁 / 걸어서 성경 속으로 (U~W)",
+    "date": "2025-10-05",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025100500270247854500_radioelim.mp3",
+    "youtubeId": "zxQ8TG_lF1Y"
+  },
+  {
+    "id": "track206",
+    "num": 206,
+    "title": "206. 광야에서 만난 엘림 9월 3주 - 칭찬릴레이 / 월간찬양, 9월 / 특별초대석 (주차부)",
+    "date": "2025-09-20",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025100500241119196700_radioelim.mp3",
+    "youtubeId": "rwhL1GAFRCQ"
+  },
+  {
+    "id": "track205",
+    "num": 205,
+    "title": "205. 광야에서 만난 엘림 9월 1주 - 대학생 여름 사무엘학교 인터뷰 / 청년회 전도집회 인터뷰 / 걸어서 성경 속으로 (R~T)",
+    "date": "2025-09-06",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091900445994000100_radioelim.mp3",
+    "youtubeId": "vWdvkXrOX-I"
+  },
+  {
+    "id": "track204",
+    "num": 204,
+    "title": "204. 광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사4 - 두아디라교회: 중세 가톨릭 시대",
+    "date": "2025-08-30",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091900431500417200_radioelim.mp3",
+    "youtubeId": "diwcQUVaxnY"
+  },
+  {
+    "id": "track203",
+    "num": 203,
+    "title": "203. 광야에서 만난 엘림 8월 3주 - 칭찬릴레이 / 월간찬양, 8월 / 2인 초대석(한몽청년수련회)",
+    "date": "2025-08-16",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091900004261398300_radioelim.mp3",
+    "youtubeId": "Lr-tHaD-qvg"
+  },
+  {
+    "id": "track202",
+    "num": 202,
+    "title": "202. 광야에서 만난 엘림 8월 1주 - 하계수양회 소식(침례 현장, 캄보디아 집회, 에콰도르 수양회) / 걸어서 성경 속으로",
+    "date": "2025-08-02",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091823524518166900_radioelim.mp3",
+    "youtubeId": "wrOQV8Eq-6w"
+  },
+  {
+    "id": "track201",
+    "num": 201,
+    "title": "201. 광야에서 만난 엘림 7월 1주 - 2025 하계수양회 기도부탁 / 갈릴리 가는 길 플레이리스트",
+    "date": "2025-07-05",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091823491674710000_radioelim.mp3",
+    "youtubeId": "vBnypKX9Zb0"
+  },
+  {
+    "id": "track200",
+    "num": 200,
+    "title": "200. 광야에서 만난 엘림 6월 3주 - <엘림 200회 특집> 애청자 축전 / 우리구역 자랑대회 / 1인 초대석",
+    "date": "2025-06-21",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091823423144138500_radioelim.mp3",
+    "youtubeId": "5stjSzsu6NM"
+  },
+  {
+    "id": "track199",
+    "num": 199,
+    "title": "199. 광야에서 만난 엘림 6월 1주 - 5월 대전도집회 기도부탁 / 중고등부 특별집회 인터뷰 / 걸어서 성경속으로 (J~M)",
+    "date": "2025-06-07",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091823364787881200_radioelim.mp3",
+    "youtubeId": "FPwm3g1XWVc"
+  },
+  {
+    "id": "track198",
+    "num": 198,
+    "title": "198. 광야에서 만난 엘림 5월 5주 - 성경을 중심으로 본 세계 교회사2 - 버가모교회",
+    "date": "2025-05-31",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025091823340325403300_radioelim.mp3",
+    "youtubeId": "HeRaTcCQ-8k"
+  },
+  {
+    "id": "track197",
+    "num": 197,
+    "title": "197. 광야에서 만난 엘림 5월 3주 - 칭찬릴레이 / 월간찬양, 5월 / 1인 초대석",
+    "date": "2025-05-17",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051712233760852600_radioelim.mp3",
+    "youtubeId": "H0ufnVVYmZE"
+  },
+  {
+    "id": "track196",
+    "num": 196,
+    "title": "196. 광야에서 만난 엘림 5월 1주 - 유초등부 교사수련회 인터뷰 / 코트디부아르 해외선교 인터뷰 / 걸어서 성경속으로 (F~I)",
+    "date": "2025-05-05",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051623372089355500_radioelim.mp3",
+    "youtubeId": "oa8h4KoBTiw"
+  },
+  {
+    "id": "track195",
+    "num": 195,
+    "title": "195. 광야에서 만난 엘림 4월 3주 - 칭찬릴레이 / 월간찬양, 4월 / 1인 초대석",
+    "date": "2025-04-19",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051623332851799700_radioelim.mp3",
+    "youtubeId": "1LcvfoRvNvQ"
+  },
+  {
+    "id": "track194",
+    "num": 194,
+    "title": "194. 광야에서 만난 엘림 4월 1주 - 청년대학집회 후기 / 오전전도집회 후기 / 걸어서 성경속으로 (A~E)",
+    "date": "2025-04-05",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051623074705068200_radioelim.mp3",
+    "youtubeId": "r5hy2kEQLPM"
+  },
+  {
+    "id": "track193",
+    "num": 193,
+    "title": "193. 광야에서 만난 엘림 3월 5주 - 자주 듣는 찬양 추천",
+    "date": "2025-03-29",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051622593773698400_radioelim.mp3",
+    "youtubeId": "2l4eksBzDkI"
+  },
+  {
+    "id": "track192",
+    "num": 192,
+    "title": "192. 광야에서 만난 엘림 3월 3주 - 칭찬릴레이 / 월간찬양, 3월 / 1인 초대석",
+    "date": "2025-03-15",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051622533529965700_radioelim.mp3",
+    "youtubeId": "vW4CIoM4elk"
+  },
+  {
+    "id": "track191",
+    "num": 191,
+    "title": "191. 광야에서 만난 엘림 3월 1주 - 상무동림광천 연합집회 후기 / 신입교사 인터뷰 / 기도부탁 사연",
+    "date": "2025-03-01",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025051622453947788200_radioelim.mp3",
+    "youtubeId": "r9X3wSD42Lc"
+  },
+  {
+    "id": "track190",
+    "num": 190,
+    "title": "190. 광야에서 만난 엘림 2월 3주 - 특별초대석 (신임전도인)",
+    "date": "2025-02-15",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025021616111322654100_radioelim.mp3",
+    "youtubeId": "PQrVJmGurTc"
+  },
+  {
+    "id": "track189",
+    "num": 189,
+    "title": "189. 광야에서 만난 엘림 2월 1주 - 대전도집회 인터뷰 / 초등부 수련회 후기 / 기도부탁 사연",
+    "date": "2025-02-01",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025021616082236372900_radioelim.mp3",
+    "youtubeId": "u7-5eepv6gE"
+  },
+  {
+    "id": "track188",
+    "num": 188,
+    "title": "188. 광야에서 만난 엘림 1월 3주 - 특별초대석",
+    "date": "2025-01-18",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025011800554787848000_radioelim.mp3",
+    "youtubeId": "jEYdCbauL1U"
+  },
+  {
+    "id": "track187",
+    "num": 187,
+    "title": "187. 광야에서 만난 엘림 1월 1주 - 엘림뉴스",
+    "date": "2025-01-04",
+    "src": "https://file2.jbch.org/2025/board/1/17/17_2025010400533902523800_radioelim.mp3",
+    "youtubeId": "sGZTK-bduIY"
+  },
+  {
+    "id": "track186",
+    "num": 186,
+    "title": "186. 광야에서 만난 엘림 12월 3주 - 특별초대석",
+    "date": "2024-12-21",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024122100555643566700_radioelim.mp3",
+    "youtubeId": "HQKPeHTe3Ek"
+  },
+  {
+    "id": "track185",
+    "num": 185,
+    "title": "185. 광야에서 만난 엘림 12월 1주 - 엘림뉴스",
+    "date": "2024-12-07",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024120700281782307100_radioelim.mp3",
+    "youtubeId": "AjJuDsp_je4"
+  },
+  {
+    "id": "track184",
+    "num": 184,
+    "title": "184. 광야에서 만난 엘림 11월 5주 - 성경을 중심으로 본 세계 교회사2",
+    "date": "2024-11-30",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024113000403575374800_radioelim.mp3",
+    "youtubeId": "0ZJATl43tEY"
+  },
+  {
+    "id": "track183",
+    "num": 183,
+    "title": "183. 광야에서 만난 엘림 11월 3주 - 특별초대석",
+    "date": "2024-11-16",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024111611032907249800_radioelim.mp3",
+    "youtubeId": "m0ERuNDI4tU"
+  },
+  {
+    "id": "track182",
+    "num": 182,
+    "title": "182. 광야에서 만난 엘림 11월 1주 - 들어보겠니",
+    "date": "2024-11-02",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024110200454322026600_radioelim.mp3",
+    "youtubeId": "cAHmj61t_d0"
+  },
+  {
+    "id": "track181",
+    "num": 181,
+    "title": "181. 광야에서 만난 엘림 10월 3주 - 특별초대석",
+    "date": "2024-10-19",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024101901065266239000_radioelim.mp3",
+    "youtubeId": "FHUCPMBzTXc"
+  },
+  {
+    "id": "track180",
+    "num": 180,
+    "title": "180. 광야에서 만난 엘림 10월 1주 - 들어보겠니",
+    "date": "2024-10-05",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024100500410585716100_radioelim.mp3",
+    "youtubeId": "P_DIgN9o3Xs"
+  },
+  {
+    "id": "track179",
+    "num": 179,
+    "title": "179. 광야에서 만난 엘림 9월 3주 - 특별초대석",
+    "date": "2024-09-21",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024092100515375577100_radioelim.mp3",
+    "youtubeId": "xAthIJ1I5xQ"
+  },
+  {
+    "id": "track178",
+    "num": 178,
+    "title": "178. 광야에서 만난 엘림 9월 1주 - 엘림뉴스",
+    "date": "2024-09-06",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024090623522097665400_radioelim.mp3",
+    "youtubeId": "Yy9LKyoQkjM"
+  },
+  {
+    "id": "track177",
+    "num": 177,
+    "title": "177. 광야에서 만난 엘림 8월 5주 - 성경을 중심으로 본 세계 교회사",
+    "date": "2024-08-31",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024083100055736192200_radioelim.mp3",
+    "youtubeId": "355OUtKLCx0"
+  },
+  {
+    "id": "track176",
+    "num": 176,
+    "title": "176. 광야에서 만난 엘림 8월 4주 - 2024 하계수양회",
+    "date": "2024-08-23",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024082322410257030_radioelim.mp3",
+    "youtubeId": "ntD4zc3WXnU"
+  },
+  {
+    "id": "track175",
+    "num": 175,
+    "title": "175. 광야에서 만난 엘림 7월 1주 - 하계 특별편",
+    "date": "2024-07-06",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024070600222074376_radioelim.mp3",
+    "youtubeId": "BU-auBims0A"
+  },
+  {
+    "id": "track174",
+    "num": 174,
+    "title": "174. 광야에서 만난 엘림 6월 5주 - 어떤 찬양",
+    "date": "2024-06-28",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024062823572057866_radioelim.mp3",
+    "youtubeId": "e6zQSZvdVB8"
+  },
+  {
+    "id": "track173",
+    "num": 173,
+    "title": "173. 광야에서 만난 엘림 6월 3주 - 특별초대석(방송부)",
+    "date": "2024-06-14",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024061421334590120_radioelim.mp3",
+    "youtubeId": "lkxUaxDP8nw"
+  },
+  {
+    "id": "track172",
+    "num": 172,
+    "title": "172. 광야에서 만난 엘림 6월 1주 - 들어보겠니",
+    "date": "2024-06-01",
+    "src": "https://file2.jbch.org/2024/board/1/17/_2024060100592554126_radioelim.mp3",
+    "youtubeId": "nUJ2N_1fotM"
+  },
+  {
+    "id": "track171",
+    "num": 171,
+    "title": "171. 광야에서 만난 엘림 5월 3주 - 특별초대석(은빛장년회)",
+    "date": "2024-05-18",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024051801133366521_radioelim.mp3",
+    "youtubeId": "_4L5fWzh6M8"
+  },
+  {
+    "id": "track170",
+    "num": 170,
+    "title": "170. 광야에서 만난 엘림 5월 1주 - 들어보겠니",
+    "date": "2024-05-04",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024050400204063212_radioelim.mp3",
+    "youtubeId": "SqRxB2Jm4Lw"
+  },
+  {
+    "id": "track169",
+    "num": 169,
+    "title": "169. 광야에서 만난 엘림 4월 3주 - 시설부 형제님들 봉사 간증",
+    "date": "2024-04-20",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024042001410075484_radioelim.mp3",
+    "youtubeId": "W0qdNg-vP1c"
+  },
+  {
+    "id": "track168",
+    "num": 168,
+    "title": "168. 광야에서 만난 엘림 4월 1주 - 들어보겠니",
+    "date": "2024-04-05",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024040523451519394_radioelim.mp3",
+    "youtubeId": "1FhaqxMGuOk"
+  },
+  {
+    "id": "track168_book",
+    "num": 168.1,
+    "title": "168. 광야에서 만난 엘림 3월 5주 - 백악관을 기도실로 만든 대통령 링컨",
+    "date": "2024-03-30",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024033000354113395_radioelim.mp3",
+    "youtubeId": ""
+  },
+  {
+    "id": "track167",
+    "num": 167,
+    "title": "167. 광야에서 만난 엘림 3월 3주 - 특별초대석(봉사회 집행부)",
+    "date": "2024-03-15",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024031522575524312_radioelim.mp3",
+    "youtubeId": "XJ2mSWgcNrs"
+  },
+  {
+    "id": "track166",
+    "num": 166,
+    "title": "166. 광야에서 만난 엘림 3월 1주 - 들어보겠니",
+    "date": "2024-03-01",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024030123412995001_radioelim.mp3",
+    "youtubeId": "4owkvPe-xWw"
+  },
+  {
+    "id": "track165",
+    "num": 165,
+    "title": "165. 광야에서 만난 엘림 2월 3주 - 특별초대석(다니엘학교)",
+    "date": "2024-02-16",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024021622452740333_radioelim.mp3",
+    "youtubeId": "ioNt2L3qtdA"
+  },
+  {
+    "id": "track164",
+    "num": 164,
+    "title": "164. 광야에서 만난 엘림 2월 1주 - 들어보겠니",
+    "date": "2024-02-02",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024020222464746232_radioelim.mp3",
+    "youtubeId": "XW7fnnYZ-dc"
+  },
+  {
+    "id": "track163",
+    "num": 163,
+    "title": "163. 광야에서 만난 엘림 1월 3주 - 특별초대석(2024 청년대학 동계수련회)",
+    "date": "2024-01-20",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024012001095669924_radioelim.mp3",
+    "youtubeId": "zpRE0YdZdjQ"
+  },
+  {
+    "id": "track162",
+    "num": 162,
+    "title": "162. 광야에서 만난 엘림 1월 1주 - 들어보겠니",
+    "date": "2024-01-06",
+    "src": "https://file2.jbch.org/2024/board/1/17/17_2024010613493631568_radioelim.mp3",
+    "youtubeId": "NSD3hQg8yVk"
+  },
+  {
+    "id": "track160",
+    "num": 160,
+    "title": "160. 광야에서 만난 엘림 12월 3주 - 특별초대석(광주 어린이집 교사)",
+    "date": "2023-12-15",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023121523110386389_radioelim.mp3",
+    "youtubeId": "UELtRQ2VZ-E"
+  },
+  {
+    "id": "track159",
+    "num": 159,
+    "title": "159. 광야에서 만난 엘림 12월 1주 - 들어보겠니",
+    "date": "2023-12-02",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023120201281599566_radioelim.mp3",
+    "youtubeId": "yzjnPKWbLqs"
+  },
+  {
+    "id": "track158",
+    "num": 158,
+    "title": "158. 광야에서 만난 엘림 11월 3주 - 특별초대석(외국인선교부 영어팀)",
+    "date": "2023-11-17",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023111722434533799_radioelim.mp3",
+    "youtubeId": "m-owr7gF0e4"
+  },
+  {
+    "id": "track155",
+    "num": 155,
+    "title": "155. 광야에서 만난 엘림 10월 2주 - 로마서 강해6",
+    "date": "2023-10-14",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023101400035902366_radioelim.mp3",
+    "youtubeId": "TpQyxZ_XQ_c"
+  },
+  {
+    "id": "track154",
+    "num": 154,
+    "title": "154. 광야에서 만난 엘림 10월 1주 - 들어보겠니",
+    "date": "2023-10-06",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023100622111612314_radioelim.mp3",
+    "youtubeId": "k7c-98uzMI0"
+  },
+  {
+    "id": "track153",
+    "num": 153,
+    "title": "153. 광야에서 만난 엘림 9월 5주 - 엘림 오디오북",
+    "date": "2023-09-30",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023093011280268142_radioelim.mp3",
+    "youtubeId": "h-lQ8y2yZqo"
+  },
+  {
+    "id": "track151",
+    "num": 151,
+    "title": "151. 광야에서 만난 엘림 9월 3주 - 로마서 강해5",
+    "date": "2023-09-15",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023091520420311669_radioelim.mp3",
+    "youtubeId": "h69Ov7cgp_A"
+  },
+  {
+    "id": "track150",
+    "num": 150,
+    "title": "150. 광야에서 만난 엘림 9월 1주 - 클래식 속 찬양",
+    "date": "2023-09-01",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023090121592490311_radioelim.mp3",
+    "youtubeId": "zKfT5QhBixU"
+  },
+  {
+    "id": "track148",
+    "num": 148,
+    "title": "148. 광야에서 만난 엘림 8월 3주 - 로마서 강해4",
+    "date": "2023-08-20",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023082019400296919_radioelim.mp3",
+    "youtubeId": "duNmhWqMrkU"
+  },
+  {
+    "id": "track147",
+    "num": 147,
+    "title": "147. 광야에서 만난 엘림 8월 2주 - 은혜 가득한 봉사",
+    "date": "2023-08-12",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023081209191373999_radioelim.mp3",
+    "youtubeId": "QKV_g2NM-OM"
+  },
+  {
+    "id": "track145_1",
+    "num": 145.1,
+    "title": "145. 광야에서 만난 엘림 8월 1주 - 하계수양회 톺아보기",
+    "date": "2023-08-05",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023080508254158872_radioelim.mp3",
+    "youtubeId": "Ko1H1N10vcQ"
+  },
+  {
+    "id": "track_extra2",
+    "num": 145.2,
+    "title": "번외편. 하계가는길 #2 <하계수양회 유감>",
+    "date": "2023-07-08",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023070808031677811_radioelim.mp3",
+    "youtubeId": "e4DrElPUgaw"
+  },
+  {
+    "id": "track_extra1",
+    "num": 145.3,
+    "title": "번외편. 하계가는길 #1 <농고 하계수양회>",
+    "date": "2023-07-01",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023070100450447904_radioelim.mp3",
+    "youtubeId": "bjjt8Ckg7wA"
+  },
+  {
+    "id": "track145_2",
+    "num": 145,
+    "title": "145. 광야에서 만난 엘림 6월 4주 - 하계수양회를 기다리며",
+    "date": "2023-06-24",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023062400244737435_radioelim.mp3",
+    "youtubeId": "B5zf1PthyYk"
+  },
+  {
+    "id": "track144",
+    "num": 144,
+    "title": "144. 광야에서 만난 엘림 6월 3주 - 로마서 강해3",
+    "date": "2023-06-17",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023061702500610593_radioelim.mp3",
+    "youtubeId": "a3Zn1eyfuIw"
+  },
+  {
+    "id": "track143",
+    "num": 143,
+    "title": "143. 광야에서 만난 엘림 6월 2주 - 구원의 단비가 내리면",
+    "date": "2023-06-09",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023060923581255370_radioelim.mp3",
+    "youtubeId": "Ry3TwjHukfc"
+  },
+  {
+    "id": "track142",
+    "num": 142,
+    "title": "142. 광야에서 만난 엘림 6월 1주 - 유명 신앙인들의 찬송",
+    "date": "2023-06-02",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023060223420744816_radioelim.mp3",
+    "youtubeId": "zqQVVk2wM7U"
+  },
+  {
+    "id": "track141",
+    "num": 141,
+    "title": "141. 광야에서 만난 엘림 5월 4주 - 아빠특집",
+    "date": "2023-06-09",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023060923535144705_radioelim.mp3",
+    "youtubeId": "aS-KBKwJS1s"
+  },
+  {
+    "id": "track140",
+    "num": 140,
+    "title": "140. 광야에서 만난 엘림 5월 3주 - 로마서 강해2",
+    "date": "2023-05-19",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023051923331585411_radioelim.mp3",
+    "youtubeId": "BSHCmtSECpQ"
+  },
+  {
+    "id": "track139",
+    "num": 139,
+    "title": "139. 광야에서 만난 엘림 5월 2주 - 하나님의 품",
+    "date": "2023-05-12",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023051223540456477_radioelim.mp3",
+    "youtubeId": "JFVEyGol4qw"
+  },
+  {
+    "id": "track138",
+    "num": 138,
+    "title": "138. 광야에서 만난 엘림 5월 1주 - 더욱 사랑",
+    "date": "2023-05-05",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023050521214473221_radioelim.mp3",
+    "youtubeId": "s-uPH-PrySQ"
+  },
+  {
+    "id": "track137",
+    "num": 137,
+    "title": "137. 광야에서 만난 엘림 4월 4주 - 볼리비아 선교",
+    "date": "2023-04-29",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023042914151354199_radioelim.mp3",
+    "youtubeId": "7fb6eyFdhX0"
+  },
+  {
+    "id": "track136",
+    "num": 136,
+    "title": "136. 광야에서 만난 엘림 4월 3주 - 로마서 강해1:죄와 심판",
+    "date": "2023-04-21",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023042123044701658_radioelim.mp3",
+    "youtubeId": "bu0B6_ou8bw"
+  },
+  {
+    "id": "track135",
+    "num": 135,
+    "title": "135. 광야에서 만난 엘림 4월 2주 - 감사",
+    "date": "2023-04-14",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023041420270847412_radioelim.mp3",
+    "youtubeId": "VCgNQ0u_NtM"
+  },
+  {
+    "id": "track134",
+    "num": 134,
+    "title": "134. 광야에서 만난 엘림 4월 1주 - 진정한 평안",
+    "date": "2023-04-08",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023040814542903806_radioelim.mp3",
+    "youtubeId": "uBI2nSwG88Q"
+  },
+  {
+    "id": "track133",
+    "num": 133,
+    "title": "133. 광야에서 만난 엘림 3월 4주 - 청년 전도집회",
+    "date": "2023-03-25",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023032501302337992_radioelim.mp3",
+    "youtubeId": "P0wv29YYcDs"
+  },
+  {
+    "id": "track132",
+    "num": 132,
+    "title": "132. 광야에서 만난 엘림 3월 3주 - 세상과 충돌하라",
+    "date": "2023-03-18",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023031810545590395_radioelim.mp3",
+    "youtubeId": "dqUc0m0ayZY"
+  },
+  {
+    "id": "track131",
+    "num": 131,
+    "title": "131. 광야에서 만난 엘림 3월 2주 - 생명의 빛",
+    "date": "2023-03-10",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023031022494169525_radioelim.mp3",
+    "youtubeId": "itG2v8huunk"
+  },
+  {
+    "id": "track130",
+    "num": 130,
+    "title": "130. 광야에서 만난 엘림 3월 1주 - Amazing Grace",
+    "date": "2023-03-05",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023030518563646791_radioelim.mp3",
+    "youtubeId": "XvpZakHgjeg"
+  },
+  {
+    "id": "track129",
+    "num": 129,
+    "title": "129. 광야에서 만난 엘림 2월 4주 - 사무엘과 다니엘",
+    "date": "2023-02-25",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023022500043399964_radioelim.mp3",
+    "youtubeId": "-bVdV2VvZQs"
+  },
+  {
+    "id": "track128",
+    "num": 128,
+    "title": "128. 광야에서 만난 엘림 2월 3주 - 내게 복에 복을 더하사",
+    "date": "2023-02-18",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023021812313262514_radioelim.mp3",
+    "youtubeId": "ECizEQedq9I"
+  },
+  {
+    "id": "track127",
+    "num": 127,
+    "title": "127. 광야에서 만난 엘림 2월 2주 - 가장 완벽한 순간",
+    "date": "2023-02-10",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023021023160212747_radioelim.mp3",
+    "youtubeId": "I5G8ojOd2kw"
+  },
+  {
+    "id": "track126",
+    "num": 126,
+    "title": "126. 광야에서 만난 엘림 2월 1주 - 그 크신 하나님의 사랑",
+    "date": "2023-02-03",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023020323520521526_radioelim.mp3",
+    "youtubeId": "UoOgPi3mp1E"
+  },
+  {
+    "id": "track125",
+    "num": 125,
+    "title": "125. 광야에서 만난 엘림 1월 4주 - 우리는 온 디모데 2반",
+    "date": "2023-01-28",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023012821153264878_radioelim.mp3",
+    "youtubeId": "3T7i6ZZcYSA"
+  },
+  {
+    "id": "track124",
+    "num": 124,
+    "title": "124. 광야에서 만난 엘림 1월 3주 - 당신은 한번도 혼자가 아니었다",
+    "date": "2023-01-21",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023012100243593788_radioelim.mp3",
+    "youtubeId": "0slgFuG2h2M"
+  },
+  {
+    "id": "track123",
+    "num": 123,
+    "title": "123. 광야에서 만난 엘림 1월 2주 - 우리의 삶",
+    "date": "2023-01-15",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023011521572897288_radioelim.mp3",
+    "youtubeId": "0Tjr7YAkwWk"
+  },
+  {
+    "id": "track122",
+    "num": 122,
+    "title": "122. 광야에서 만난 엘림 1월 1주 - 새해 맞이",
+    "date": "2023-01-06",
+    "src": "https://file2.jbch.org/2023/board/1/17/17_2023010621482570371_radioelim.mp3",
+    "youtubeId": "UC-50JHAqlM"
+  },
+  {
+    "id": "track121",
+    "num": 121,
+    "title": "121. 광야에서 만난 엘림 12월 4주 - 2022 교제의 밤 미리보기",
+    "date": "2022-12-23",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022122320415370678_radioelim.mp3",
+    "youtubeId": "RZeAAghavyA"
+  },
+  {
+    "id": "track120",
+    "num": 120,
+    "title": "120. 광야에서 만난 엘림 12월 3주 - 고통은 헛되지 않아요",
+    "date": "2022-12-16",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022121813460539684_radioelim.mp3",
+    "youtubeId": "yx3mO2K7ACM"
+  },
+  {
+    "id": "track119",
+    "num": 119,
+    "title": "119. 광야에서 만난 엘림 12월 2주 - 우리가 걷는 이 길",
+    "date": "2022-12-10",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022121013021591654_radioelim.mp3",
+    "youtubeId": "_u93A8muigI"
+  },
+  {
+    "id": "track118",
+    "num": 118,
+    "title": "118. 광야에서 만난 엘림 12월 1주 - 기쁘다 구주 오셨네",
+    "date": "2022-12-05",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022120521580182688_radioelim.mp3",
+    "youtubeId": "OaH5UAC0TKc"
+  },
+  {
+    "id": "track117",
+    "num": 117,
+    "title": "117. 광야에서 만난 엘림 11월 4주 - 소리없는 찬양들을 위하여",
+    "date": "2022-11-25",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022112523492070460_radioelim.mp3",
+    "youtubeId": ""
+  },
+  {
+    "id": "track116",
+    "num": 116,
+    "title": "116. 광야에서 만난 엘림 11월 3주 - 죽음을 이긴 사람들",
+    "date": "2022-11-19",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022111900065699626_radioelim.mp3",
+    "youtubeId": "rTRgjRsu5IM"
+  },
+  {
+    "id": "track115",
+    "num": 115,
+    "title": "115. 광야에서 만난 엘림 11월 2주 - 더욱 사랑하기",
+    "date": "2022-11-12",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022111215441224460_radioelim.mp3",
+    "youtubeId": "_igSvrp3m_w"
+  },
+  {
+    "id": "track114",
+    "num": 114,
+    "title": "114. 광야에서 만난 엘림 11월 1주 - 믿음에 대하여",
+    "date": "2022-11-05",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022110503150414998_radioelim.mp3",
+    "youtubeId": "hlgi0Jsfs6A"
+  },
+  {
+    "id": "track113",
+    "num": 113,
+    "title": "113. 광야에서 만난 엘림 10월 4주 - 할렐루야! 광주교회 찬양의 밤",
+    "date": "2022-10-21",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022102123165322348_radioelim.mp3",
+    "youtubeId": "ubXQsjHNdgA"
+  },
+  {
+    "id": "track112",
+    "num": 112,
+    "title": "112. 광야에서 만난 엘림 10월 3주 - 마귀에 맞서 싸우는 방법",
+    "date": "2022-10-14",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022101423464631639_radioelim.mp3",
+    "youtubeId": "4Amske-6wdk"
+  },
+  {
+    "id": "track111",
+    "num": 111,
+    "title": "111. 광야에서 만난 엘림 10월 2주 - 어서와! 교구는 처음이지?",
+    "date": "2022-10-08",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022100800050974703_radioelim.mp3",
+    "youtubeId": "Ia78V3mCKO0"
+  },
+  {
+    "id": "track110",
+    "num": 110,
+    "title": "110. 광야에서 만난 엘림 10월 1주 - 수확의 계절",
+    "date": "2022-10-01",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022093023502025455_radioelim.mp3",
+    "youtubeId": "X7TGiuBhk6s"
+  },
+  {
+    "id": "track109",
+    "num": 109,
+    "title": "109. 광야에서 만난 엘림 8월 넷째주<사연,한줄감사,특별초대석>",
+    "date": "2022-08-27",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022082709432832316_radioelim.mp3",
+    "youtubeId": "PmhCOuuZbPE"
+  },
+  {
+    "id": "track108",
+    "num": 108,
+    "title": "108. 광야에서 만난 엘림 8월 셋째주<후아유,갈릴리학교>",
+    "date": "2022-08-20",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022082009414616171_radioelim.mp3",
+    "youtubeId": "ddLO-L9tHcQ"
+  },
+  {
+    "id": "track107",
+    "num": 107,
+    "title": "107. 광야에서 만난 엘림 8월 둘째주<하계뉴스,사연>",
+    "date": "2022-08-13",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022081311170871909_radioelim.mp3",
+    "youtubeId": "rhPizxWwCl0"
+  },
+  {
+    "id": "track106",
+    "num": 106,
+    "title": "106. 광야에서 만난 엘림 8월 첫째주<엘림뉴스,선곡의 정석>",
+    "date": "2022-08-05",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022080522550584548_radioelim.mp3",
+    "youtubeId": "Ll01kn7fLZs"
+  },
+  {
+    "id": "track105",
+    "num": 105,
+    "title": "105. 광야에서 만난 엘림 7월 둘째주<하계수양회 특집2>",
+    "date": "2022-07-09",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022070901121134877_radioelim.mp3",
+    "youtubeId": "enPHuyXNfwo"
+  },
+  {
+    "id": "track104",
+    "num": 104,
+    "title": "104. 광야에서 만난 엘림 7월 첫째주<하계수양회 특집1>",
+    "date": "2022-07-03",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022070319174137656_radioelim.mp3",
+    "youtubeId": "EIYxzzXsL7I"
+  },
+  {
+    "id": "track103",
+    "num": 103,
+    "title": "103. 광야에서 만난 엘림 6월 넷째주<생명의 빛,사연,특별초대석>",
+    "date": "2022-06-26",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022062611361391167_radioelim.mp3",
+    "youtubeId": "4UZ-TNb2qMY"
+  },
+  {
+    "id": "track102",
+    "num": 102,
+    "title": "102. 광야에서 만난 엘림 6월 셋째주<후아유,시각선교부>",
+    "date": "2022-06-18",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022061810042428259_radioelim.mp3",
+    "youtubeId": "iM3nV1SjOj4"
+  },
+  {
+    "id": "track101",
+    "num": 101,
+    "title": "101. 광야에서 만난 엘림 6월 둘째주<교제되새김,조각말씀,해외선교>",
+    "date": "2022-06-11",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022061100310476746_radioelim.mp3",
+    "youtubeId": "6yewv56djFo"
+  },
+  {
+    "id": "track100",
+    "num": 100,
+    "title": "100. 광야에서 만난 엘림 6월 첫째주<축하메시지,특별초대석,설문추첨식>",
+    "date": "2022-06-04",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022060323595851351_radioelim.mp3",
+    "youtubeId": "j2dCxz9zJa0"
+  },
+  {
+    "id": "track99",
+    "num": 99,
+    "title": "99. 광야에서 만난 엘림 5월 넷째주<특별초대석>",
+    "date": "2022-05-28",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022052809155429933_radioelim.mp3",
+    "youtubeId": "LIesm4owpgk"
+  },
+  {
+    "id": "track98",
+    "num": 98,
+    "title": "98. 광야에서 만난 엘림 5월 셋째주<후아유,시각선교부>",
+    "date": "2022-05-20",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022052022463700046_radioelim.mp3",
+    "youtubeId": "UAeMMAZ9vcc"
+  },
+  {
+    "id": "track97",
+    "num": 97,
+    "title": "97. 광야에서 만난 엘림 5월 둘째주<선곡의정석,해외선교,갈릴리학교>",
+    "date": "2022-05-14",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022051408130423578_radioelim.mp3",
+    "youtubeId": "Bj__ap8HvtU"
+  },
+  {
+    "id": "track96",
+    "num": 96,
+    "title": "96. 광야에서 만난 엘림 5월 첫째주<엘림뉴스,교제되새김,조각말씀,교회학교>",
+    "date": "2022-05-06",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022050621105153998_radioelim.mp3",
+    "youtubeId": "ThfaIjh8-1M"
+  },
+  {
+    "id": "track95",
+    "num": 95,
+    "title": "95. 광야에서 만난 엘림 4월 다섯째주<특별초대석,찬양대>",
+    "date": "2022-04-23",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022042310304619802_radioelim.mp3",
+    "youtubeId": "Sih382wvQNI"
+  },
+  {
+    "id": "track94",
+    "num": 94,
+    "title": "94. 광야에서 만난 엘림 4월 넷째주<후아유,특별간증,시각선교부>",
+    "date": "2022-04-15",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022041523214025297_radioelim.mp3",
+    "youtubeId": "L6AsFEpW99Y"
+  },
+  {
+    "id": "track93",
+    "num": 93,
+    "title": "93. 광야에서 만난 엘림 4월 둘째주<선곡의 정석, 해외선교>",
+    "date": "2022-04-09",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022040912153252732_radioelim.mp3",
+    "youtubeId": "fTupqpDa1KU"
+  },
+  {
+    "id": "track92",
+    "num": 92,
+    "title": "92. 광야에서 만난 엘림 4월 첫째주<엘림뉴스,교제되새김,조각말씀>",
+    "date": "2022-04-02",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022040209592680033_radioelim.mp3",
+    "youtubeId": "cPcfdPRfysE"
+  },
+  {
+    "id": "track91",
+    "num": 91,
+    "title": "91. 광야에서 만난 엘림 3월 넷째주<특별초대석,찬양대>",
+    "date": "2022-03-26",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022032611174343613_radioelim.mp3",
+    "youtubeId": "0mkfL4njaEw"
+  },
+  {
+    "id": "track90",
+    "num": 90,
+    "title": "90. 광야에서 만난 엘림 3월 셋째주<후아유,시각선교부>",
+    "date": "2022-03-19",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022031910473762582_radioelim.mp3",
+    "youtubeId": "rit4c7NmNNI"
+  },
+  {
+    "id": "track89",
+    "num": 89,
+    "title": "89. 광야에서 만난 엘림 3월 둘째주<선곡의정석,해외선교,갈릴리학교>",
+    "date": "2022-03-12",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022031211220382974_radioelim.mp3",
+    "youtubeId": "w5__d7X_Hu0"
+  },
+  {
+    "id": "track88",
+    "num": 88,
+    "title": "88. 광야에서 만난 엘림 3월 첫째주<엘림뉴스,교제되새김,조각말씀,교회학교>",
+    "date": "2022-03-05",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022030510044497582_radioelim.mp3",
+    "youtubeId": "Yv5ztrXWf5Y"
+  },
+  {
+    "id": "track87",
+    "num": 87,
+    "title": "87. 광야에서 만난 엘림 2월 넷째주<칭찬합시다,특별초대석,찬양대>",
+    "date": "2022-02-26",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022022610163974610_radioelim.mp3",
+    "youtubeId": "kKzmditGVsk"
+  },
+  {
+    "id": "track86",
+    "num": 86,
+    "title": "86. 광야에서 만난 엘림 2월 셋째주<후아유,특별초대석>",
+    "date": "2022-02-19",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022021911533899301_radioelim.mp3",
+    "youtubeId": "1pWNY8i186o"
+  },
+  {
+    "id": "track85",
+    "num": 85,
+    "title": "85. 광야에서 만난 엘림 2월 둘째주<선곡의 정석,해외선교,갈릴리학교>",
+    "date": "2022-02-11",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022021122161504927_radioelim.mp3",
+    "youtubeId": "VvUvSWoH3XA"
+  },
+  {
+    "id": "track84",
+    "num": 84,
+    "title": "84. 광야에서 만난 엘림 2월 첫째주<엘림뉴스,교제되새김,조각말씀,교회학교>",
+    "date": "2022-02-05",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022020509521009228_radioelim.mp3",
+    "youtubeId": "CdXtrsl-qrw"
+  },
+  {
+    "id": "track83",
+    "num": 83,
+    "title": "83. 광야에서 만난 엘림 1월 다섯째주<특별초대석,해외선교>",
+    "date": "2022-01-28",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022012822075786916_radioelim.mp3",
+    "youtubeId": "J4BERiKPn-k"
+  },
+  {
+    "id": "track82",
+    "num": 82,
+    "title": "82. 광야에서 만난 엘림 1월 넷째주<칭찬합시다,후아유,갈릴리학교>",
+    "date": "2022-01-22",
+    "src": "https://file2.jbch.org/2022/board/1/17/17_2022012200401012091_radioelim.mp3",
+    "youtubeId": "4muTe5Je4ew"
+  },
+  {
+    "id": "track81",
+    "num": 81,
+    "title": "81. 광야에서 만난 엘림 12월 넷째주<교제되새김,해외선교,특별초대석>",
+    "date": "2021-12-24",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021122422180843965_radioelim.mp3",
+    "youtubeId": "aeqBom3iGE4"
+  },
+  {
+    "id": "track80",
+    "num": 80,
+    "title": "80. 광야에서 만난 엘림 12월 셋째주<칭찬합시다,특별초대석,갈릴리학교>",
+    "date": "2021-12-17",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021121723325764003_radioelim.mp3",
+    "youtubeId": "jswJj9iavsU"
+  },
+  {
+    "id": "track79",
+    "num": 79,
+    "title": "79. 광야에서 만난 엘림 12월 둘째주<선곡의정석,후아유,교회학교>",
+    "date": "2021-12-10",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021121022442321914_radioelim.mp3",
+    "youtubeId": "3NElysF_8dY"
+  },
+  {
+    "id": "track78",
+    "num": 78,
+    "title": "78. 광야에서 만난 엘림 12월 첫째주<엘림뉴스,회원코너,조각말씀>",
+    "date": "2021-12-03",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021120321544149546_radioelim.mp3",
+    "youtubeId": "ZZIg_WiOpQI"
+  },
+  {
+    "id": "track77",
+    "num": 77,
+    "title": "77. 광야에서 만난 엘림 11월 넷째주<교제되새김, 은빛청년회>",
+    "date": "2021-11-27",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021112700232857215_radioelim.mp3",
+    "youtubeId": "mvWzGaeGAls"
+  },
+  {
+    "id": "track76",
+    "num": 76,
+    "title": "76. 광야에서 만난 엘림 11월 셋째주<갈릴리학교, 특별초대석, 칭찬합시다>",
+    "date": "2021-11-19",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021111922430585641_radioelim.mp3",
+    "youtubeId": "9GuFgNjvy8E"
+  },
+  {
+    "id": "track75",
+    "num": 75,
+    "title": "75. 광야에서 만난 엘림 11월 둘째주<청년회,후아유,선곡의 정석>",
+    "date": "2021-11-12",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021111222412582025_radioelim.mp3",
+    "youtubeId": "TwOARhmzZgM"
+  },
+  {
+    "id": "track74",
+    "num": 74,
+    "title": "74. 광야에서 만난 엘림 11월 첫째주<엘림뉴스,교회학교,조각말씀>",
+    "date": "2021-11-05",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021110617151959655_oyster.mp3",
+    "youtubeId": "cZZs4fQF6FE"
+  },
+  {
+    "id": "track73",
+    "num": 73,
+    "title": "73. 광야에서 만난 엘림 10월 넷째주<교제 되새김,은상회,해외선교>",
+    "date": "2021-10-22",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021102223075991733_radioelim.mp3",
+    "youtubeId": "OBfjmBXzFRY"
+  },
+  {
+    "id": "track72",
+    "num": 72,
+    "title": "72. 광야에서 만난 엘림 10월 셋째주<기도부탁,칭찬합시다,갈릴리학교,특별초대석>",
+    "date": "2021-10-15",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021101523314554553_radioelim.mp3",
+    "youtubeId": "oHoACrti6FU"
+  },
+  {
+    "id": "track71",
+    "num": 71,
+    "title": "71. 광야에서 만난 엘림 10월 둘째주<후아유,교회학교,선곡의정석>",
+    "date": "2021-10-08",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021100823300093068_radioelim.mp3",
+    "youtubeId": "nWg68xDMNvg"
+  },
+  {
+    "id": "track70",
+    "num": 70,
+    "title": "70. 광야에서 만난 엘림 10월 첫째주<엘림뉴스,청년회,조각말씀>",
+    "date": "2021-10-02",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021100200134365408_radioelim.mp3",
+    "youtubeId": "zJ3pCQAoZAw"
+  },
+  {
+    "id": "track69",
+    "num": 69,
+    "title": "69. 광야에서 만난 엘림 9월 넷째주<후아유,은정회,갈릴리학교>",
+    "date": "2021-09-24",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021092423461726107_radioelim.mp3",
+    "youtubeId": "EZLk0N72LvI"
+  },
+  {
+    "id": "track68",
+    "num": 68,
+    "title": "68. 광야에서 만난 엘림 9월 셋째주<추석특집 선곡의 정석>",
+    "date": "2021-09-18",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021091801161554825_radioelim.mp3",
+    "youtubeId": "xMP3eFCj9no"
+  },
+  {
+    "id": "track67",
+    "num": 67,
+    "title": "67. 광야에서 만난 엘림 9월 둘째주<특별초대석,칭찬합시다,청년회>",
+    "date": "2021-09-10",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021091022191246731_radioelim.mp3",
+    "youtubeId": "dwJep8a0Isg"
+  },
+  {
+    "id": "track66",
+    "num": 66,
+    "title": "66. 광야에서 만난 엘림 9월 첫째주<엘림뉴스,교회학교,조각말씀>",
+    "date": "2021-09-04",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021090400504927573_radioelim.mp3",
+    "youtubeId": "hf6fYv4OERk"
+  },
+  {
+    "id": "track65",
+    "num": 65,
+    "title": "65. 광야에서 만난 엘림 8월 넷째주<하계밀착취재,은장회,엘림의책방>",
+    "date": "2021-08-27",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021082723274415950_radioelim.mp3",
+    "youtubeId": "JjATHoocTcc"
+  },
+  {
+    "id": "track64",
+    "num": 64,
+    "title": "64. 광야에서 만난 엘림 8월 셋째주<하계초대석,칭찬합시다,갈릴리학교>",
+    "date": "2021-08-20",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021082022452581730_radioelim.mp3",
+    "youtubeId": "e70vMGYpMNo"
+  },
+  {
+    "id": "track63",
+    "num": 63,
+    "title": "63. 광야에서 만난 엘림 8월 둘째주<청년회,선곡의정석,하계초대석2>",
+    "date": "2021-08-13",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021081323444078294_radioelim.mp3",
+    "youtubeId": "lyNdulT-E5Q"
+  },
+  {
+    "id": "track62",
+    "num": 62,
+    "title": "62. 광야에서 만난 엘림 8월 첫째주<엘림뉴스,교회학교,하계초대석,주말말씀>",
+    "date": "2021-08-06",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021080622231226888_radioelim.mp3",
+    "youtubeId": "Ed8wCoVo5Hk"
+  },
+  {
+    "id": "track61",
+    "num": 61,
+    "title": "61. 광야에서 만난 엘림 7월 넷째주<해외선교,은빛청년회>",
+    "date": "2021-07-24",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021072400022771192_radioelim.mp3",
+    "youtubeId": "GzmfmB8oRoI"
+  },
+  {
+    "id": "track60",
+    "num": 60,
+    "title": "60. 광야에서 만난 엘림 7월 셋째주<하계수양회 인터뷰,특별초대석,갈릴리학교>",
+    "date": "2021-07-16",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021071623532942513_radioelim.mp3",
+    "youtubeId": "N9uSrEOkJ88"
+  },
+  {
+    "id": "track59",
+    "num": 59,
+    "title": "59. 광야에서 만난 엘림 7월 둘째주<청년회,하계수양회 인터뷰,선곡의 정석>",
+    "date": "2021-07-09",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021071012441145629_radioelim.mp3",
+    "youtubeId": "wKt2ItnRbhY"
+  },
+  {
+    "id": "track58",
+    "num": 58,
+    "title": "58. 광야에서 만난 엘림 7월 첫째주<엘림뉴스,조각말씀,교회학교>",
+    "date": "2021-07-02",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021070223244392783_radioelim.mp3",
+    "youtubeId": "gtilLrn42BQ"
+  },
+  {
+    "id": "track57",
+    "num": 57,
+    "title": "57. 광야에서 만난 엘림 6월 넷째주<엘림의 책방,은빛장년회>",
+    "date": "2021-06-25",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021062522592487388_radioelim.mp3",
+    "youtubeId": "CQhiE1FY6qM"
+  },
+  {
+    "id": "track56",
+    "num": 56,
+    "title": "56. 광야에서 만난 엘림 6월 3주<특별초대석,갈릴리학교>",
+    "date": "2021-06-18",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021061822464097283_radioelim.mp3",
+    "youtubeId": "7_5oGewrLoc"
+  },
+  {
+    "id": "track55",
+    "num": 55,
+    "title": "55. 광야에서 만난 엘림 6월 2주<청년회코너 후아유,선곡의정석>",
+    "date": "2021-06-12",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021061218490197480_radioelim.mp3",
+    "youtubeId": "GzXxP7QTM8o"
+  },
+  {
+    "id": "track54",
+    "num": 54,
+    "title": "54. 광야에서 만난 엘림 6월 1주<엘림뉴스,밀착취재,회원코너(초등부),조각말씀>",
+    "date": "2021-06-05",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021060502420262724_radioelim.mp3",
+    "youtubeId": "fybnfypVhkc"
+  },
+  {
+    "id": "track53",
+    "num": 53,
+    "title": "53. 광야에서 만난 엘림 5월 넷째주<대집회 기도부탁,엘림의 책방>",
+    "date": "2021-05-21",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021052122571354973_radioelim.mp3",
+    "youtubeId": "scWawfJFzsM"
+  },
+  {
+    "id": "track52",
+    "num": 52,
+    "title": "52. 광야에서 만난 엘림 5월 셋째주<선곡의 정석>",
+    "date": "2021-05-15",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021051510235157984_radioelim.mp3",
+    "youtubeId": "gD0-1U352jM"
+  },
+  {
+    "id": "track51",
+    "num": 51,
+    "title": "51. 광야에서 만난 엘림 5월 둘째주<조각말씀,사연>",
+    "date": "2021-05-08",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021050821090357679_radioelim.mp3",
+    "youtubeId": "MiIf_4x6SLA"
+  },
+  {
+    "id": "track50",
+    "num": 50,
+    "title": "50. 광야에서 만난 엘림 5월 첫째주<엘림뉴스,후대유2021>",
+    "date": "2021-04-30",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021043023103781348_radioelim.mp3",
+    "youtubeId": "fMgARMe8xFk"
+  },
+  {
+    "id": "track49",
+    "num": 49,
+    "title": "49. 광야에서 만난 엘림 4월 넷째주<성찬시,엘림의 책방>",
+    "date": "2021-04-24",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021042400034486432_radioelim.mp3",
+    "youtubeId": "r6nBrUHYXhs"
+  },
+  {
+    "id": "track48",
+    "num": 48,
+    "title": "48. 광야에서 만난 엘림 4월 셋째주<조각말씀,한줄감사,사연>",
+    "date": "2021-04-17",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021041700264671123_radioelim.mp3",
+    "youtubeId": "kZ6jR7z4ic0"
+  },
+  {
+    "id": "track47",
+    "num": 47,
+    "title": "47. 광야에서 만난 엘림 4월 둘째주<이비에스,선곡의정석>",
+    "date": "2021-04-09",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021040923132550695_radioelim.mp3",
+    "youtubeId": "fbgSRy5Ukm8"
+  },
+  {
+    "id": "track46",
+    "num": 46,
+    "title": "46. 광야에서 만난 엘림 4월 첫째주<엘림뉴스,특별초대석'로뎀나무'>",
+    "date": "2021-04-03",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021040300300339292_radioelim.mp3",
+    "youtubeId": "j9tqOKCr2HE"
+  },
+  {
+    "id": "track45",
+    "num": 45,
+    "title": "45. 광야에서 만난 엘림 3월 넷째주<엘림의 책방>",
+    "date": "2021-03-26",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021032623444654119_radioelim.mp3",
+    "youtubeId": "ZkXqVx1vpoU"
+  },
+  {
+    "id": "track44",
+    "num": 44,
+    "title": "44. 광야에서 만난 엘림 3월 셋째주<조각말씀,특별초대석'공주어린이집 졸업생'>",
+    "date": "2021-03-20",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021032000571904148_radioelim.mp3",
+    "youtubeId": "E1GRPpvrURM"
+  },
+  {
+    "id": "track43",
+    "num": 43,
+    "title": "43. 광야에서 만난 엘림 3월 둘째주<이비에스,선곡의정석>",
+    "date": "2021-03-13",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021031321481689677_radioelim.mp3",
+    "youtubeId": "cmUNJMrGawU"
+  },
+  {
+    "id": "track42",
+    "num": 42,
+    "title": "42. 광야에서 만난 엘림 3월 첫째주<엘림뉴스,한줄감사,사연>",
+    "date": "2021-03-06",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021030609504590938_radioelim.mp3",
+    "youtubeId": "rUxrZO-1A8k"
+  },
+  {
+    "id": "track41",
+    "num": 41,
+    "title": "41. 광야에서 만난 엘림 2월 네째주<성찬시,엘림의책방>",
+    "date": "2021-02-27",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021022700141151794_radioelim.mp3",
+    "youtubeId": "nR5Pto7PrjI"
+  },
+  {
+    "id": "track40",
+    "num": 40,
+    "title": "40. 광야에서 만난 엘림 2월 셋째주<특별초대석 '아트선교부'>",
+    "date": "2021-02-20",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021022000315757987_radioelim.mp3",
+    "youtubeId": "1gdjW4SfHv8"
+  },
+  {
+    "id": "track39",
+    "num": 39,
+    "title": "39. 광야에서 만난 엘림 2월 둘째주<조각말씀,선곡의정석>",
+    "date": "2021-02-12",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021021222353010529_radioelim.mp3",
+    "youtubeId": "PX3xUjLEKvs"
+  },
+  {
+    "id": "track38",
+    "num": 38,
+    "title": "38. 광야에서 만난 엘림 2월 첫째주 <엘림뉴스, 한줄감사, 사연>",
+    "date": "2021-02-06",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021020601060369296_radioelim.mp3",
+    "youtubeId": "r5GuRRqKBWs"
+  },
+  {
+    "id": "track37",
+    "num": 37,
+    "title": "37. 광야에서 만난 엘림 1월 네째주",
+    "date": "2021-01-30",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021013009554384323_radioelim.mp3",
+    "youtubeId": "tNHV-LDRsV4"
+  },
+  {
+    "id": "track36",
+    "num": 36,
+    "title": "36. 광야에서 만난 엘림 1월 셋째주",
+    "date": "2021-01-23",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021012301281863041_radioelim.mp3",
+    "youtubeId": "t9Y3t5vqIWY"
+  },
+  {
+    "id": "track35",
+    "num": 35,
+    "title": "35. 광야에서 만난 엘림 1월 첫째주",
+    "date": "2021-01-16",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021011609254522921_radioelim.mp3",
+    "youtubeId": "WCj4KMSCO4o"
+  },
+  {
+    "id": "track34",
+    "num": 34,
+    "title": "34. 광야에서 만난 엘림 1월 첫째주",
+    "date": "2021-01-08",
+    "src": "https://file2.jbch.org/2021/board/1/17/17_2021010822334574409_radioelim.mp3",
+    "youtubeId": "C77qP_aH2cU"
+  },
+  {
+    "id": "track33",
+    "num": 33,
+    "title": "33. 광야에서 만난 엘림 12월 네째주",
+    "date": "2020-12-25",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020122609373241825_radioelim.mp3",
+    "youtubeId": "QQjO2zWu5HA"
+  },
+  {
+    "id": "track32",
+    "num": 32,
+    "title": "32. 광야에서 만난 엘림 12월 셋째주",
+    "date": "2020-12-19",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020121909145509899_radioelim.mp3",
+    "youtubeId": "3y1_bjsoJig"
+  },
+  {
+    "id": "track31",
+    "num": 31,
+    "title": "31. 광야에서 만난 엘림 12월 둘째주",
+    "date": "2020-12-11",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020121118431619921_radioelim.mp3",
+    "youtubeId": "sYjhzIJvuj0"
+  },
+  {
+    "id": "track30",
+    "num": 30,
+    "title": "30. 광야에서 만난 엘림 1주년 특집",
+    "date": "2020-12-05",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020120510251925012_radioelim.mp3",
+    "youtubeId": "2Qwvik1hUgg"
+  },
+  {
+    "id": "track29",
+    "num": 29,
+    "title": "29. 광야에서 만난 엘림 11월 네째주",
+    "date": "2020-11-28",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020112800493718549_radioelim.mp3",
+    "youtubeId": "rucHr2ebeyk"
+  },
+  {
+    "id": "track28",
+    "num": 28,
+    "title": "28. 광야에서 만난 엘림 11월 셋째주",
+    "date": "2020-11-20",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020112022071744840_radioelim.mp3",
+    "youtubeId": "1-9QOhIkU0w"
+  },
+  {
+    "id": "track27",
+    "num": 27,
+    "title": "27. 광야에서 만난 엘림 11월 둘째주",
+    "date": "2020-11-14",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020111401151742089_radioelim.mp3",
+    "youtubeId": "EkeC23xex0g"
+  },
+  {
+    "id": "track26",
+    "num": 26,
+    "title": "26. 광야에서 만난 엘림 11월 첫째주",
+    "date": "2020-11-07",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020110710245226541_radioelim.mp3",
+    "youtubeId": "uFyxsQXTe8I"
+  },
+  {
+    "id": "track_extra_youth",
+    "num": 25.1,
+    "title": "번외. 광야에서 만난 엘림 <청년집회>",
+    "date": "2020-10-28",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020102815000246945_radioelim.mp3",
+    "youtubeId": "Bqi2hXWqvSQ"
+  },
+  {
+    "id": "track25",
+    "num": 25,
+    "title": "25. 광야에서 만난 엘림 10월 네째주",
+    "date": "2020-10-23",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020102322395198869_radioelim.mp3",
+    "youtubeId": "tW1wgevWLYU"
+  },
+  {
+    "id": "track24",
+    "num": 24,
+    "title": "24. 광야에서 만난 엘림 10월 셋째주",
+    "date": "2020-10-17",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020101708210888192_radioelim.mp3",
+    "youtubeId": "nDSdPI7LX6g"
+  },
+  {
+    "id": "track23",
+    "num": 23,
+    "title": "23. 광야에서 만난 엘림 10월 둘째주",
+    "date": "2020-10-09",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020100923584710865_radioelim.mp3",
+    "youtubeId": "84cEpykWVnw"
+  },
+  {
+    "id": "track22",
+    "num": 22,
+    "title": "22. 광야에서 만난 엘림 10월 첫째주",
+    "date": "2020-10-03",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020100309275422421_radioelim.mp3",
+    "youtubeId": "4bPHKND9yq4"
+  },
+  {
+    "id": "track21",
+    "num": 21,
+    "title": "21. 광야에서 만난 엘림 9월 네째주",
+    "date": "2020-09-26",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020092613550618972_radioelim.mp3",
+    "youtubeId": "YBqkrBDqU6k"
+  },
+  {
+    "id": "track20",
+    "num": 20,
+    "title": "20. 광야에서 만난 엘림 9월 셋째주",
+    "date": "2020-09-19",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020091909432595582_radioelim.mp3",
+    "youtubeId": "nuBFuDiOuh4"
+  },
+  {
+    "id": "track19",
+    "num": 19,
+    "title": "19. 광야에서 만난 엘림 19회",
+    "date": "2020-09-11",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020091120542525948_radioelim.mp3",
+    "youtubeId": "gdl0AV-mCxw"
+  },
+  {
+    "id": "track18",
+    "num": 18,
+    "title": "18. 광야에서 만난 엘림 18회",
+    "date": "2020-08-23",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020082318232775730_radioelim.mp3",
+    "youtubeId": "ZbLYzJMU5DA"
+  },
+  {
+    "id": "track_extra_3",
+    "num": 17.3,
+    "title": "번외3. 광야에서 만난 엘림 - 농고 하계수양회",
+    "date": "2020-08-14",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020081422395724234_radioelim.mp3",
+    "youtubeId": "wh-NYrxNKg0"
+  },
+  {
+    "id": "track17",
+    "num": 17,
+    "title": "17. 광야에서 만난 엘림 17회",
+    "date": "2020-08-08",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020080912530193728_radioelim.mp3",
+    "youtubeId": "N2XIf5fbBgs"
+  },
+  {
+    "id": "track16",
+    "num": 16,
+    "title": "16. 광야에서 만난 엘림 16회",
+    "date": "2020-07-25",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020072519470948359_radioelim.mp3",
+    "youtubeId": "u-OLF8qDs2c"
+  },
+  {
+    "id": "track_extra_2",
+    "num": 15.2,
+    "title": "번외2. 광야에서 만난 엘림 - 집사 심재희",
+    "date": "2020-07-18",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020071911512045174_radioelim.mp3",
+    "youtubeId": "WzoWYmSySVg"
+  },
+  {
+    "id": "track15",
+    "num": 15,
+    "title": "15. 광야에서 만난 엘림 15회",
+    "date": "2020-07-12",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020071215263644596_radioelim.mp3",
+    "youtubeId": "PSERmKvD5aM"
+  },
+  {
+    "id": "track14",
+    "num": 14,
+    "title": "14. 광야에서 만난 엘림 14회",
+    "date": "2020-06-28",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020062910083313516_oyster.mp3",
+    "youtubeId": "ezQhTnDTZSg"
+  },
+  {
+    "id": "track13",
+    "num": 13,
+    "title": "13. 광야에서 만난 엘림 13회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061617290366145_radioelim.mp3",
+    "youtubeId": "r7MrnhW_YQM"
+  },
+  {
+    "id": "track12",
+    "num": 12,
+    "title": "12. 광야에서 만난 엘림 12회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061617251524712_radioelim.mp3",
+    "youtubeId": "cKUg0HOaD74"
+  },
+  {
+    "id": "track11",
+    "num": 11,
+    "title": "11. 광야에서 만난 엘림 11회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061617211459351_radioelim.mp3",
+    "youtubeId": "bFvYW1Mf8y8"
+  },
+  {
+    "id": "track10",
+    "num": 10,
+    "title": "10. 광야에서 만난 엘림 10회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061617050902455_radioelim.mp3",
+    "youtubeId": "5Ms25ycl9x0"
+  },
+  {
+    "id": "track9",
+    "num": 9,
+    "title": "9. 광야에서 만난 엘림 9회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061616593986180_radioelim.mp3",
+    "youtubeId": "xiZUvWDrChI"
+  },
+  {
+    "id": "track8",
+    "num": 8,
+    "title": "8. 광야에서 만난 엘림 8회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061616451761876_radioelim.mp3",
+    "youtubeId": "howdFHseApY"
+  },
+  {
+    "id": "track7",
+    "num": 7,
+    "title": "7. 광야에서 만난 엘림 7회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061616353617729_radioelim.mp3",
+    "youtubeId": "CGP7ZwwYRFk"
+  },
+  {
+    "id": "track6",
+    "num": 6,
+    "title": "6. 광야에서 만난 엘림 6회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061616151964386_radioelim.mp3",
+    "youtubeId": "hOa2O_hmb3c"
+  },
+  {
+    "id": "track5",
+    "num": 5,
+    "title": "5. 광야에서 만난 엘림 5회",
+    "date": "2020-06-16",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020061616073318043_radioelim.mp3",
+    "youtubeId": "lUgj171KFpk"
+  },
+  {
+    "id": "track4",
+    "num": 4,
+    "title": "4. 광야에서 만난 엘림 4회",
+    "date": "2020-02-02",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020020221180395093_pigflower4.mp3",
+    "youtubeId": "znfVgxn_G9o"
+  },
+  {
+    "id": "track3",
+    "num": 3,
+    "title": "3. 광야에서 만난 엘림 3회",
+    "date": "2020-02-02",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020020220423792307_pigflower4.mp3",
+    "youtubeId": "c8bONxyUDkY"
+  },
+  {
+    "id": "track2",
+    "num": 2,
+    "title": "2. 광야에서 만난 엘림 2회",
+    "date": "2020-02-02",
+    "src": "https://file2.jbch.org/2020/board/1/17/17_2020020220391848638_pigflower4.mp3",
+    "youtubeId": "cH1fN1RzDHo"
+  },
+  {
+    "id": "track1",
+    "num": 1,
+    "title": "1. 엘림 1회",
+    "date": "2019-12-07",
+    "src": "https://file2.jbch.org/2019/board/1/17/17_2019120812000968217_oyster.mp3",
+    "youtubeId": "WcvTzxt568Q"
+  }
+];
 
     const sermonEpisodes = [
-        { id: "track31", num: 31, title: "31. 박경수Pa_고전13_그 중에 제일은 사랑이라", date: "2026-08-16", src: "https://file2.jbch.org/2026/board/1/17/17_20260823002556_6542_kjcmedia.mp3" },
-        { id: "track30", num: 30, title: "30. 박종욱Pa_출15_내 삶이 마라를 지날 때", date: "2026-08-09", src: "https://file2.jbch.org/2026/board/1/17/17_20260823002244_6761_kjcmedia.mp3" },
-        { id: "track29", num: 29, title: "29. 박수휘Pa_히12_징계와 시험", date: "2026-08-02", src: "https://file2.jbch.org/2026/board/1/17/17_20260823001334_0951_kjcmedia.mp3" },
-        { id: "track28", num: 28, title: "28. 김병헌Pa_빌1_은혜와 고난 후 영광", date: "2026-07-26", src: "https://file2.jbch.org/2026/board/1/17/17_20260823001108_1212_kjcmedia.mp3" },
-        { id: "track27", num: 27, title: "27. 양현준Pa_잠25_일을 숨기시는 하나님", date: "2026-07-19", src: "https://file2.jbch.org/2026/board/1/17/17_20260823000841_9321_kjcmedia.mp3" },
-        { id: "track26", num: 26, title: "26. 공성수Pa_사26_심지가 견고한 자", date: "2026-07-12", src: "https://file2.jbch.org/2026/board/1/17/17_20260823000257_1515_kjcmedia.mp3" },
-        { id: "track25", num: 25, title: "25. 이상민Pa_출23_빈손으로 보이지 말라", date: "2026-07-05", src: "https://file2.jbch.org/2026/board/1/17/17_20260821164612_3715_kjcmedia.mp3" },
-        { id: "track24", num: 24, title: "24. 조윤구Pa_창49_네 형제의 찬송이 될찌라", date: "2026-06-28", src: "https://file2.jbch.org/2026/board/1/17/17_20260821164203_3344_kjcmedia.mp3" },
-        { id: "track23", num: 23, title: "23. 이상민pa_계8_금향로에 담긴 기도", date: "2026-06-21", src: "https://file2.jbch.org/2026/board/1/17/17_20260821163557_9641_kjcmedia.mp3" },
-        { id: "track22", num: 22, title: "22. 박경수Pa_마24_충성되고 지혜있는 종", date: "2026-06-14", src: "https://file2.jbch.org/2026/board/1/17/17_20260821163050_0231_kjcmedia.mp3" },
-        { id: "track21", num: 21, title: "21. 이영림pa_잠22_진리 앞에서", date: "2026-06-07", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162511_7683_kjcmedia.mp3" },
-        { id: "track20", num: 20, title: "20. 이상민Pa_수24_오직 나와 내 집은", date: "2026-05-31", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162241_2234_kjcmedia.mp3" },
-        { id: "track19", num: 19, title: "19. 이종혁Pa_열상8_제사장들이 궤를 메니라", date: "2026-05-24", src: "https://file2.jbch.org/2026/board/1/17/17_20260821162025_6690_kjcmedia.mp3" },
-        { id: "track18", num: 18, title: "18. 임승환Pa_골1_깨달은 날부터 자라가라", date: "2026-05-17", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161838_0397_kjcmedia.mp3" },
-        { id: "track17", num: 17, title: "17. 이상민Pa_딤후4_지금이 바로 이때라", date: "2026-05-10", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161710_1742_kjcmedia.mp3" },
-        { id: "track16", num: 16, title: "16. 유태종Pa_눅14_비용", date: "2026-05-03", src: "https://file2.jbch.org/2026/board/1/17/17_20260821161346_7248_kjcmedia.mp3" },
-        { id: "track15", num: 15, title: "15. 이상민Pa_벧전4_선한 청지기", date: "2026-04-26", src: "https://file2.jbch.org/2026/board/1/17/17_20260820135613_3949_kjcmedia.mp3" },
-        { id: "track14", num: 14, title: "14. 김종천Pa_마28_복음전파의 사명", date: "2026-04-19", src: "https://file2.jbch.org/2026/board/1/17/17_20260820094353_7129_kjcmedia.mp3" },
-        { id: "track13", num: 13, title: "13. 이상민pa_엡6_영적 전쟁에서 이기는 삶", date: "2026-04-12", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092911_0947_kjcmedia.mp3" },
-        { id: "track12", num: 12, title: "12. 박경수Pa_욥35_밤중에 노래하게 하시는 하나님", date: "2026-04-05", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092851_5586_kjcmedia.mp3" },
-        { id: "track11", num: 11, title: "11. 신창훈Pa_눅17_무익한 종", date: "2026-03-29", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092747_2285_kjcmedia.mp3" },
-        { id: "track10", num: 10, title: "10. 이정익Pa_신8_광야의 길", date: "2026-03-22", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092546_1460_kjcmedia.mp3" },
-        { id: "track9", num: 9, title: "9. 이성기Pa_창26_이삭의 순종과 하나님께 받은 축복", date: "2026-03-08", src: "https://file2.jbch.org/2026/board/1/17/17_20260820092409_5610_kjcmedia.mp3" },
-        { id: "track8", num: 8, title: "8. 이상민Pa_레23_모퉁이에 남겨둔 사랑", date: "2026-03-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091720_0297_kjcmedia.mp3" },
-        { id: "track7", num: 7, title: "7. 강명수Pa_민10_은나팔 둘", date: "2026-02-22", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091433_7776_kjcmedia.mp3" },
-        { id: "track6", num: 6, title: "6. 이상민Pa_엡6_우리 집 믿음으로", date: "2026-02-15", src: "https://file2.jbch.org/2026/board/1/17/17_20260820091135_3963_kjcmedia.mp3" },
-        { id: "track5", num: 5, title: "5. 박경수Pa_말3_기념책을 기억하라", date: "2026-02-08", src: "https://file2.jbch.org/2026/board/1/17/17_20260820090514_5457_kjcmedia.mp3" },
-        { id: "track4", num: 4, title: "4. 이상민Pa_계7_흰옷 입은 자들", date: "2026-02-01", src: "https://file2.jbch.org/2026/board/1/17/17_20260820090212_2586_kjcmedia.mp3" },
-        { id: "track3", num: 3, title: "3. 이기천Pa_렘5_한 사람이 중요하다", date: "2026-01-25", src: "https://file2.jbch.org/2026/board/1/17/17_20260820085916_2223_kjcmedia.mp3" },
-        { id: "track2", num: 2, title: "2. 이상민Pa_레23_초실절", date: "2026-01-18", src: "https://file2.jbch.org/2026/board/1/17/17_20260818160757_7822_kjcmedia.mp3" },
-        { id: "track1", num: 1, title: "1. 이요한Pa_눅17_구원받은 후의 삶", date: "2026-01-11", src: "https://file2.jbch.org/2026/board/1/17/17_20260818152622_1516_kjcmedia.mp3" }
-    ];
+  {
+    "id": "sermon31",
+    "num": 31,
+    "title": "31. 박경수Pa_고전13_그 중에 제일은 사랑이라",
+    "date": "2026-08-16",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823002556_6542_kjcmedia.mp3",
+    "youtubeId": "6OXNK8qh9v8"
+  },
+  {
+    "id": "sermon30",
+    "num": 30,
+    "title": "30. 박종욱Pa_출15_내 삶이 마라를 지날 때",
+    "date": "2026-08-09",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823002244_6761_kjcmedia.mp3",
+    "youtubeId": "4idMGjh4Mos"
+  },
+  {
+    "id": "sermon29",
+    "num": 29,
+    "title": "29. 박수휘Pa_히12_징계와 시험",
+    "date": "2026-08-02",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823001334_0951_kjcmedia.mp3",
+    "youtubeId": "Y2W4z_NTP88"
+  },
+  {
+    "id": "sermon28",
+    "num": 28,
+    "title": "28. 김병헌Pa_빌1_은혜와 고난 후 영광",
+    "date": "2026-07-26",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823001108_1212_kjcmedia.mp3",
+    "youtubeId": "RxutEPaU3jY"
+  },
+  {
+    "id": "sermon27",
+    "num": 27,
+    "title": "27. 양현준Pa_잠25_일을 숨기시는 하나님",
+    "date": "2026-07-19",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823000841_9321_kjcmedia.mp3",
+    "youtubeId": "qyH973A47SA"
+  },
+  {
+    "id": "sermon26",
+    "num": 26,
+    "title": "26. 공성수Pa_사26_심지가 견고한 자",
+    "date": "2026-07-12",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260823000257_1515_kjcmedia.mp3",
+    "youtubeId": "Yii7VHb6NNo"
+  },
+  {
+    "id": "sermon25",
+    "num": 25,
+    "title": "25. 이상민Pa_출23_빈손으로 보이지 말라",
+    "date": "2026-07-05",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821164612_3715_kjcmedia.mp3",
+    "youtubeId": "KS-g-NdXAVw"
+  },
+  {
+    "id": "sermon24",
+    "num": 24,
+    "title": "24. 조윤구Pa_창49_네 형제의 찬송이 될찌라",
+    "date": "2026-06-28",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821164203_3344_kjcmedia.mp3",
+    "youtubeId": "W65fapQtI2w"
+  },
+  {
+    "id": "sermon23",
+    "num": 23,
+    "title": "23. 이상민pa_계8_금향로에 담긴 기도",
+    "date": "2026-06-21",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821163557_9641_kjcmedia.mp3",
+    "youtubeId": "MLtC7iwuWbk"
+  },
+  {
+    "id": "sermon22",
+    "num": 22,
+    "title": "22. 박경수Pa_마24_충성되고 지혜있는 종",
+    "date": "2026-06-14",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821163050_0231_kjcmedia.mp3",
+    "youtubeId": "z6b--MATfXs"
+  },
+  {
+    "id": "sermon21",
+    "num": 21,
+    "title": "21. 이영림pa_잠22_진리 앞에서",
+    "date": "2026-06-07",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821162511_7683_kjcmedia.mp3",
+    "youtubeId": "ES6IvTHKonk"
+  },
+  {
+    "id": "sermon20",
+    "num": 20,
+    "title": "20. 이상민Pa_수24_오직 나와 내 집은",
+    "date": "2026-05-31",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821162241_2234_kjcmedia.mp3",
+    "youtubeId": "lyTVAgpD4fk"
+  },
+  {
+    "id": "sermon19",
+    "num": 19,
+    "title": "19. 이종혁Pa_열상8_제사장들이 궤를 메니라",
+    "date": "2026-05-24",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821162025_6690_kjcmedia.mp3",
+    "youtubeId": "-iVwJBvjmpM"
+  },
+  {
+    "id": "sermon18",
+    "num": 18,
+    "title": "18. 임승환Pa_골1_깨달은 날부터 자라가라",
+    "date": "2026-05-17",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821161838_0397_kjcmedia.mp3",
+    "youtubeId": "_aW1USUB-0s"
+  },
+  {
+    "id": "sermon17",
+    "num": 17,
+    "title": "17. 이상민Pa_딤후4_지금이 바로 이때라",
+    "date": "2026-05-10",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821161710_1742_kjcmedia.mp3",
+    "youtubeId": "DFfhkzjq2FI"
+  },
+  {
+    "id": "sermon16",
+    "num": 16,
+    "title": "16. 유태종Pa_눅14_비용",
+    "date": "2026-05-03",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260821161346_7248_kjcmedia.mp3",
+    "youtubeId": "ZrMFnZxe-oc"
+  },
+  {
+    "id": "sermon15",
+    "num": 15,
+    "title": "15. 이상민Pa_벧전4_선한 청지기",
+    "date": "2026-04-26",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820135613_3949_kjcmedia.mp3",
+    "youtubeId": "f0fwimJ37a0"
+  },
+  {
+    "id": "sermon14",
+    "num": 14,
+    "title": "14. 김종천Pa_마28_복음전파의 사명",
+    "date": "2026-04-19",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820094353_7129_kjcmedia.mp3",
+    "youtubeId": "Zmo6lReltL4"
+  },
+  {
+    "id": "sermon13",
+    "num": 13,
+    "title": "13. 이상민pa_엡6_영적 전쟁에서 이기는 삶",
+    "date": "2026-04-12",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820092911_0947_kjcmedia.mp3",
+    "youtubeId": "_GiZiznqO-E"
+  },
+  {
+    "id": "sermon12",
+    "num": 12,
+    "title": "12. 박경수Pa_욥35_밤중에 노래하게 하시는 하나님",
+    "date": "2026-04-05",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820092851_5586_kjcmedia.mp3",
+    "youtubeId": "jegEZ6UAYX8"
+  },
+  {
+    "id": "sermon11",
+    "num": 11,
+    "title": "11. 신창훈Pa_눅17_무익한 종",
+    "date": "2026-03-29",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820092747_2285_kjcmedia.mp3",
+    "youtubeId": "A3i9wEb8EkA"
+  },
+  {
+    "id": "sermon10",
+    "num": 10,
+    "title": "10. 이정익Pa_신8_광야의 길",
+    "date": "2026-03-22",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820092546_1460_kjcmedia.mp3",
+    "youtubeId": "2QC6CQHt7OQ"
+  },
+  {
+    "id": "sermon9",
+    "num": 9,
+    "title": "9. 이성기Pa_창26_이삭의 순종과 하나님께 받은 축복",
+    "date": "2026-03-08",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820092409_5610_kjcmedia.mp3",
+    "youtubeId": "C68d4YQkdXw"
+  },
+  {
+    "id": "sermon8",
+    "num": 8,
+    "title": "8. 이상민Pa_레23_모퉁이에 남겨둔 사랑",
+    "date": "2026-03-01",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820091720_0297_kjcmedia.mp3",
+    "youtubeId": "WfUt-HcGz1o"
+  },
+  {
+    "id": "sermon7",
+    "num": 7,
+    "title": "7. 강명수Pa_민10_은나팔 둘",
+    "date": "2026-02-22",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820091433_7776_kjcmedia.mp3",
+    "youtubeId": "NBiliH6_d5o"
+  },
+  {
+    "id": "sermon6",
+    "num": 6,
+    "title": "6. 이상민Pa_엡6_우리 집 믿음으로",
+    "date": "2026-02-15",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820091135_3963_kjcmedia.mp3",
+    "youtubeId": "JgR0c9GLChM"
+  },
+  {
+    "id": "sermon5",
+    "num": 5,
+    "title": "5. 박경수Pa_말3_기념책을 기억하라",
+    "date": "2026-02-08",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820090514_5457_kjcmedia.mp3",
+    "youtubeId": "GbyhPXG0_dw"
+  },
+  {
+    "id": "sermon4",
+    "num": 4,
+    "title": "4. 이상민Pa_계7_흰옷 입은 자들",
+    "date": "2026-02-01",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820090212_2586_kjcmedia.mp3",
+    "youtubeId": "RDrCYs2MKTw"
+  },
+  {
+    "id": "sermon3",
+    "num": 3,
+    "title": "3. 이기천Pa_렘5_한 사람이 중요하다",
+    "date": "2026-01-25",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260820085916_2223_kjcmedia.mp3",
+    "youtubeId": "a5ygsrgB_vo"
+  },
+  {
+    "id": "sermon2",
+    "num": 2,
+    "title": "2. 이상민Pa_레23_초실절",
+    "date": "2026-01-18",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260818160757_7822_kjcmedia.mp3",
+    "youtubeId": "g8xvLUwkrFk"
+  },
+  {
+    "id": "sermon1",
+    "num": 1,
+    "title": "1. 이요한Pa_눅17_구원받은 후의 삶",
+    "date": "2026-01-11",
+    "src": "https://file2.jbch.org/2026/board/1/17/17_20260818152622_1516_kjcmedia.mp3",
+    "youtubeId": ""
+  }
+];
 
     // ---------------- State ----------------
     let currentRoute = 'home';
@@ -371,12 +2222,19 @@
     let currentEpisode = null;
     let currentEpisodeTab = 'radio';
     let isPlaying = false;
-    let favorites = [];
-    let currentSpeed = 1.0;
+    let favorites = readSaved('elim.favorites.v2', []);
+    if (!Array.isArray(favorites)) favorites=[];
+    let currentSpeed = Number(readSaved('elim.speed.v2', 1));
+    if (![0.75,1,1.25,1.5,1.75,2].includes(currentSpeed)) currentSpeed=1;
+    let positions = readSaved('elim.positions.v2', {});
+    if (!positions || typeof positions !== 'object' || Array.isArray(positions)) positions={};
+    let lastSavedAt=0;
+    let playRequest=0;
     
     // 오디오 객체 전역 싱글톤 선언 및 설정
     let audioEl = window.audioEl || new Audio();
     window.audioEl = audioEl;
+    audioEl.preload="metadata";
 
     // 잠금화면 / 제어센터에 현재 회차명을 표시
     function decodeHtml(text) {
@@ -388,7 +2246,7 @@
     function updateNowPlayingInfo(ep) {
         if (!ep) return;
 
-        const episodeTitle = decodeHtml(ep.title);
+        const episodeTitle = ep.title;
         const sectionName = currentEpisodeTab === 'radio' ? '라디오 엘림' : '주일말씀';
 
         // iOS WKWebView는 웹페이지 제목을 잠금화면 재생 제목으로 사용하는 경우가 있어
@@ -404,7 +2262,8 @@
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: episodeTitle,
                     artist: sectionName,
-                    album: '생명의말씀선교회 광주교회'
+                    album: '생명의말씀선교회 광주교회',
+                    artwork: ep.youtubeId ? [{src:thumbURL(ep), sizes:'480x360',type:'image/jpeg'}] : []
                 });
             } catch (e) {
                 console.log('Media Session metadata 설정 불가:', e);
@@ -413,9 +2272,11 @@
     }
 
     // 오디오 이벤트 바인딩
-    audioEl.onended = () => { playAdjacent(1); };
-    audioEl.ontimeupdate = () => { updatePlayerProgress(); };
+    audioEl.onended = () => { if(currentEpisode) { delete positions[currentEpisode.id]; writeSaved('elim.positions.v2',positions); } playAdjacent(1, true); };
+    audioEl.ontimeupdate = () => { updatePlayerProgress(); if(Date.now()-lastSavedAt>5000) savePosition(); updatePositionState(); };
     audioEl.onloadedmetadata = () => {
+        const saved=Number(positions[currentEpisode?.id]);
+        if(Number.isFinite(saved) && saved>0 && Number.isFinite(audioEl.duration) && saved<audioEl.duration-3) audioEl.currentTime=saved;
         updatePlayerProgress();
         if (currentEpisode) updateNowPlayingInfo(currentEpisode);
     };
@@ -428,7 +2289,9 @@
             try { navigator.mediaSession.playbackState = 'playing'; } catch (e) {}
         }
     };
+    audioEl.onerror = () => { isPlaying=false; syncPlayingUI(); showMessage("음원을 불러오지 못했습니다. 네트워크를 확인한 뒤 다시 재생해 주세요."); };
     audioEl.onpause = () => {
+        if(!audioEl.ended) savePosition();
         isPlaying = false;
         syncPlayingUI();
         if ('mediaSession' in navigator) {
@@ -436,7 +2299,7 @@
         }
     };
 
-    window.addEventListener('DOMContentLoaded', render);
+    window.addEventListener('DOMContentLoaded', () => render());
 
     function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
     function formatTime(totalSeconds) {
@@ -456,7 +2319,8 @@
         const durLabel = document.getElementById('duration-time-label');
         if (!slider || !curLabel || !durLabel) return;
         
-        const dur = audioEl.duration || 0;
+        const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : 0;
+        slider.disabled = dur <= 0;
         slider.max = dur || 100;
         slider.value = audioEl.currentTime || 0;
         curLabel.innerText = formatTime(audioEl.currentTime || 0);
@@ -464,7 +2328,8 @@
     }
 
     function onSeekInput(val) {
-        audioEl.currentTime = parseFloat(val);
+        if(!Number.isFinite(audioEl.duration) || audioEl.duration<=0) return;
+        audioEl.currentTime = Math.max(0,Math.min(audioEl.duration,Number(val)||0));
         updatePlayerProgress();
     }
 
@@ -478,10 +2343,10 @@
     function getFilteredSorted() {
         let items = listFor(currentTab).slice();
         if (searchKeyword.trim()) {
-            const kw = searchKeyword.trim().toLowerCase();
-            items = items.filter(ep => ep.title.toLowerCase().includes(kw) || String(ep.num).includes(kw));
+            const kw = searchKeyword.normalize('NFC').replace(/\s+/g,'').toLowerCase();
+            items = items.filter(ep => ep.title.normalize('NFC').replace(/\s+/g,'').toLowerCase().includes(kw) || String(ep.num).includes(kw));
         }
-        items.sort((a, b) => sortAscending ? a.num - b.num : b.num - a.num);
+        items.sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
         return items;
     }
 
@@ -503,6 +2368,7 @@
     function openPlayer(tab, id) {
         const ep = listFor(tab).find(e => e.id === id);
         if (!ep) return;
+        if(currentEpisode && currentEpisode.id!==ep.id && !audioEl.ended) savePosition();
         currentEpisode = ep;
         currentEpisodeTab = tab;
         updateNowPlayingInfo(ep);
@@ -553,7 +2419,8 @@
                         </span>
                         <span class="text-xs text-slate-400">${formatDateKo(latest.date)}</span>
                     </div>
-                    <h2 class="text-lg font-bold mb-1 leading-snug text-slate-900">${latest.title}</h2>
+                    ${thumbnail(latest, 'cover-large mb-4', false)}
+                    <h2 class="text-lg font-bold mb-1 leading-snug text-slate-900">${escapeHtml(latest.title)}</h2>
                     <div class="flex items-center space-x-2 mt-3">
                         <div class="w-8 h-8 rounded-full bg-blue-950 text-white flex items-center justify-center text-xs shadow-sm">
                             <i class="fa-solid fa-play ml-0.5"></i>
@@ -566,7 +2433,7 @@
                 <div class="space-y-2">
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input id="search-input" type="text" placeholder="제목이나 회차 번호로 검색해 보세요" value="${searchKeyword}"
+                        <input id="search-input" aria-label="제목, 회차, 목사님 검색" type="text" placeholder="제목 · 회차 · 목사님 검색" value="${escapeHtml(searchKeyword)}"
                             class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-900 focus:bg-white shadow-sm" />
                     </div>
                     <div class="flex justify-end space-x-3 text-xs font-semibold">
@@ -578,7 +2445,7 @@
                 <!-- LIST -->
                 <div>
                     <h3 class="font-bold text-sm text-slate-700 mb-3 flex items-center">
-                        <i class="fa-solid fa-list-ul text-blue-950 mr-2"></i>${tabLabel(currentTab)} 전체 (${listFor(currentTab).length}개)
+                        <i class="fa-solid fa-list-ul text-blue-950 mr-2"></i>${tabLabel(currentTab)} 전체 (${items.length} / ${listFor(currentTab).length}개)
                     </h3>
                     <div class="space-y-2.5">
                         ${items.length === 0 ? `<p class="text-center text-slate-400 text-sm py-10">검색 결과가 없습니다 🙇</p>` :
@@ -587,11 +2454,9 @@
                             return `
                                 <div onclick="openPlayer('${currentTab}','${ep.id}')" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer transition-all group">
                                     <div class="flex items-center space-x-3 min-w-0">
-                                        <div class="w-11 h-11 rounded-lg bg-blue-950 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold shadow-sm">
-                                            ${String(ep.num).includes('.') ? '번외' : ep.num}
-                                        </div>
+                                        ${thumbnail(ep, 'cover-small')}
                                         <div class="min-w-0">
-                                            <h4 class="font-semibold text-sm text-slate-800 truncate">${ep.title}</h4>
+                                            <h4 class="font-semibold text-sm text-slate-800 truncate">${escapeHtml(ep.title)}</h4>
                                             <p class="text-xs text-slate-500 truncate">${formatDateKo(ep.date)}</p>
                                         </div>
                                     </div>
@@ -612,7 +2477,9 @@
     function attachHomeEvents() {
         const input = document.getElementById('search-input');
         if (input) {
+            input.addEventListener('compositionend',()=>input.dispatchEvent(new Event('input')));
             input.addEventListener('input', (e) => {
+                if(e.isComposing) return;
                 searchKeyword = e.target.value;
                 const cursorPos = e.target.selectionStart;
                 render();
@@ -643,28 +2510,20 @@
                     </button>
                 </div>
 
-                <!-- 라디오 비주얼 카드 -->
-                <div class="w-full flex justify-center my-1">
-                    <div class="w-56 h-56 bg-blue-950 rounded-3xl p-6 shadow-2xl text-white relative overflow-hidden flex flex-col items-center justify-center border border-blue-900">
-                        <div class="w-12 h-12 rounded-full border-2 border-white/80 flex items-center justify-center mb-4 ${isPlaying ? 'animate-pulse' : ''}">
-                            <div class="w-4 h-4 rounded-full bg-white shadow-sm"></div>
-                        </div>
-                        <span class="text-[11px] font-semibold text-slate-300 tracking-widest mb-1">RADIO</span>
-                        <h3 class="text-lg font-bold tracking-tight text-white">ELIM</h3>
-                    </div>
-                </div>
-
+                <!-- 유튜브 원본 썸네일 -->
+                <div class="w-full my-1">${thumbnail(ep, 'cover-large', false)}</div>
+                ${ep.youtubeId ? `<a href="https://www.youtube.com/watch?v=${ep.youtubeId}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-900 underline">YouTube에서 원본 보기 ↗</a>` : `<p class="text-xs text-slate-500">일치하는 공개 영상의 썸네일을 확인 중입니다.</p>`}
                 <!-- 타이틀 및 날짜 정보 -->
                 <div class="text-center w-full px-2">
                     <p class="text-xs font-semibold text-slate-400 mb-1">${tabLabel(currentEpisodeTab)}</p>
-                    <h2 class="text-lg font-bold text-slate-900 mb-1 leading-snug px-2 line-clamp-2">${ep.title}</h2>
+                    <h2 class="text-lg font-bold text-slate-900 mb-1 leading-snug px-2">${escapeHtml(ep.title)}</h2>
                     <p class="text-xs text-slate-400 font-medium">${formatDateKo(ep.date)}</p>
                 </div>
 
                 <!-- PLAYBACK BAR & CONTROLS -->
                 <div class="w-full space-y-4 px-1 pb-2">
                     <div>
-                        <input id="progress-slider" type="range" min="0" max="100" value="0" step="0.1"
+                        <input id="progress-slider" aria-label="재생 위치" type="range" min="0" max="100" value="0" step="0.1"
                             oninput="onSeekInput(this.value)"
                             class="w-full h-1.5 rounded-lg cursor-pointer">
                         <div class="flex items-center justify-between mt-2 text-xs font-semibold text-slate-400">
@@ -695,7 +2554,12 @@
                     </div>
                 </div>
 
-                <div class="w-full pb-1"></div>
+                <div class="w-full flex items-center justify-center gap-3 pb-4">
+                    <label for="speed-select" class="text-sm text-slate-500">재생 속도</label>
+                    <select id="speed-select" onchange="setSpeed(Number(this.value))" class="p-2 rounded-xl bg-slate-100 text-sm">
+                        ${[0.75,1,1.25,1.5,1.75,2].map(s=>`<option value="${s}" ${s===currentSpeed?'selected':''}>${s}배</option>`).join('')}
+                    </select>
+                </div>
             </div>
         `;
     }
@@ -718,10 +2582,10 @@
                         ${favEps.map(ep => `
                             <div onclick="openPlayer('${ep.tab}','${ep.id}')" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer shadow-sm">
                                 <div class="flex items-center space-x-3 min-w-0">
-                                    <div class="w-11 h-11 rounded-lg bg-blue-950 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold shadow-sm">${String(ep.num).includes('.') ? '번외' : ep.num}</div>
+                                    ${thumbnail(ep, 'cover-small')}
                                     <div class="min-w-0">
                                         <span class="text-[10px] text-blue-900 font-semibold px-1.5 py-0.5 rounded bg-blue-50">${tabLabel(ep.tab)}</span>
-                                        <h4 class="font-semibold text-sm text-slate-800 truncate mt-0.5">${ep.title}</h4>
+                                        <h4 class="font-semibold text-sm text-slate-800 truncate mt-0.5">${escapeHtml(ep.title)}</h4>
                                         <p class="text-xs text-slate-500 truncate">${formatDateKo(ep.date)}</p>
                                     </div>
                                 </div>
@@ -738,46 +2602,28 @@
 
     // ---------------- Player logic ----------------
     function playEpisode(ep) {
-        // 중요: 오디오를 재생하기 전에 제목을 먼저 바꿔야
-        // iPhone 잠금화면이 "라디오 엘림" 대신 현재 회차명을 잡기 쉽다.
         updateNowPlayingInfo(ep);
-
-        if (audioEl.src !== ep.src) {
+        if (audioEl.getAttribute('src') !== ep.src) {
             audioEl.src = ep.src;
             audioEl.load();
         }
-
-        // src/load 뒤에도 한 번 더 적용
-        updateNowPlayingInfo(ep);
-
         audioEl.playbackRate = currentSpeed;
-        const p = audioEl.play();
-        if (p !== undefined) {
-            p.then(() => { 
-                updateNowPlayingInfo(ep);
-                isPlaying = true; 
-                syncPlayingUI();
-            }).catch((err) => { 
-                console.log("재생 오류 방어:", err);
-                isPlaying = false; 
-                syncPlayingUI(); 
-            });
+        safePlay();
+    }
+    async function safePlay() {
+        const request=++playRequest;
+        try {
+            if(audioEl.error && currentEpisode) { audioEl.src=currentEpisode.src; audioEl.load(); }
+            await audioEl.play();
+        } catch(error) {
+            if(request!==playRequest || error.name==='AbortError') return;
+            isPlaying=false; syncPlayingUI();
+            showMessage('재생을 시작하지 못했습니다. 재생 버튼을 다시 눌러 주세요.');
         }
     }
-
     function togglePlayPause() {
-        if (!currentEpisode) {
-            if (radioEpisodes.length) openPlayer('radio', radioEpisodes[0].id);
-            return;
-        }
-        if (audioEl.paused) { 
-            audioEl.play().catch(() => {}); 
-            isPlaying = true; 
-        } else { 
-            audioEl.pause(); 
-            isPlaying = false; 
-        }
-        syncPlayingUI();
+        if(!currentEpisode) { const list=listFor(currentTab); if(list.length) openPlayer(currentTab,list[0].id); return; }
+        if(audioEl.paused) safePlay(); else { ++playRequest; audioEl.pause(); }
     }
 
     function syncPlayingUI() {
@@ -791,35 +2637,41 @@
     }
 
     function skipSeconds(delta) {
-        if (!audioEl) return;
+        if (!audioEl || !Number.isFinite(audioEl.duration)) return;
         let newTime = audioEl.currentTime + delta;
         audioEl.currentTime = Math.max(0, Math.min(audioEl.duration || 0, newTime));
         updatePlayerProgress();
     }
 
     function setSpeed(s) {
+        if (![0.75,1,1.25,1.5,1.75,2].includes(s)) return;
         currentSpeed = s;
         audioEl.playbackRate = s;
+        writeSaved('elim.speed.v2',s); updatePositionState();
     }
 
-    function playAdjacent(delta) {
+    function playAdjacent(delta, auto = false) {
         if (!currentEpisode) return;
-        const list = listFor(currentEpisodeTab).slice().sort((a, b) => sortAscending ? a.num - b.num : b.num - a.num);
+        const list = listFor(currentEpisodeTab).slice().sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
         const idx = list.findIndex(e => e.id === currentEpisode.id);
         if (idx === -1) return;
-        const nextIdx = (idx + delta + list.length) % list.length;
+        const nextIdx = idx + delta;
+        if(nextIdx<0 || nextIdx>=list.length) { if(!auto) showMessage('마지막 회차입니다.'); return; }
         openPlayer(currentEpisodeTab, list[nextIdx].id);
     }
 
     function toggleFavorite(id) {
         favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
+        writeSaved('elim.favorites.v2',favorites);
         render();
     }
 
     function updateMiniPlayer() {
         const mini = document.getElementById('mini-player');
-        if (currentEpisode && (isPlaying || currentRoute !== 'player')) {
+        document.getElementById('app').classList.toggle('has-mini', !!currentEpisode && currentRoute!=='player');
+        if (currentEpisode && currentRoute !== 'player') {
             mini.classList.remove('hidden');
+            document.getElementById('mini-art').innerHTML=thumbnail(currentEpisode,'cover-mini',false);
             document.getElementById('mini-title').innerText = currentEpisode.title;
             document.getElementById('mini-date').innerText = formatDateKo(currentEpisode.date);
             document.querySelector('#mini-play-btn i').className = isPlaying ? 'fa-solid fa-pause text-sm' : 'fa-solid fa-play text-sm ml-0.5';
@@ -829,9 +2681,11 @@
     }
 
     function closeMiniPlayer() {
-        audioEl.pause();
+        savePosition(); ++playRequest; audioEl.pause();
+        audioEl.removeAttribute('src'); audioEl.load();
         isPlaying = false;
         currentEpisode = null;
+        if('mediaSession' in navigator) { navigator.mediaSession.metadata=null; navigator.mediaSession.playbackState='none'; }
         document.title = '라디오 엘림';
         updateMiniPlayer();
     }
@@ -842,7 +2696,7 @@
             navigator.mediaSession.setActionHandler('play', () => {
                 if (!currentEpisode) return;
                 updateNowPlayingInfo(currentEpisode);
-                audioEl.play().catch(() => {});
+                safePlay();
             });
             navigator.mediaSession.setActionHandler('pause', () => {
                 audioEl.pause();
@@ -863,6 +2717,51 @@
             console.log('Media Session 버튼 설정 불가:', e);
         }
     }
+
+    function escapeHtml(value) { return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function readSaved(key,fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+    function writeSaved(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch {} }
+    function thumbURL(ep) { return 'https://i.ytimg.com/vi/'+ep.youtubeId+'/hqdefault.jpg'; }
+    function placeholder(ep) {
+        const label=ep.id.startsWith('sermon')?'주일말씀':'RADIO ELIM';
+        return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" rx="20" fill="#172554"/><text x="320" y="155" text-anchor="middle" fill="#fff" font-size="36" font-family="sans-serif">${label}</text><text x="320" y="213" text-anchor="middle" fill="#cbd5e1" font-size="21" font-family="sans-serif">썸네일 준비 중</text></svg>`);
+    }
+    function thumbnail(ep,classes='',lazy=true) {
+        return `<img src="${escapeHtml(ep.youtubeId?thumbURL(ep):placeholder(ep))}" data-episode="${ep.id}" alt="${escapeHtml(ep.title)} 썸네일" class="cover ${classes}" width="480" height="270" loading="${lazy?'lazy':'eager'}" decoding="async" onerror="thumbnailFailed(this)">`;
+    }
+    function thumbnailFailed(img) {
+        img.onerror=null;
+        const ep=[...radioEpisodes,...sermonEpisodes].find(e=>e.id===img.dataset.episode);
+        if(ep) img.src=placeholder(ep);
+    }
+    function savePosition() {
+        if(!currentEpisode || audioEl.readyState<1 || audioEl.ended) return;
+        positions[currentEpisode.id]=audioEl.currentTime;
+        writeSaved('elim.positions.v2',positions); lastSavedAt=Date.now();
+    }
+    function updatePositionState() {
+        if(!navigator.mediaSession?.setPositionState || !Number.isFinite(audioEl.duration) || audioEl.duration<=0) return;
+        try { navigator.mediaSession.setPositionState({duration:audioEl.duration,playbackRate:audioEl.playbackRate,position:Math.min(audioEl.duration,Math.max(0,audioEl.currentTime))}); } catch {}
+    }
+    let messageTimer;
+    function showMessage(text) {
+        const el=document.getElementById('status-message'); el.textContent=text; el.hidden=false;
+        clearTimeout(messageTimer); messageTimer=setTimeout(()=>el.hidden=true,6000);
+    }
+    window.addEventListener('pagehide',savePosition);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden) savePosition();});
+    if('mediaSession' in navigator) {
+        try { navigator.mediaSession.setActionHandler('seekto',d=>{if(Number.isFinite(d.seekTime)) onSeekInput(d.seekTime);}); } catch {}
+    }
+    const originalRender=render;
+    render=function() { originalRender();
+        document.querySelectorAll('button:not([aria-label])').forEach(b=>{
+            const action=b.getAttribute('onclick')||'';
+            if(b.textContent.trim()) return;
+            b.setAttribute('aria-label',b.title || (action.includes('Favorite')?'즐겨찾기 전환':action.includes('togglePlay')?'재생 또는 일시정지':action.includes('closeMini')?'재생 종료':'목록으로 돌아가기'));
+        });
+    };
     </script>
+    <div id="status-message" role="status" aria-live="polite" hidden style="position:fixed;z-index:100;bottom:calc(150px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(90%,400px);padding:14px 18px;background:#172554;color:white;border-radius:14px;font-size:14px;box-shadow:0 6px 30px #0003"></div>
 </body>
 </html>
