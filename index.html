@@ -60,6 +60,9 @@
         .ambient-ribbon { position:absolute; width:200%; height:65%; left:0; bottom:0; fill:var(--wave); opacity:.16; animation:wave-drift 22s linear infinite; }
         .ambient .ribbon-two { fill:var(--wave-second); bottom:12%; opacity:.1; animation-duration:30s; animation-direction:reverse; }
         @keyframes wave-drift { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+        .ambient-ribbon { position:absolute; width:200%; height:65%; left:0; bottom:0; fill:var(--wave); opacity:.21; animation:wave-drift 18s ease-in-out infinite; }
+        .ambient .ribbon-two { fill:var(--wave-second); bottom:12%; opacity:.14; animation-duration:25s; animation-direction:reverse; }
+        @keyframes wave-drift { 0% { transform:translate3d(0,2px,0); } 50% { transform:translate3d(-25%,-5px,0); } 100% { transform:translate3d(-50%,2px,0); } }
         .section-banner { position:relative; overflow:hidden; border-radius:20px; background:var(--accent-deep); color:white; padding:20px; min-height:116px; isolation:isolate; }
         .section-banner .banner-copy { position:relative; z-index:1; }
         .section-banner h2 { font-size:23px; font-weight:800; letter-spacing:-.04em; }
@@ -95,8 +98,8 @@
         .section-banner svg { opacity:.15; animation-duration:28s; height:90px; bottom:-22px; }
         .section-banner svg:last-child { opacity:.1; animation-duration:38s; bottom:-38px; }
         .section-banner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 85% 0%,#ffffff2e,transparent 62%); pointer-events:none; }
-        .section-banner svg { opacity:.30; animation-duration:25s; height:102px; bottom:-17px; filter:saturate(1.15); }
-        .section-banner svg:last-child { opacity:.21; animation-duration:34s; bottom:-32px; }
+        .section-banner svg { opacity:.34; animation-duration:18s; height:106px; bottom:-15px; filter:saturate(1.2); }
+        .section-banner svg:last-child { opacity:.24; animation-duration:25s; bottom:-30px; }
         .section-banner h2 { font-size:22px; letter-spacing:-.025em; }
         .section-banner p { letter-spacing:.06em; font-size:10px; margin-top:7px; }
         .library-surface { background:#fff; border:1px solid #e4e8ee; border-radius:22px; padding:18px 16px 8px; box-shadow:0 3px 12px #0f172a04; }
@@ -121,6 +124,14 @@
         .transport-panel .speed-row { margin-top:20px; padding:16px 0 0; border-top:1px solid #eef1f4; display:flex; align-items:center; justify-content:space-between; gap:12px; }
         #app .transport-panel .bg-blue-950 { box-shadow:0 5px 12px #0f172a18; }
         #mini-player { background:white; border-top:1px solid #dfe5ec; }
+        .mini-equalizer { width:18px; height:18px; display:flex; align-items:center; justify-content:center; gap:2px; color:var(--accent); opacity:.42; transition:opacity .2s; }
+        .mini-equalizer span { width:2.5px; height:14px; border-radius:99px; background:currentColor; transform:scaleY(.22); transform-origin:center; animation:mini-sound 780ms ease-in-out infinite; animation-play-state:paused; }
+        .mini-equalizer span:nth-child(2) { animation-delay:-520ms; }
+        .mini-equalizer span:nth-child(3) { animation-delay:-260ms; }
+        .mini-equalizer span:nth-child(4) { animation-delay:-650ms; }
+        .mini-equalizer.is-active { opacity:1; }
+        .mini-equalizer.is-active span { animation-play-state:running; }
+        @keyframes mini-sound { 0%,100% { transform:scaleY(.22); } 45% { transform:scaleY(1); } 70% { transform:scaleY(.48); } }
         @media(max-width:360px) { #player-card { padding:16px 12px 20px; } .transport-panel,.episode-information { padding:16px; } .episode-information h2 { font-size:17px; } }
         @media(prefers-reduced-motion:reduce) { .section-banner svg { animation:none!important; } }
     </style>
@@ -154,6 +165,7 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2 flex-shrink-0">
+                <div id="mini-equalizer" class="mini-equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
                 <button onclick="event.stopPropagation(); togglePlayPause()" aria-label="재생 또는 일시정지" id="mini-play-btn" class="w-10 h-10 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-md transition-transform active:scale-95">
                     <i class="fa-solid fa-pause text-sm"></i>
                 </button>
@@ -2720,6 +2732,7 @@
             document.getElementById('mini-title').innerText = currentEpisode.title;
             document.getElementById('mini-date').innerText = tabLabel(currentEpisodeTab)+' · '+formatDateKo(currentEpisode.date);
             document.querySelector('#mini-play-btn i').className = isPlaying ? 'fa-solid fa-pause text-sm' : 'fa-solid fa-play text-sm ml-0.5';
+            document.getElementById('mini-equalizer').classList.toggle('is-active',isPlaying);
         } else {
             mini.classList.add('hidden');
         }
