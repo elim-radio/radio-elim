@@ -4,19 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>라디오 엘림</title>
-
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="라디오 엘림" />
     <link rel="icon" sizes="192x192" href="elim_logo.png" />
     <link rel="apple-touch-icon" href="elim_logo.png" />
-
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Pretendard (한글 최적화 폰트) -->
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
-
     <style>
         html { height: 100%; }
         body { margin:0; height:100vh; height:100dvh; overflow:hidden; }
@@ -47,7 +44,6 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #eef2f7; }
         ::-webkit-scrollbar-thumb { background: #b9c6d6; border-radius: 3px; }
-
         input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
         input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: #e2e8f0; }
         input[type="range"]::-webkit-slider-thumb {
@@ -55,7 +51,6 @@
             width: 16px; height: 16px; border-radius: 50%;
             background: #1e3a8a; margin-top: -5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-
         /* Section palette: blue for Elim, emerald for Sunday sermons. */
         [data-theme="radio"] { --accent:#1e40af; --accent-deep:#172554; --tint:#edf4ff; --wave:#60a5fa; --wave-second:#818cf8; --line:#c7d9f7; }
         [data-theme="sermon"] { --accent:#047857; --accent-deep:#064e3b; --tint:#edf9f3; --wave:#34d399; --wave-second:#5eead4; --line:#b9e6d4; }
@@ -91,14 +86,17 @@
         .episode-title { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.5; overflow-wrap:anywhere; }
         #status-message { bottom:calc(var(--dock-height,80px) + 12px)!important; }
         @media(prefers-reduced-motion:reduce) { .ambient-ribbon,.section-banner svg { animation:none!important; } }
-
         /* V3: stable reading surfaces, restrained motion, clearly grouped controls. */
         #app #church-name { color:#000; }
         #content-shell { background:linear-gradient(180deg,var(--tint) 0%,#f4f6f8 340px); }
+        #content-shell { background:linear-gradient(180deg,var(--tint) 0%,var(--tint) 220px,#f4f6f8 520px); }
         .section-banner { min-height:108px; border-radius:22px; padding:22px; background:linear-gradient(120deg,var(--accent-deep),var(--accent)); border:1px solid #ffffff20; box-shadow:inset 0 1px 0 #ffffff25,0 6px 18px #0f172a0a; }
         .section-banner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 85% 0%,#ffffff20,transparent 65%); pointer-events:none; }
         .section-banner svg { opacity:.15; animation-duration:28s; height:90px; bottom:-22px; }
         .section-banner svg:last-child { opacity:.1; animation-duration:38s; bottom:-38px; }
+        .section-banner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 85% 0%,#ffffff2e,transparent 62%); pointer-events:none; }
+        .section-banner svg { opacity:.30; animation-duration:25s; height:102px; bottom:-17px; filter:saturate(1.15); }
+        .section-banner svg:last-child { opacity:.21; animation-duration:34s; bottom:-32px; }
         .section-banner h2 { font-size:22px; letter-spacing:-.025em; }
         .section-banner p { letter-spacing:.06em; font-size:10px; margin-top:7px; }
         .library-surface { background:#fff; border:1px solid #e4e8ee; border-radius:22px; padding:18px 16px 8px; box-shadow:0 3px 12px #0f172a04; }
@@ -128,9 +126,7 @@
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 h-full flex flex-col antialiased selection:bg-blue-900 selection:text-white">
-
     <div id="app" data-theme="radio" class="flex-1 flex flex-col max-w-md mx-auto w-full bg-white shadow-2xl relative overflow-hidden border-x border-slate-200">
-
         <!-- HEADER (박스 제거 및 ELIM 로고 + 텍스트 복구) -->
         <header class="px-5 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white/90 backdrop-blur-md sticky top-0 z-30">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="goElim()">
@@ -143,13 +139,11 @@
                 </div>
             </div>
         </header>
-
         <!-- MAIN CONTENT -->
         <div id="content-shell">
             <main id="main-content" class="flex-1 overflow-y-auto"></main>
         </div>
         <footer id="bottom-dock">
-
         <!-- MINI PLAYER -->
         <div id="mini-player" data-theme="radio" class="hidden bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
             <div class="flex items-center space-x-3 cursor-pointer flex-1 mr-2 min-w-0" onclick="openPlayerFromMini()">
@@ -168,7 +162,6 @@
                 </button>
             </div>
         </div>
-
         <!-- BOTTOM NAV -->
         <nav id="bottom-nav" class=" bg-white/95 backdrop-blur-lg border-t border-slate-200 px-2 py-2.5 flex justify-around items-center z-20">
             <button onclick="goElim()" id="nav-elim" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
@@ -186,7 +179,6 @@
         </nav>
         </footer>
     </div>
-
     <script>
     /* ============================================================
        라디오 엘림 전체 회차 데이터
@@ -2041,7 +2033,6 @@
     "youtubeId": "WcvTzxt568Q"
   }
 ];
-
     const sermonEpisodes = [
   {
     "id": "sermon31",
@@ -2292,7 +2283,6 @@
     "youtubeId": ""
   }
 ];
-
     // ---------------- State ----------------
     let currentRoute = 'home';
     let currentTab = 'radio'; // 'radio' | 'sermon'
@@ -2314,27 +2304,22 @@
     let audioEl = window.audioEl || new Audio();
     window.audioEl = audioEl;
     audioEl.preload="metadata";
-
     // 잠금화면 / 제어센터에 현재 회차명을 표시
     function decodeHtml(text) {
         const textarea = document.createElement('textarea');
         textarea.innerHTML = text || '';
         return textarea.value;
     }
-
     function updateNowPlayingInfo(ep) {
         if (!ep) return;
-
         const episodeTitle = ep.title;
         const sectionName = currentEpisodeTab === 'radio' ? '라디오 엘림' : '주일말씀';
-
         // iOS WKWebView는 웹페이지 제목을 잠금화면 재생 제목으로 사용하는 경우가 있어
         // 재생 직전에 현재 회차명으로 페이지 제목과 audio title을 모두 갱신한다.
         document.title = episodeTitle;
         audioEl.title = episodeTitle;
         audioEl.setAttribute('title', episodeTitle);
         audioEl.setAttribute('aria-label', episodeTitle);
-
         // Media Session API를 지원하는 환경에서는 더 자세한 메타데이터도 함께 전달한다.
         if ('mediaSession' in navigator && 'MediaMetadata' in window) {
             try {
@@ -2349,7 +2334,6 @@
             }
         }
     }
-
     // 오디오 이벤트 바인딩
     audioEl.onended = () => { if(currentEpisode) { delete positions[currentEpisode.id]; writeSaved('elim.positions.v2',positions); } playAdjacent(1, true); };
     audioEl.ontimeupdate = () => { updatePlayerProgress(); if(Date.now()-lastSavedAt>5000) savePosition(); updatePositionState(); };
@@ -2377,9 +2361,7 @@
             try { navigator.mediaSession.playbackState = 'paused'; } catch (e) {}
         }
     };
-
     window.addEventListener('DOMContentLoaded', () => render());
-
     function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
     function formatTime(totalSeconds) {
         if (!isFinite(totalSeconds) || totalSeconds < 0) totalSeconds = 0;
@@ -2391,7 +2373,6 @@
         }
         return `${pad2(m)}:${pad2(s)}`;
     }
-
     function updatePlayerProgress() {
         const slider = document.getElementById('progress-slider');
         const curLabel = document.getElementById('current-time-label');
@@ -2405,20 +2386,17 @@
         curLabel.innerText = formatTime(audioEl.currentTime || 0);
         durLabel.innerText = formatTime(dur);
     }
-
     function onSeekInput(val) {
         if(!Number.isFinite(audioEl.duration) || audioEl.duration<=0) return;
         audioEl.currentTime = Math.max(0,Math.min(audioEl.duration,Number(val)||0));
         updatePlayerProgress();
     }
-
     function listFor(tab) { return tab === 'radio' ? radioEpisodes : sermonEpisodes; }
     function tabLabel(tab) { return tab === 'radio' ? '라디오 엘림' : '주일말씀'; }
     function formatDateKo(d) {
         const [y, m, day] = d.split('-');
         return `${y}.${m}.${day}`;
     }
-
     function getFilteredSorted() {
         let items = listFor(currentTab).slice();
         if (searchKeyword.trim()) {
@@ -2428,23 +2406,19 @@
         items.sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
         return items;
     }
-
     // ---------------- Navigation ----------------
     function navigate(route) { 
         currentRoute = route; 
         render();
         document.getElementById('main-content').scrollTop=0; 
     }
-
     function goElim() { currentTab = 'radio'; searchKeyword = ''; navigate('home'); }
     function goSermon() { currentTab = 'sermon'; searchKeyword = ''; navigate('home'); }
     function goFavorites() { navigate('favorites'); }
-
     function backToList() { 
         currentTab = currentEpisodeTab; 
         navigate('home'); 
     }
-
     function openPlayer(tab, id) {
         const ep = listFor(tab).find(e => e.id === id);
         if (!ep) return;
@@ -2456,7 +2430,6 @@
         playEpisode(ep);
     }
     function openPlayerFromMini() { if (currentEpisode) navigate('player'); }
-
     // ---------------- Render ----------------
     function render() {
         updateTheme();
@@ -2471,7 +2444,6 @@
             updatePlayerProgress();
         }
     }
-
     function updateNavStyles() {
         const relevantTab = currentRoute === 'player' ? currentEpisodeTab : currentTab;
         const activeId =
@@ -2485,7 +2457,6 @@
             }
         });
     }
-
     function updateTheme() {
         const theme=currentRoute==='favorites' ? 'favorites' : currentRoute==='player' ? currentEpisodeTab : currentTab;
         document.getElementById('app').dataset.theme=theme;
@@ -2522,7 +2493,6 @@
                         <span class="text-xs font-semibold text-blue-950">지금 바로 듣기</span>
                     </div>
                 </div>
-
                 <!-- SEARCH & SORT -->
                 <div class="space-y-2">
                     <div class="relative">
@@ -2535,7 +2505,6 @@
                         <button onclick="setSort(true)" class="${sortAscending ? 'text-blue-950 underline font-bold' : 'text-slate-400'}">오래된 순</button>
                     </div>
                 </div>
-
                 <!-- LIST -->
                 <div class="library-surface">
                     <h3 class="font-bold text-sm text-slate-700 mb-3 flex items-center">
@@ -2567,7 +2536,6 @@
             </div>
         `;
     }
-
     function attachHomeEvents() {
         const input = document.getElementById('search-input');
         if (input) {
@@ -2582,9 +2550,7 @@
             });
         }
     }
-
     function setSort(asc) { sortAscending = asc; render(); }
-
     function renderPlayerView() {
         if (!currentEpisode) return '';
         const ep=currentEpisode;
@@ -2618,7 +2584,6 @@
                             <span id="duration-time-label">00:00</span>
                         </div>
                     </div>
-
                     <!-- 재생 컨트롤 버튼 레이아웃 -->
                     <div class="flex items-center justify-around px-2">
                         <button onclick="skipSeconds(-15)" class="relative text-slate-500 hover:text-slate-800 p-2 flex flex-col items-center" title="15초 뒤로">
@@ -2640,7 +2605,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="speed-row">
                     <label for="speed-select" class="text-sm text-slate-500">재생 속도</label>
                     <select id="speed-select" onchange="setSpeed(Number(this.value))" class="p-2 rounded-xl bg-slate-100 text-sm">
@@ -2651,7 +2615,6 @@
             </div>
         `;
     }
-
     function renderFavoritesView() {
         const all = [...radioEpisodes.map(e => ({ ...e, tab: 'radio' })), ...sermonEpisodes.map(e => ({ ...e, tab: 'sermon' }))];
         const favEps = all.filter(e => favorites.includes(e.id));
@@ -2687,7 +2650,6 @@
             </div>
         `;
     }
-
     // ---------------- Player logic ----------------
     function playEpisode(ep) {
         updateNowPlayingInfo(ep);
@@ -2713,7 +2675,6 @@
         if(!currentEpisode) { const list=listFor(currentTab); if(list.length) openPlayer(currentTab,list[0].id); return; }
         if(audioEl.paused) safePlay(); else { ++playRequest; audioEl.pause(); }
     }
-
     function syncPlayingUI() {
         updateMiniPlayer();
         if (currentRoute === 'player') {
@@ -2723,21 +2684,18 @@
             }
         }
     }
-
     function skipSeconds(delta) {
         if (!audioEl || !Number.isFinite(audioEl.duration)) return;
         let newTime = audioEl.currentTime + delta;
         audioEl.currentTime = Math.max(0, Math.min(audioEl.duration || 0, newTime));
         updatePlayerProgress();
     }
-
     function setSpeed(s) {
         if (![0.75,1,1.25,1.5,1.75,2].includes(s)) return;
         currentSpeed = s;
         audioEl.playbackRate = s;
         writeSaved('elim.speed.v2',s); updatePositionState();
     }
-
     function playAdjacent(delta, auto = false) {
         if (!currentEpisode) return;
         const list = listFor(currentEpisodeTab).slice().sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
@@ -2747,13 +2705,11 @@
         if(nextIdx<0 || nextIdx>=list.length) { if(!auto) showMessage('마지막 회차입니다.'); return; }
         openPlayer(currentEpisodeTab, list[nextIdx].id);
     }
-
     function toggleFavorite(id) {
         favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
         writeSaved('elim.favorites.v2',favorites);
         render();
     }
-
     function updateMiniPlayer() {
         const mini = document.getElementById('mini-player');
         document.getElementById('app').classList.toggle('has-mini', !!currentEpisode && currentRoute!=='player');
@@ -2768,7 +2724,6 @@
             mini.classList.add('hidden');
         }
     }
-
     function closeMiniPlayer() {
         savePosition(); ++playRequest; audioEl.pause();
         audioEl.removeAttribute('src'); audioEl.load();
@@ -2778,7 +2733,6 @@
         document.title = '라디오 엘림';
         updateMiniPlayer();
     }
-
     // 잠금화면 / 제어센터 버튼 제어
     if ('mediaSession' in navigator) {
         try {
@@ -2806,7 +2760,6 @@
             console.log('Media Session 버튼 설정 불가:', e);
         }
     }
-
     function escapeHtml(value) { return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     function readSaved(key,fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
     function writeSaved(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch {} }
@@ -2850,7 +2803,6 @@
             b.setAttribute('aria-label',b.title || (action.includes('Favorite')?'즐겨찾기 전환':action.includes('togglePlay')?'재생 또는 일시정지':action.includes('closeMini')?'재생 종료':'목록으로 돌아가기'));
         });
     };
-
     // Keep one-finger scrolling and seeking; suppress page pinch/double-tap zoom.
     for (const name of ['gesturestart','gesturechange','gestureend']) {
         document.addEventListener(name, e => e.preventDefault(), {passive:false});
@@ -2869,4 +2821,5 @@
     </script>
     <div id="status-message" role="status" aria-live="polite" hidden style="position:fixed;z-index:100;bottom:calc(150px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(90%,400px);padding:14px 18px;background:#172554;color:white;border-radius:14px;font-size:14px;box-shadow:0 6px 30px #0003"></div>
 </body>
+</html>
 </html>
