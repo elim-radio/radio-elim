@@ -1,86 +1,201 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="h-full">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#173e36">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="생명의말씀선교회 광주교회 라디오 엘림 · 주일말씀">
-<title>라디오 엘림</title>
-<link rel="icon" href="NowPlayingLogo.png">
-<link rel="apple-touch-icon" href="NowPlayingLogo.png">
-<style>
-:root{color-scheme:light;--bg:#f5f3ed;--paper:#fffefb;--ink:#202e29;--muted:#67736d;--line:#dedfd5;--soft:#eceee6;--brand:#173e36;--brand-ink:#fffef5;--gold:#b7a070;--accent:#315c4d;--tint:#e7ede5;--danger:#9d413e;--text-scale:1;--dock:76px}
-*{box-sizing:border-box}html{height:100%;background:var(--bg)}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:calc(15px * var(--text-scale));-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button,a,input,select{touch-action:manipulation}button{color:inherit;cursor:pointer}button{border:0;background:none}button:disabled{opacity:.4;cursor:default}a{color:inherit;text-underline-offset:4px}button,a,input,select{ -webkit-tap-highlight-color:transparent }button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button:hover:not(:disabled){filter:brightness(.96)}button:active:not(:disabled){transform:translateY(1px)}button svg{pointer-events:none}svg.icon{width:21px;height:21px;display:block;flex:none;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}h1,h2,h3,p{margin:0}img{max-width:100%;display:block}button p,button span{pointer-events:none}[hidden]{display:none!important}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip{position:fixed;top:-80px;left:12px;z-index:300;background:var(--paper);padding:12px}.skip:focus{top:8px}.muted{color:var(--muted)}.icon-button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;flex:none}.icon-button.selected{color:var(--accent);background:var(--tint)}.outline-button{border:1px solid var(--line);border-radius:10px;min-height:44px;padding:10px 15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--paper);font-size:.85em;font-weight:600}.primary{background:var(--brand);color:var(--brand-ink);border:1px solid transparent;min-height:46px;border-radius:9px;padding:12px 19px;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-weight:650;font-size:.9em}.primary .icon{width:17px;height:17px}.text-button{font-size:.82em;min-height:44px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:5px}.text-button .icon{width:16px;height:16px}.rule{border:0;border-top:1px solid var(--line);margin:22px 0}.empty{text-align:center;padding:48px 20px;color:var(--muted);line-height:1.9;font-size:.9em}.empty .icon{margin:0 auto 16px;width:32px;height:32px}.empty strong{display:block;color:var(--ink);font-weight:600;margin-bottom:5px}
-#app{height:100dvh;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}.header{flex:none;border-bottom:1px solid var(--line);background:var(--paper);padding-top:env(safe-area-inset-top,0px);z-index:20}.header-inner{height:83px;max-width:1120px;margin:auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand-lockup{display:flex;align-items:center;text-align:left;gap:19px;padding:0;min-height:48px}.brand-name{font-size:17px;font-weight:750;letter-spacing:-.04em;display:block}.church{display:block;font-size:10px;letter-spacing:.025em;color:var(--muted);margin-top:5px}.header-right{display:flex;align-items:center;gap:17px}.header-right .icon-button{border:1px solid var(--line);width:39px;height:39px}.offline{background:#ede1c3;color:#533f1e;text-align:center;padding:8px 16px;font-size:12px;flex:none}
-#main-content{overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent;outline:none}.page{max-width:1120px;margin:auto;padding:34px 32px 40px}.art{position:relative;overflow:hidden;aspect-ratio:16/9;border-radius:7px;background:#24483e;flex:none;isolation:isolate}.art img{width:100%;height:100%;object-fit:cover}.art-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#e8e3d6;background:#24483e;z-index:-1;border:1px solid #ffffff10}.art-fallback:before{content:'';width:26px;height:1px;background:#b7a070;margin-bottom:10px}.art-fallback strong{font:19px Georgia,"AppleMyungjo",serif;letter-spacing:.04em}.art-fallback span{font-size:8px;letter-spacing:.17em;margin-top:9px;color:#c0cabd}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 17px}.section-heading h2{font-size:1.2em;letter-spacing:-.045em}.section-heading p{font-size:11px;color:var(--muted);margin-top:6px}.count{font-size:12px;font-weight:400;color:var(--muted);margin-left:9px}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:13px}.search-box{position:relative;flex:1;min-width:0}.search-box>.icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px}.search-box input{width:100%;height:48px;padding:10px 45px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font-size:16px}.search-box .icon-button{position:absolute;right:3px;top:2px;width:42px;height:42px}.search-box .icon-button .icon{width:15px}.select{min-height:46px;max-width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 29px 9px 12px;background:var(--paper);color:var(--ink);font-size:13px}.chip{padding:8px 14px;min-height:39px;font-size:12px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--muted)}.chip[aria-pressed=true]{background:var(--tint);border-color:var(--accent);color:var(--accent);font-weight:650}.catalog{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}.episode-grid{display:grid;grid-template-columns:1fr 1fr}.episode-row{display:flex;min-width:0;align-items:center;border-bottom:1px solid var(--line);padding:17px 17px 17px 20px;gap:6px}.episode-row:nth-child(odd){border-right:1px solid var(--line)}.episode-open{display:flex;align-items:center;gap:15px;flex:1;min-width:0;padding:0;text-align:left;min-height:64px}.episode-open .art{width:99px}.episode-copy{min-width:0;flex:1}.episode-title{font-size:.89em;font-weight:600;line-height:1.6;letter-spacing:-.025em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}.episode-meta{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);margin-top:6px;flex-wrap:wrap}.episode-meta .saved-pos{color:var(--accent)}.favorite{width:38px;height:44px;color:var(--muted);flex:none}.favorite .icon{width:19px;height:19px}.favorite[aria-pressed=true]{color:var(--accent)}.favorite[aria-pressed=true] .icon{fill:var(--tint)}.is-current .episode-title{color:var(--accent)}.is-current{background:var(--tint)}.progress-track{height:2px;background:var(--line);margin-top:9px;border-radius:2px;overflow:hidden}.progress-track span{height:100%;display:block;background:var(--accent);width:var(--progress,0%)}.load-more{padding:16px;border-top:0;text-align:center}.load-more button{min-width:180px}
-#bottom-dock{flex:none;z-index:25;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}#bottom-nav{max-width:620px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr);padding:7px 12px 8px;gap:15px}.nav-item{display:flex;align-items:center;justify-content:center;gap:10px;min-height:51px;border-radius:8px;color:var(--muted);font-size:12px;position:relative}.nav-item[aria-current=page]{color:var(--accent);background:var(--tint);font-weight:700}.nav-item .icon{width:20px;height:20px}.mini{max-width:1056px;margin:auto;display:flex;align-items:center;gap:9px;padding:11px 16px;position:relative;border-bottom:1px solid var(--line)}.mini-open{display:flex;align-items:center;gap:12px;text-align:left;flex:1;min-width:0;padding:0}.mini .art{width:67px;border-radius:5px}.mini-copy{min-width:0}.mini-copy strong{font-size:.84em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:650px;font-weight:600}.mini-copy small{font-size:10px;color:var(--muted);display:block;margin-top:5px}.mini .play-toggle{width:42px;height:42px;background:var(--brand);color:var(--brand-ink);border-radius:50%}.mini-line{position:absolute;height:2px;left:0;bottom:-1px;width:var(--progress,0%);background:var(--accent)}.mini .close-mini{width:35px}.mini .close-mini .icon{width:16px}
-.player-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:23px}.player-top .icon-button{border:1px solid var(--line);background:var(--paper)}.player-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}.player-art{background:var(--brand);padding:18px;border-radius:13px}.player-art .art{border-radius:6px;aspect-ratio:16/10}.player-art .art img{object-fit:contain;background:#14352e}.player-art .art-fallback{z-index:0}.player-art img{position:relative;z-index:1}.player-info{padding:24px 2px 0}.player-title{font-size:1.4em;line-height:1.65;letter-spacing:-.045em;margin:10px 0 13px;overflow-wrap:anywhere}.player-info .meta{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px}.player-info a{font-size:11px}.player-controls{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:25px}.playing-status{font-size:11px;min-height:24px;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:13px}.status-dot{width:5px;height:5px;background:currentColor;border-radius:50%;display:block}.seek{width:100%;height:26px;padding:0;background:transparent;cursor:pointer;accent-color:var(--accent);--progress:0%;appearance:none;-webkit-appearance:none}.seek::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--accent) var(--progress),var(--line) var(--progress));border-radius:4px}.seek::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;margin-top:-6.5px;border-radius:50%;background:var(--accent);border:3px solid var(--paper);box-shadow:0 0 0 1px var(--accent)}.seek::-moz-range-track{height:4px;background:var(--line)}.seek::-moz-range-progress{height:4px;background:var(--accent)}.seek::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--paper)}.time-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:0}.transport{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:23px 0 25px}.transport .play-toggle{width:67px;height:67px;background:var(--brand);color:var(--brand-ink)}.transport .play-toggle .icon{width:27px;height:27px}.skip-seconds{display:flex;flex-direction:column;align-items:center;justify-content:center;width:44px;height:48px;color:var(--muted);gap:1px;font-size:9px}.skip-seconds .icon{width:21px}.tools-row{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;gap:7px}.player-tool{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:10px;color:var(--muted)}.player-tool strong{font-size:15px;color:var(--ink);font-weight:600}.player-tool[aria-pressed=true]{color:var(--accent)}.player-tool .icon{color:var(--ink);width:19px;height:19px}.autoplay-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:20px;font-size:12px}.switch{width:40px;height:24px;border-radius:20px;position:relative;background:var(--line);flex:none;min-height:24px}.switch:after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--paper);border-radius:50%;transition:transform .15s}.switch[aria-checked=true]{background:var(--accent)}.switch[aria-checked=true]:after{transform:translateX(16px)}.switch:before{content:'';position:absolute;inset:-10px 0}
-dialog{border:1px solid var(--line);border-radius:17px;background:var(--paper);color:var(--ink);padding:0;width:min(440px,calc(100% - 32px));max-height:calc(90dvh - env(safe-area-inset-top,0px));box-shadow:0 24px 90px #001c2340}dialog::backdrop{background:#10281fcc;opacity:.7}.dialog-head{padding:21px 22px 13px;display:flex;justify-content:space-between;align-items:center}.dialog-head h2{font-size:18px}.dialog-head .icon-button{width:35px;height:35px}.dialog-body{padding:0 24px 25px}.dialog-body p{font-size:12px;line-height:1.9;color:var(--muted)}.setting{padding:18px 0;border-bottom:1px solid var(--line)}.setting:last-child{border-bottom:0}.setting-label{font-size:13px;font-weight:650;display:block;margin-bottom:12px}.segments{display:flex;gap:7px}.segments button{flex:1}.dialog-body .primary{width:100%;margin-top:18px}.sleep-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.sleep-options button{min-height:51px}.sleep-options .active{background:var(--tint);border-color:var(--accent);color:var(--accent)}.toast{position:fixed;left:50%;bottom:calc(var(--dock) + 15px);transform:translateX(-50%);z-index:200;max-width:460px;width:calc(100% - 40px);padding:14px 19px;border-radius:10px;background:var(--brand);color:var(--brand-ink);font-size:13px;line-height:1.7;box-shadow:0 5px 24px #0002;pointer-events:none}
-html[data-mode=dark]{color-scheme:dark;--bg:#151e1a;--paper:#1d2923;--ink:#e6e8df;--muted:#a6b3a7;--line:#37443a;--soft:#2c382e;--brand:#254f40;--brand-ink:#f5f3e8;--accent:#b6c6a6;--tint:#303e31;--gold:#c5af83;--danger:#e5a19a}html[data-mode=dark] .primary,html[data-mode=dark] .play-toggle{background:#b8c8a7;color:#1b3024}
-@media(min-width:850px){.episode-row:nth-last-child(-n+2){border-bottom:0}.page.player-page{max-width:1010px;padding-top:24px}}
-@media(max-width:849px){.header-inner{height:75px;padding:0 22px}.page{padding:24px 22px 30px}.episode-grid{grid-template-columns:1fr}.episode-row:nth-child(odd){border-right:0}.episode-row:last-child{border-bottom:0}.player-grid{gap:23px}.player-controls{padding:20px}.mini-copy strong{max-width:calc(100vw - 230px)}}
-@media(max-width:600px){.header-inner{height:71px;padding:0 20px}.brand-lockup{gap:14px}.brand-name{font-size:16px}.church{font-size:9px}.header-right{gap:0}.header-right .icon-button{width:35px;height:35px}.header-right .icon{width:18px}.page{padding:22px 19px 30px}.section-heading{margin:25px 0 14px}.section-heading h2{font-size:1.12em}.toolbar{gap:7px;margin-bottom:11px}.toolbar>.select{width:101px;font-size:12px;padding-left:9px;padding-right:8px}.search-box input{height:46px;padding-left:38px;padding-right:38px;font-size:16px}.search-box>.icon{left:12px;width:16px}.search-box .icon-button{width:35px}.chip{padding:7px 12px;font-size:11px;min-height:37px}.episode-row{padding:15px 10px 15px 13px;gap:3px}.episode-open{gap:12px}.episode-open .art{width:86px}.episode-title{font-size:.87em;line-height:1.55}.episode-meta{font-size:10px;gap:5px}.favorite{width:34px}.favorite .icon{width:17px}.nav-item{flex-direction:column;gap:5px;min-height:48px;font-size:10px}.nav-item .icon{width:21px;height:21px}#bottom-nav{gap:8px;padding:6px 19px 7px}.mini{padding:10px 14px;gap:5px}.mini .art{width:54px}.mini-open{gap:10px}.mini-copy strong{max-width:calc(100vw - 185px);font-size:12px}.mini-copy small{font-size:9px}.mini .play-toggle{width:37px;height:37px}.mini .close-mini{width:30px}.mini .icon{width:18px}.player-page{padding:17px 19px 30px}.player-top{margin-bottom:16px}.player-top .icon-button{width:38px;height:38px}.player-grid{grid-template-columns:1fr;gap:20px}.player-art{padding:14px;border-radius:11px}.player-art .art{aspect-ratio:16/9;max-height:220px}.player-info{padding-top:21px}.player-title{font-size:1.25em;line-height:1.65;margin:9px 0 12px}.player-controls{padding:22px;border-radius:11px}.transport{margin:21px 0}.toast{font-size:12px}}
-@media(max-width:359px){.page{padding-left:13px;padding-right:13px}.header-inner{padding:0 14px}.church{font-size:8px}.brand-lockup{gap:11px}.episode-open .art{width:69px}.episode-open{gap:9px}.transport{gap:1px}.player-controls{padding:18px}}
-#main-content{position:relative}
-.progress-track{display:block}
-.player-tool.favorite{width:auto;height:auto}
-@media(max-width:600px){.player-grid{display:flex;flex-direction:column;gap:17px}.player-grid>div{display:contents}.player-art{order:1;width:100%}.player-art .art{max-height:170px}.player-info{order:2;width:100%;padding-top:1px}.player-controls{order:3;width:100%}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-/* Quiet, distinct section palettes. The logo image itself is unmodified. */
-[data-section="radio"]{--bg:#f1f3f5;--paper:#fffefc;--ink:#253440;--muted:#677580;--line:#dae0e4;--brand:#263f56;--brand-ink:#fffef8;--accent:#3f607b;--tint:#e5ebf0;--wave:#648299}
-[data-section="sermon"]{--bg:#f1f4ef;--paper:#fffefb;--ink:#29372e;--muted:#68766b;--line:#dce2d8;--brand:#294a3b;--brand-ink:#fffef5;--accent:#476c55;--tint:#e5ece1;--wave:#668876}
-[data-section="library"]{--bg:#f3f2ee;--paper:#fffefb;--ink:#303b36;--muted:#737870;--line:#dfdfd7;--brand:#3b4b43;--brand-ink:#fffef5;--accent:#52695c;--tint:#e9ece5;--wave:#7f897d}
-html[data-mode="dark"][data-section="radio"],html[data-mode="dark"] [data-section="radio"]{--bg:#192229;--paper:#222e37;--ink:#e3e8eb;--muted:#a2b2bc;--line:#3a4852;--brand:#a9c0cf;--brand-ink:#1b2b35;--accent:#aac1d0;--tint:#303f4b;--wave:#a0bbc9}
-html[data-mode="dark"][data-section="sermon"],html[data-mode="dark"] [data-section="sermon"]{--bg:#19241e;--paper:#243229;--ink:#e4e9df;--muted:#a9b7aa;--line:#3d4b3e;--brand:#b5c7ad;--brand-ink:#243026;--accent:#b5c7ad;--tint:#334536;--wave:#a8b99d}
-html[data-mode="dark"][data-section="library"]{--bg:#1e2420;--paper:#29312b;--ink:#e5e7df;--muted:#aab5a9;--line:#414b41;--brand:#bac5b6;--brand-ink:#263025;--accent:#b3c4b0;--tint:#374136;--wave:#aab4a3}
-html[data-mode="dark"] .primary,html[data-mode="dark"] .play-toggle{background:var(--brand);color:var(--brand-ink)}
-.elim-mark{display:block;width:99px;height:auto;aspect-ratio:980/282;flex:none;overflow:hidden;background:#fff;border-radius:2px}
-.brand-lockup{gap:20px}.brand-lockup>span{padding-left:18px;border-left:1px solid var(--line)}
-#main-region{position:relative;flex:1;min-height:0;overflow:hidden;isolation:isolate;background:var(--bg)}
-#main-content{height:100%;position:relative;z-index:1;background:transparent}
-.ambient-waves{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;color:var(--wave)}
-.ambient-wave{position:absolute;left:-20%;bottom:-15%;width:190%;height:85%;fill:currentColor;will-change:transform;animation:quiet-wave 54s ease-in-out infinite alternate}
-.wave-one{opacity:.028}.wave-two{opacity:.019;bottom:-3%;animation-name:quiet-wave-back;animation-duration:73s}
-@keyframes quiet-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(-14%,-12px,0)}}
-@keyframes quiet-wave-back{from{transform:translate3d(-12%,0,0)}to{transform:translate3d(4%,10px,0)}}
-html[data-background-paused] .ambient-wave{animation-play-state:paused}
-.collection-heading{display:flex;align-items:baseline;gap:12px;margin:0 0 23px}.collection-heading h1{font-size:26px;font-weight:700;letter-spacing:-.055em}.collection-heading>span{font-size:12px;color:var(--muted)}
-.latest-feature{display:grid;grid-template-columns:minmax(200px,.86fr) 1.4fr;align-items:center;gap:27px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:19px;box-shadow:0 4px 18px #18263504}
-.latest-art{padding:0;text-align:left;min-width:0;width:100%;border-radius:7px;overflow:hidden}.latest-art .art{width:100%;aspect-ratio:16/9}
-.latest-details{padding:5px 8px 5px 0;min-width:0}.latest-label{font-size:11px;font-weight:650;color:var(--accent)}.latest-details h2{font-size:1.3em;line-height:1.65;letter-spacing:-.035em;margin:11px 0 9px;overflow-wrap:anywhere}.latest-details time{display:block;font-size:12px;color:var(--muted)}.latest-details .primary{margin-top:19px;min-height:41px;padding:10px 18px;font-size:13px}
-.section-heading{margin-top:29px;margin-bottom:15px}.section-heading h2{font-size:1.05em}
-.toolbar{margin-bottom:16px}.art,.art-fallback{background:var(--tint)}.art-fallback:before{display:none}.art-fallback{gap:8px;padding:12px}.art-fallback .elim-mark{width:min(56%,115px)}.art-fallback span{font-size:10px;color:var(--accent);letter-spacing:.04em;margin-top:0}
-.player-top{display:grid;grid-template-columns:44px 1fr 44px;gap:10px}.player-top>span{text-align:center;font-size:12px;font-weight:600;color:var(--accent)}
-.player-art{background:var(--tint);border:1px solid var(--line);padding:14px}.player-art .art{aspect-ratio:16/9}.player-art .art img{background:var(--tint)}
-.player-info{padding-top:19px}.player-title{margin-top:0}.player-controls{padding:26px}.tools-row{grid-template-columns:repeat(2,1fr)}.player-tool{font-size:11px}.player-tool+ .player-tool{border-left:1px solid var(--line)}
-.player-tool.favorite{width:auto;height:auto}.player-grid{align-items:start}.page{padding-top:28px;padding-bottom:32px}
-@media(min-width:850px){.minimal-home .latest-feature{max-width:100%}.latest-art .art{max-height:230px}.player-page{max-width:950px}}
-@media(max-width:600px){.page{padding-top:22px}.elim-mark{width:82px}.brand-lockup{gap:13px}.brand-lockup>span{padding-left:13px}.collection-heading{margin-bottom:18px;gap:10px}.collection-heading h1{font-size:23px}.collection-heading>span{font-size:11px}.latest-feature{grid-template-columns:109px 1fr;gap:15px;padding:14px;border-radius:10px}.latest-details{padding:0}.latest-details h2{font-size:.92em;line-height:1.58;margin:7px 0 7px}.latest-label{font-size:10px}.latest-details time{font-size:10px}.latest-details .primary{margin-top:11px;min-height:35px;padding:7px 14px;font-size:11px}.latest-art .art{aspect-ratio:16/9}.section-heading{margin-top:24px}.player-page{padding-top:16px}.player-grid{gap:18px}.player-art{padding:10px}.player-art .art{max-height:180px}.player-info{padding-top:0}.player-controls{padding:22px}.player-top>span{font-size:11px}.player-title{font-size:1.2em;margin-bottom:9px}.playing-status{margin-bottom:5px}.transport{margin:17px 0 20px}.autoplay-row{padding-top:18px}.tools-row{padding:9px 0}.mini{background:var(--paper)}}
-@media(max-width:359px){.elim-mark{width:73px}.brand-lockup{gap:11px}.brand-lockup>span{padding-left:11px}.latest-feature{grid-template-columns:91px 1fr;gap:11px;padding:12px}.latest-details h2{font-size:.87em}.player-controls{padding:18px}}
-@media(prefers-reduced-motion:reduce){.ambient-wave{animation:none!important;will-change:auto}}
-
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>라디오 엘림</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="라디오 엘림" />
+    <link rel="icon" sizes="192x192" href="elim_logo.png" />
+    <link rel="apple-touch-icon" href="elim_logo.png" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Pretendard (한글 최적화 폰트) -->
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        html { height: 100%; }
+        body { margin:0; height:100vh; height:100dvh; overflow:hidden; }
+        #app { height:100%; min-height:0; }
+        header { padding-top:calc(0.875rem + env(safe-area-inset-top)); flex-shrink:0; }
+        #content-shell { flex:1 1 0%; min-height:0; position:relative; display:flex; overflow:hidden; isolation:isolate; }
+        #main-content { min-height:0; padding-bottom:20px; scroll-behavior:auto; overflow-anchor:none; position:relative; z-index:1; overscroll-behavior-y:contain; }
+        #bottom-dock { flex:none; position:relative; z-index:40; width:100%; background:white; }
+        #bottom-nav { position:relative; padding-bottom:calc(0.625rem + env(safe-area-inset-bottom,0px)); }
+        #mini-player { position:relative; inset:auto; margin:0; border-bottom:0; box-shadow:0 -3px 14px #0f172a08; }
+        #mini-player.hidden { display:none; }
+        html,body,#app { touch-action:pan-x pan-y; overscroll-behavior:none; }
+        button,a,input,select { touch-action:pan-x pan-y; }
+        input[type="range"] { touch-action:pan-x; }
+        #search-input, #speed-select { font-size:16px; }
+        button:focus-visible,a:focus-visible { outline:3px solid #60a5fa; outline-offset:3px; }
+        .cover { height:auto; display:block; aspect-ratio:16/9; object-fit:cover; background:#172554; border-radius:12px; }
+        .cover-small { width:96px; flex-shrink:0; }
+        .cover-large { width:100%; }
+        .cover-mini { width:64px; margin-right:10px; }
+        @media(max-width:360px) { .cover-small { width:76px; } }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; scroll-behavior:auto!important; } }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+        @media (prefers-color-scheme: dark) {
+            :root { color-scheme: light !important; }
+            body { background-color: #eef2f7 !important; }
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #eef2f7; }
+        ::-webkit-scrollbar-thumb { background: #b9c6d6; border-radius: 3px; }
+        input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
+        input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: #e2e8f0; }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: #1e3a8a; margin-top: -5px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        /* Section palette: blue for Elim, emerald for Sunday sermons. */
+        [data-theme="radio"] { --accent:#1e40af; --accent-deep:#172554; --tint:#edf4ff; --wave:#60a5fa; --wave-second:#818cf8; --line:#c7d9f7; }
+        [data-theme="sermon"] { --accent:#047857; --accent-deep:#064e3b; --tint:#edf9f3; --wave:#34d399; --wave-second:#5eead4; --line:#b9e6d4; }
+        [data-theme="favorites"] { --accent:#9f3868; --accent-deep:#702848; --tint:#fcf1f6; --wave:#f9a8d4; --wave-second:#d8b4fe; --line:#f0cddd; }
+        #content-shell { background:var(--tint); transition:background-color .3s; }
+        .ambient { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+        .ambient-ribbon { position:absolute; width:200%; height:65%; left:0; bottom:0; fill:var(--wave); opacity:.16; animation:wave-drift 22s linear infinite; }
+        .ambient .ribbon-two { fill:var(--wave-second); bottom:12%; opacity:.1; animation-duration:30s; animation-direction:reverse; }
+        @keyframes wave-drift { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+        .ambient-ribbon { position:absolute; width:200%; height:65%; left:0; bottom:0; fill:var(--wave); opacity:.21; animation:wave-drift 18s ease-in-out infinite; }
+        .ambient .ribbon-two { fill:var(--wave-second); bottom:12%; opacity:.14; animation-duration:25s; animation-direction:reverse; }
+        @keyframes wave-drift { 0% { transform:translate3d(0,2px,0); } 50% { transform:translate3d(-25%,-5px,0); } 100% { transform:translate3d(-50%,2px,0); } }
+        .section-banner { position:relative; overflow:hidden; border-radius:20px; background:var(--accent-deep); color:white; padding:20px; min-height:116px; isolation:isolate; }
+        .section-banner .banner-copy { position:relative; z-index:1; }
+        .section-banner h2 { font-size:23px; font-weight:800; letter-spacing:-.04em; }
+        .section-banner p { font-size:12px; opacity:.8; margin-top:4px; }
+        .section-banner svg { position:absolute; left:0; bottom:-16px; width:200%; height:108px; fill:var(--wave); opacity:.3; animation:wave-drift 14s linear infinite; z-index:0; pointer-events:none; }
+        .section-banner svg:last-child { fill:var(--wave-second); opacity:.22; bottom:-30px; animation-duration:21s; animation-direction:reverse; }
+        #app .text-blue-950, #app .text-blue-900 { color:var(--accent); }
+        #app .bg-blue-950, #app .bg-blue-900 { background-color:var(--accent-deep); }
+        #app .bg-blue-50 { background-color:var(--tint); }
+        #app .bg-slate-50 { background-color:rgba(255,255,255,.86); border-color:var(--line); }
+        #app .cover { background-color:var(--accent-deep); }
+        #app input[type="range"]::-webkit-slider-thumb { background:var(--accent); }
+        #app input[type="range"]::-moz-range-thumb { background:var(--accent); width:16px; height:16px; border:0; border-radius:50%; }
+        #app input[type="range"]::-moz-range-track { height:6px; background:#e2e8f0; border-radius:99px; }
+        #player-card { background:transparent; }
+        #player-card > div:not(:first-child) { position:relative; }
+        #mini-player { background:var(--tint); border-top:1px solid var(--line); }
+        #mini-player #mini-date { color:var(--accent); }
+        #mini-player #mini-play-btn { background:var(--accent-deep); }
+        #mini-player .cover-mini { margin:0; }
+        #nav-elim { --accent:#1e40af; }
+        #nav-sermon { --accent:#047857; }
+        #nav-favorites { --accent:#9f3868; }
+        .episode-title { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.5; overflow-wrap:anywhere; }
+        #status-message { bottom:calc(var(--dock-height,80px) + 12px)!important; }
+        @media(prefers-reduced-motion:reduce) { .ambient-ribbon,.section-banner svg { animation:none!important; } }
+        /* V3: stable reading surfaces, restrained motion, clearly grouped controls. */
+        #app #church-name { color:#000; }
+        #content-shell { background:linear-gradient(180deg,var(--tint) 0%,#f4f6f8 340px); }
+        #content-shell { background:linear-gradient(180deg,var(--tint) 0%,var(--tint) 220px,#f4f6f8 520px); }
+        .section-banner { min-height:108px; border-radius:22px; padding:22px; background:linear-gradient(120deg,var(--accent-deep),var(--accent)); border:1px solid #ffffff20; box-shadow:inset 0 1px 0 #ffffff25,0 6px 18px #0f172a0a; }
+        .section-banner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 85% 0%,#ffffff20,transparent 65%); pointer-events:none; }
+        .section-banner svg { opacity:.15; animation-duration:28s; height:90px; bottom:-22px; }
+        .section-banner svg:last-child { opacity:.1; animation-duration:38s; bottom:-38px; }
+        .section-banner::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 85% 0%,#ffffff2e,transparent 62%); pointer-events:none; }
+        .section-banner svg { opacity:.34; animation-duration:18s; height:106px; bottom:-15px; filter:saturate(1.2); }
+        .section-banner svg:last-child { opacity:.24; animation-duration:25s; bottom:-30px; }
+        .section-banner h2 { font-size:22px; letter-spacing:-.025em; }
+        .section-banner p { letter-spacing:.06em; font-size:10px; margin-top:7px; }
+        .library-surface { background:#fff; border:1px solid #e4e8ee; border-radius:22px; padding:18px 16px 8px; box-shadow:0 3px 12px #0f172a04; }
+        #app .library-surface .episode-row { border:0; border-bottom:1px solid #edf0f4; border-radius:0; box-shadow:none; background:#fff; padding:14px 0; }
+        #app .library-surface .episode-row:last-child { border-bottom:0; }
+        .library-surface .space-y-2\.5 > * + * { margin-top:0; }
+        #app .library-surface .episode-row:hover { background:#f8fafc; }
+        #app .latest-card { border:1px solid #e4e8ee; border-radius:22px; box-shadow:0 4px 14px #0f172a05; }
+        #player-card { display:block; padding:20px 18px 26px; min-height:0; }
+        .player-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+        .player-topbar span { font-size:13px; font-weight:700; color:var(--accent-deep); }
+        .now-playing-panel { border:1px solid #e1e6ed; border-radius:24px; background:white; overflow:hidden; box-shadow:0 8px 24px #0f172a08; }
+        .artwork-well { padding:16px; background:linear-gradient(145deg,var(--tint),#f8fafc); border-bottom:1px solid #e8edf2; }
+        .artwork-well .cover { border-radius:13px; box-shadow:0 3px 10px #0f172a12; }
+        .episode-information { padding:20px; }
+        .eyebrow { color:var(--accent); font-size:10px; font-weight:800; letter-spacing:.12em; margin-bottom:9px; }
+        .episode-information h2 { font-size:19px; font-weight:750; line-height:1.55; letter-spacing:-.035em; overflow-wrap:anywhere; color:#172033; }
+        .episode-meta { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid #eef1f4; font-size:11px; color:#64748b; }
+        .episode-meta a { color:var(--accent); font-weight:600; }
+        .transport-panel { margin-top:16px; border:1px solid #e1e6ed; border-radius:24px; padding:20px; background:white; box-shadow:0 3px 12px #0f172a04; }
+        .transport-label { margin-bottom:16px; font-size:12px; font-weight:700; color:#475569; }
+        .transport-panel .speed-row { margin-top:20px; padding:16px 0 0; border-top:1px solid #eef1f4; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        #app .transport-panel .bg-blue-950 { box-shadow:0 5px 12px #0f172a18; }
+        #mini-player { background:white; border-top:1px solid #dfe5ec; }
+        .mini-equalizer { width:18px; height:18px; display:flex; align-items:center; justify-content:center; gap:2px; color:var(--accent); opacity:.42; transition:opacity .2s; }
+        .mini-equalizer span { width:2.5px; height:14px; border-radius:99px; background:currentColor; transform:scaleY(.22); transform-origin:center; animation:mini-sound 780ms ease-in-out infinite; animation-play-state:paused; }
+        .mini-equalizer span:nth-child(2) { animation-delay:-520ms; }
+        .mini-equalizer span:nth-child(3) { animation-delay:-260ms; }
+        .mini-equalizer span:nth-child(4) { animation-delay:-650ms; }
+        .mini-equalizer.is-active { opacity:1; }
+        .mini-equalizer.is-active span { animation-play-state:running; }
+        @keyframes mini-sound { 0%,100% { transform:scaleY(.22); } 45% { transform:scaleY(1); } 70% { transform:scaleY(.48); } }
+        @media(max-width:360px) { #player-card { padding:16px 12px 20px; } .transport-panel,.episode-information { padding:16px; } .episode-information h2 { font-size:17px; } }
+        @media(prefers-reduced-motion:reduce) { .section-banner svg { animation:none!important; } }
+    </style>
 </head>
-<body>
-<a href="#main-content" class="skip">본문으로 이동</a>
-<div id="app">
- <header class="header"><div class="header-inner">
-  <button class="brand-lockup" data-action="nav" data-tab="radio" aria-label="라디오 엘림 홈"><svg class="elim-mark" viewBox="140 480 980 282" aria-hidden="true"><image href="NowPlayingLogo.png" width="1254" height="1254"/></svg><span><span class="brand-name">라디오 엘림</span><span class="church">생명의말씀선교회 광주교회</span></span></button>
-  <div class="header-right"><button id="settings-button" class="icon-button" data-action="settings" aria-label="화면 설정"></button></div>
- </div></header>
- <div id="offline" class="offline" role="status" hidden>인터넷 연결이 끊겼습니다. 새 음원 재생에는 연결이 필요합니다.</div>
- <div id="main-region"><div class="ambient-waves" aria-hidden="true"><svg class="ambient-wave wave-one" viewBox="0 0 1600 600" preserveAspectRatio="none"><path d="M0 230C200 90 400 90 600 230S1000 370 1200 230S1400 90 1600 230V600H0Z"/></svg><svg class="ambient-wave wave-two" viewBox="0 0 1600 600" preserveAspectRatio="none"><path d="M0 250C220 400 420 400 640 250S1040 100 1240 250S1440 400 1640 250V600H0Z"/></svg></div><main id="main-content" tabindex="-1"></main></div>
- <footer id="bottom-dock"><div id="mini-player" class="mini" hidden></div><nav id="bottom-nav" aria-label="주 메뉴"></nav></footer>
-</div>
-<dialog id="modal" aria-labelledby="dialog-title"><div class="dialog-head"><h2 id="dialog-title"></h2><button class="icon-button" data-action="close-dialog" aria-label="닫기"></button></div><div id="dialog-body" class="dialog-body"></div></dialog>
-<div id="status-message" class="toast" role="status" aria-live="polite" hidden></div>
-<noscript>라디오 엘림을 이용하려면 브라우저의 JavaScript를 켜 주세요.</noscript>
-<script>
-'use strict';
-const radioEpisodes = [
+<body class="bg-slate-100 text-slate-800 h-full flex flex-col antialiased selection:bg-blue-900 selection:text-white">
+    <div id="app" data-theme="radio" class="flex-1 flex flex-col max-w-md mx-auto w-full bg-white shadow-2xl relative overflow-hidden border-x border-slate-200">
+        <!-- HEADER (박스 제거 및 ELIM 로고 + 텍스트 복구) -->
+        <header class="px-5 py-3.5 flex items-center justify-between border-b border-slate-100 bg-white/90 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goElim()">
+                <div class="h-7 flex items-center">
+                    <img src="elim_logo.png" alt="ELIM 로고" onerror="this.outerHTML='<strong>ELIM</strong>'" class="h-full w-auto object-contain" />
+                </div>
+                <div class="border-l border-slate-200 pl-3">
+                    <h1 class="font-bold text-base tracking-tight text-slate-900 leading-tight">라디오 엘림</h1>
+                    <p id="church-name" class="text-[10px] font-semibold tracking-wide leading-tight">생명의말씀선교회 광주교회</p>
+                </div>
+            </div>
+        </header>
+        <!-- MAIN CONTENT -->
+        <div id="content-shell">
+            <main id="main-content" class="flex-1 overflow-y-auto"></main>
+        </div>
+        <footer id="bottom-dock">
+        <!-- MINI PLAYER -->
+        <div id="mini-player" data-theme="radio" class="hidden bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 flex items-center justify-between z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+            <div class="flex items-center space-x-3 cursor-pointer flex-1 mr-2 min-w-0" onclick="openPlayerFromMini()">
+                <div id="mini-art"></div>
+                <div class="min-w-0 flex-1">
+                    <h4 id="mini-title" class="text-sm font-semibold truncate text-slate-800">-</h4>
+                    <p id="mini-date" class="text-xs text-slate-500 truncate">-</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <div id="mini-equalizer" class="mini-equalizer" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+                <button onclick="event.stopPropagation(); togglePlayPause()" aria-label="재생 또는 일시정지" id="mini-play-btn" class="w-10 h-10 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-md transition-transform active:scale-95">
+                    <i class="fa-solid fa-pause text-sm"></i>
+                </button>
+                <button onclick="event.stopPropagation(); closeMiniPlayer()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+        <!-- BOTTOM NAV -->
+        <nav id="bottom-nav" class=" bg-white/95 backdrop-blur-lg border-t border-slate-200 px-2 py-2.5 flex justify-around items-center z-20">
+            <button onclick="goElim()" id="nav-elim" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-tower-broadcast text-lg"></i>
+                <span class="text-[10px] font-medium">엘림</span>
+            </button>
+            <button onclick="goSermon()" id="nav-sermon" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-book-bible text-lg"></i>
+                <span class="text-[10px] font-medium">주일말씀</span>
+            </button>
+            <button onclick="goFavorites()" id="nav-favorites" class="flex flex-col items-center space-y-1 px-4 py-1 transition-colors">
+                <i class="fa-solid fa-heart text-lg"></i>
+                <span class="text-[10px] font-medium">즐겨찾기</span>
+            </button>
+        </nav>
+        </footer>
+    </div>
+    <script>
+    /* ============================================================
+       라디오 엘림 전체 회차 데이터
+       ============================================================ */
+    const radioEpisodes = [
   {
     "id": "track230",
     "num": 230,
@@ -2180,224 +2295,544 @@ const radioEpisodes = [
     "youtubeId": ""
   }
 ];
-
-// No frameworks, external fonts, tracking, or audio prefetching.
-const $=id=>document.getElementById(id);
-const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const paths={play:'<path d="m9 5 11 7-11 7Z"/>',pause:'<path d="M8 5v14M16 5v14"/>',radio:'<circle cx="12" cy="8" r="2"/><path d="m8 21 4-10 4 10M9 17h6M5.6 3a9 9 0 0 0 0 10M18.4 3a9 9 0 0 1 0 10M8 5.5a4 4 0 0 0 0 5M16 5.5a4 4 0 0 1 0 5"/>',book:'<path d="M12 5c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v15M6 8h3M15 8h3"/>',bookmark:'<path d="M6 3h12v18l-6-4-6 4Z"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',right:'<path d="m9 5 7 7-7 7"/>',down:'<path d="m5 9 7 7 7-7"/>',back:'<path d="m14 5-7 7 7 7M7 12h14"/>',settings:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',history:'<path d="M3 10a9 9 0 1 1 2 8M3 4v6h6M12 7v5l4 2"/>',next:'<path d="m5 5 10 7-10 7ZM19 5v14"/>',previous:'<path d="m19 5-10 7 10 7ZM5 5v14"/>',rewind:'<path d="M4 9a8 8 0 1 1 1 9M4 3v6h6"/>',forward:'<path d="M20 9a8 8 0 1 0-1 9M20 3v6h-6"/>',share:'<path d="M12 15V2m-4 4 4-4 4 4M5 10H3v11h18V10h-2"/>',plus:'<path d="M12 5v14M5 12h14"/>',moon:'<path d="M20.5 14A9 9 0 0 1 10 3a9 9 0 1 0 10.5 11Z"/>',check:'<path d="m5 12 4 4L19 6"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>'};
-function icon(name){return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name]||paths.book}</svg>`;}
-function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
-let storageWarned=false;
-function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch{if(!storageWarned){storageWarned=true;message('저장 공간을 사용할 수 없어 이번 변경은 앱을 닫으면 사라질 수 있습니다.');}}}
-const all=[...radioEpisodes.map(e=>({...e,tab:'radio'})),...sermonEpisodes.map(e=>({...e,tab:'sermon'}))];
-const byId=new Map(all.map(e=>[e.id,e]));
-const lists={radio:all.filter(e=>e.tab==='radio').sort((a,b)=>b.date.localeCompare(a.date)||b.num-a.num),sermon:all.filter(e=>e.tab==='sermon').sort((a,b)=>b.date.localeCompare(a.date)||b.num-a.num)};
-const validObject=x=>x&&typeof x==='object'&&!Array.isArray(x);
-let favorites=read('elim.favorites.v2',[]);favorites=Array.isArray(favorites)?[...new Set(favorites.filter(id=>byId.has(id)))]:[];
-let positions=read('elim.positions.v2',{});positions=validObject(positions)?Object.fromEntries(Object.entries(positions).filter(([id,p])=>byId.has(id)&&Number.isFinite(p)&&p>=0)):{};
-let completed=read('elim.completed.v3',[]);completed=Array.isArray(completed)?completed.filter(id=>byId.has(id)):[];
-let durations=read('elim.durations.v3',{});durations=validObject(durations)?Object.fromEntries(Object.entries(durations).filter(([id,d])=>byId.has(id)&&Number.isFinite(d)&&d>0)):{};
-let prefs=read('elim.preferences.v3',{});prefs=validObject(prefs)?prefs:{};
-prefs={mode:['light','dark'].includes(prefs.mode)?prefs.mode:'light',size:[1,1.12,1.24].includes(prefs.size)?prefs.size:1,autoplay:typeof prefs.autoplay==='boolean'?prefs.autoplay:true};
-let route={view:'home',tab:'radio'},search='',ascending=false,limit=24,returnRoute={view:'home',tab:'radio'},returnScroll=0;
-let current=null,queue=[],pendingSeek=null,pendingEpisode=null,loading=false,mediaError=false,playRequest=0,switching=false,lastSave=0,hasSource=false;
-let sleepDeadline=0,sleepAtEnd=false,sleepMinutes=0,sleepInterval=null,toastTimer,searchTimer,dialogReturnFocus=null;
-const speed=1;
-const audioEl=window.audioEl||new Audio();window.audioEl=audioEl;audioEl.preload='none';audioEl.playbackRate=speed;
-function label(tab){return tab==='sermon'?'주일말씀':'라디오 엘림';}
-function title(ep){return ep.title.replace(/^\s*\d+\.\s*/,'').replace(/\s+_\s+/g,' · ');}
-function date(ep){return ep.date.replaceAll('-','.');}
-function time(s){s=Math.floor(Number.isFinite(s)&&s>0?s:0);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
-function thumb(ep){return /^[\w-]{11}$/.test(ep.youtubeId||'')?'https://i.ytimg.com/vi/'+ep.youtubeId+'/hqdefault.jpg':'';}
-document.addEventListener('error',e=>{if(e.target instanceof HTMLImageElement)e.target.hidden=true;},true);
-function message(text){$('status-message').textContent=text;$('status-message').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('status-message').hidden=true,4300);}
-function favButton(ep){return `<button class="icon-button favorite" data-action="favorite" data-id="${ep.id}" aria-label="${esc(title(ep))} 즐겨찾기" aria-pressed="${favorites.includes(ep.id)}">${icon('bookmark')}</button>`;}
-function episodeRow(ep){const pos=positions[ep.id]||0,percent=durations[ep.id]?Math.min(100,pos/durations[ep.id]*100):0;return `<article class="episode-row ${current?.id===ep.id?'is-current':''}" data-row="${ep.id}"><button class="episode-open" data-action="open" data-id="${ep.id}" aria-label="${esc(title(ep))} 듣기">${art(ep)}<span class="episode-copy"><span class="episode-title">${esc(title(ep))}</span><span class="episode-meta"><time datetime="${ep.date}">${date(ep)}</time>${route.view==='library'?`<span>· ${label(ep.tab)}</span>`:''}${completed.includes(ep.id)?'<span class="saved-pos">청취 완료</span>':pos>5?`<span class="saved-pos">· ${time(pos)} 들음</span>`:''}</span>${percent>0?`<span class="progress-track"><span style="--progress:${percent}%"></span></span>`:''}</span></button>${favButton(ep)}</article>`;}
-function searchToolbar(){return `<div class="toolbar"><div class="search-box">${icon('search')}<input id="search-input" type="search" autocomplete="off" spellcheck="false" value="${esc(search)}" placeholder="제목 · 회차 · 목사님 검색" aria-label="제목, 회차, 날짜, 목사님 검색"><button class="icon-button" data-action="clear-search" aria-label="검색어 지우기" ${search?'':'hidden'}>${icon('close')}</button></div><select id="sort-select" class="select" aria-label="정렬 순서"><option value="desc" ${ascending?'':'selected'}>최신순</option><option value="asc" ${ascending?'selected':''}>오래된순</option></select></div>`;}
-function normalize(s){return String(s).normalize('NFC').toLowerCase().replace(/\s/g,'');}
-function empty(heading,body,name){return `<div class="empty">${icon(name)}<strong>${heading}</strong><p>${body}</p></div>`;}
-function nextEpisode(delta=1){const idx=queue.indexOf(current?.id);return idx>=0?byId.get(queue[idx+delta]):null;}
-function routeHash(r){return r.view==='player'&&current?'#episode='+encodeURIComponent(current.id):'#'+(r.view==='library'?'library':r.tab);}
-function navigate(r,{replace=false,scroll=0,focus=false}={}){route=r;try{history[replace?'replaceState':'pushState']({elim:true},'',routeHash(r));}catch{}render();$('main-content').scrollTop=scroll;if(focus)$('main-content').focus({preventScroll:true});}
-function goTab(tab){resetFilters();navigate({view:tab==='library'?'library':'home',tab:tab==='library'?'radio':tab});}
-function sourceForCurrent(seekTo=null){if(!current)return;hasSource=true;pendingSeek=seekTo??(positions[current.id]||0);pendingEpisode=current.id;audioEl.src=current.src;audioEl.load();audioEl.playbackRate=speed;}
-function openEpisode(id,{autoplay=true,seekTo=null,changeView=true,keepQueue=false}={}){const ep=byId.get(id);if(!ep)return;clearTimeout(searchTimer);if(route.view!=='player'){returnRoute={...route};returnScroll=$('main-content').scrollTop;}if(current?.id!==id){savePosition();switching=true;++playRequest;audioEl.pause();current=ep;hasSource=false;loading=false;mediaError=false;pendingSeek=seekTo??(positions[id]||0);pendingEpisode=id;if(!keepQueue)queue=lists[ep.tab].map(e=>e.id);if(autoplay)sourceForCurrent(pendingSeek);switching=false;}else if(seekTo!==null){seek(seekTo);}if(!queue.includes(id))queue=lists[ep.tab].map(e=>e.id);if(changeView)navigate({view:'player',tab:ep.tab});else{renderMini();if(route.view==='player')render();}if(autoplay)play();}
-async function play(){if(!current)return;if(checkSleep())return;const request=++playRequest;if(!hasSource||audioEl.error)sourceForCurrent(pendingSeek??positions[current.id]??0);mediaError=false;loading=true;syncPlayback();try{await audioEl.play();if(request!==playRequest)return;}catch(error){if(request!==playRequest||error.name==='AbortError')return;loading=false;mediaError=true;syncPlayback();message(navigator.onLine?'재생을 시작하지 못했습니다. 재생 버튼으로 다시 시도해 주세요.':'인터넷 연결을 확인한 뒤 다시 재생해 주세요.');}}
-function pause(){++playRequest;loading=false;audioEl.pause();syncPlayback();savePosition();}
-function toggle(){if(!current)return;if(audioEl.paused&&!loading)play();else pause();}
-function seek(value){if(!current)return;value=Math.max(0,Number(value)||0);if(!hasSource||audioEl.readyState<1){pendingSeek=value;pendingEpisode=current.id;updateProgress();return;}if(Number.isFinite(audioEl.duration)){audioEl.currentTime=Math.min(value,Math.max(0,audioEl.duration-.1));pendingSeek=null;updateProgress();savePosition();updatePositionState();}}
-function adjacent(delta,auto=false){const next=nextEpisode(delta);if(!next){if(!auto)message('현재 목록의 마지막 회차입니다.');return;}openEpisode(next.id,{changeView:!auto||route.view==='player',keepQueue:true});}
-function savePosition(){if(!current||switching||!hasSource||audioEl.readyState<1||audioEl.ended)return;positions[current.id]=Math.max(0,audioEl.currentTime);write('elim.positions.v2',positions);lastSave=Date.now();}
-function updateProgress(){const dur=hasSource&&Number.isFinite(audioEl.duration)?audioEl.duration:(durations[current?.id]||0),pos=pendingSeek!==null?pendingSeek:hasSource?audioEl.currentTime:(positions[current?.id]||0),percent=dur?Math.min(100,pos/dur*100):0;const slider=$('progress-slider');if(slider){slider.disabled=!hasSource||audioEl.readyState<1||dur<=0;slider.max=dur||100;slider.value=pos;slider.style.setProperty('--progress',percent+'%');slider.setAttribute('aria-valuetext',time(pos)+' / '+time(dur));$('current-time-label').textContent=time(pos);$('duration-time-label').textContent=time(dur);}const line=document.querySelector('.mini-line');if(line)line.style.setProperty('--progress',percent+'%');}
-function updateMetadata(){if(!current)return;document.title=title(current);audioEl.title=title(current);audioEl.setAttribute('aria-label',title(current));if('mediaSession'in navigator&&'MediaMetadata'in window){try{navigator.mediaSession.metadata=new MediaMetadata({title:title(current),artist:label(current.tab),album:'생명의말씀선교회 광주교회',artwork:thumb(current)?[{src:thumb(current),sizes:'480x360',type:'image/jpeg'}]:[]});}catch{}}}
-function updatePositionState(){if(!hasSource||!navigator.mediaSession?.setPositionState||!Number.isFinite(audioEl.duration)||audioEl.duration<=0)return;try{navigator.mediaSession.setPositionState({duration:audioEl.duration,position:Math.max(0,Math.min(audioEl.currentTime,audioEl.duration)),playbackRate:speed});}catch{}}
-audioEl.addEventListener('loadedmetadata',()=>{if(!current||!hasSource)return;const d=audioEl.duration;if(Number.isFinite(d)&&d>0){durations[current.id]=d;write('elim.durations.v3',durations);if(pendingEpisode===current.id&&pendingSeek!==null){const pos=pendingSeek;pendingSeek=null;audioEl.currentTime=pos<d-2?pos:0;}}updateProgress();updateMetadata();updatePositionState();});
-audioEl.addEventListener('play',()=>{if(checkSleep())return;remember();updateMetadata();syncPlayback();});
-audioEl.addEventListener('playing',()=>{if(checkSleep())return;loading=false;mediaError=false;syncPlayback();});
-audioEl.addEventListener('waiting',()=>{if(hasSource&&!audioEl.paused){loading=true;syncPlayback();}});
-audioEl.addEventListener('pause',()=>{if(switching)return;loading=false;savePosition();syncPlayback();});
-audioEl.addEventListener('timeupdate',()=>{if(checkSleep())return;updateProgress();if(Date.now()-lastSave>5000)savePosition();updatePositionState();});
-audioEl.addEventListener('durationchange',updateProgress);
-audioEl.addEventListener('error',()=>{if(switching||!current||!hasSource)return;loading=false;mediaError=true;syncPlayback();message('음원을 불러오지 못했습니다. 연결을 확인하고 다시 재생해 주세요.');});
-audioEl.addEventListener('ended',()=>{if(!current)return;delete positions[current.id];completed=[...new Set([...completed,current.id])];write('elim.positions.v2',positions);write('elim.completed.v3',completed);loading=false;syncPlayback();if(sleepAtEnd){clearSleep();message('이번 회차를 모두 들어 재생을 종료했습니다.');return;}if(checkSleep())return;if(prefs.autoplay)adjacent(1,true);});
-function toggleFavorite(id){if(!byId.has(id))return;const added=!favorites.includes(id);favorites=added?[...favorites,id]:favorites.filter(x=>x!==id);write('elim.favorites.v2',favorites);document.querySelectorAll(`[data-action="favorite"][data-id="${id}"]`).forEach(b=>{b.setAttribute('aria-pressed',String(added));const span=b.querySelector('span');if(span)span.textContent=added?'보관됨':'보관하기';});if(route.view==='library'){const scroll=$('main-content').scrollTop;render();$('main-content').scrollTop=scroll;}message(added?'보관함에 담았습니다.':'즐겨찾기에서 해제했습니다.');}
-function openDialog(heading,html){dialogReturnFocus=document.activeElement;$('dialog-title').textContent=heading;$('dialog-body').innerHTML=html;if(!$('modal').open)$('modal').showModal();}
-function closeDialog(){$('modal').close();}
-$('modal').addEventListener('close',()=>{if(dialogReturnFocus?.isConnected)dialogReturnFocus.focus({preventScroll:true});});
-$('modal').addEventListener('click',e=>{if(e.target===$('modal')){const r=$('modal').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDialog();}});
-function clearSleep(){sleepDeadline=0;sleepAtEnd=false;sleepMinutes=0;clearInterval(sleepInterval);sleepInterval=null;updateSleepLabel();}
-function setSleep(v){clearSleep();if(v==='end')sleepAtEnd=true;else if(v!=='off'){sleepMinutes=Number(v);sleepDeadline=Date.now()+sleepMinutes*60000;sleepInterval=setInterval(()=>{checkSleep();updateSleepLabel();},1000);}updateSleepLabel();closeDialog();message(v==='off'?'종료 예약을 해제했습니다.':v==='end'?'이번 회차가 끝나면 재생을 멈춥니다.':`${v}분 후 재생을 멈춥니다.`);}
-function checkSleep(){if(!sleepDeadline||Date.now()<sleepDeadline)return false;clearSleep();pause();message('예약한 시간이 되어 재생을 멈췄습니다.');return true;}
-function updateSleepLabel(){if($('sleep-label'))$('sleep-label').textContent=sleepAtEnd?'회차 끝에 종료':sleepDeadline?Math.max(1,Math.ceil((sleepDeadline-Date.now())/60000))+'분 뒤 종료':'종료 예약';}
-document.addEventListener('input',e=>{if(e.target.id==='progress-slider'){seek(e.target.value);return;}if(e.target.id==='search-input'&&!e.isComposing){clearTimeout(searchTimer);search=e.target.value;limit=24;document.querySelector('[data-action="clear-search"]').hidden=!search;searchTimer=setTimeout(renderResults,120);}});
-document.addEventListener('compositionend',e=>{if(e.target.id==='search-input')e.target.dispatchEvent(new Event('input',{bubbles:true}));});
-document.addEventListener('keydown',e=>{if(e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,select,textarea,button,a')||$('modal').open)return;if(current&&(e.code==='Space'||e.code==='ArrowLeft'||e.code==='ArrowRight')){e.preventDefault();if(e.code==='Space')toggle();else seek(audioEl.currentTime+(e.code==='ArrowLeft'?-15:15));}});
-function loadRoute(){const raw=location.hash.slice(1);if(raw.startsWith('episode=')){const p=new URLSearchParams(raw),id=p.get('episode'),ep=byId.get(id),t=Number(p.get('t'));if(ep){if(current?.id!==id){savePosition();switching=true;audioEl.pause();switching=false;++playRequest;current=ep;queue=lists[ep.tab].map(x=>x.id);hasSource=false;pendingSeek=p.has('t')&&Number.isFinite(t)?Math.max(0,t):positions[id]||0;pendingEpisode=id;}else if(p.has('t')&&Number.isFinite(t))seek(t);route={view:'player',tab:ep.tab};returnRoute={view:'home',tab:ep.tab};}else{route={view:'home',tab:'radio'};message('이 회차를 찾을 수 없어 엘림 목록을 열었습니다.');}}else if(['radio','sermon','library'].includes(raw)){resetFilters();route={view:raw==='library'?'library':'home',tab:raw==='sermon'?'sermon':'radio'};}else route={view:'home',tab:'radio'};render();$('main-content').scrollTop=0;}
-window.addEventListener('popstate',loadRoute);window.addEventListener('pagehide',savePosition);document.addEventListener('visibilitychange',()=>{if(document.hidden)savePosition();else{checkSleep();updateSleepLabel();updateProgress();}});
-function connection(){$('offline').hidden=navigator.onLine;}
-window.addEventListener('online',connection);window.addEventListener('offline',connection);
-if('mediaSession'in navigator){const actions={play:()=>play(),pause:()=>pause(),seekbackward:d=>seek(audioEl.currentTime-(d.seekOffset||15)),seekforward:d=>seek(audioEl.currentTime+(d.seekOffset||15)),seekto:d=>seek(d.seekTime),previoustrack:()=>adjacent(-1),nexttrack:()=>adjacent(1)};for(const [name,handler]of Object.entries(actions))try{navigator.mediaSession.setActionHandler(name,handler);}catch{}}
-$('settings-button').innerHTML=icon('settings');document.querySelector('[data-action="close-dialog"]').innerHTML=icon('close');applyPrefs();connection();
-function logoMark() {
-    return '<svg class="elim-mark" viewBox="140 480 980 282" aria-hidden="true"><image href="NowPlayingLogo.png" width="1254" height="1254"/></svg>';
-}
-
-function art(ep, eager = false) {
-    const src = thumb(ep);
-    return `<div class="art"><div class="art-fallback" aria-hidden="true">${logoMark()}${ep.tab === 'sermon' ? '<span>주일말씀</span>' : ''}</div>${src ? `<img src="${src}" alt="" width="480" height="270" loading="${eager ? 'eager' : 'lazy'}" decoding="async">` : ''}</div>`;
-}
-
-function homeView() {
-    const ep = lists[route.tab][0];
-    const radio = route.tab === 'radio';
-    return `<div class="page minimal-home">
-        <div class="collection-heading"><h1>${label(route.tab)}</h1><span>${lists[route.tab].length}편</span></div>
-        ${ep ? `<section class="latest-feature" aria-label="최근 ${radio ? '방송' : '말씀'}">
-            <button class="latest-art" data-action="open" data-id="${ep.id}" aria-label="${esc(title(ep))} 듣기">${art(ep, true)}</button>
-            <div class="latest-details"><span class="latest-label">최근 ${radio ? '방송' : '말씀'}</span><h2>${esc(title(ep))}</h2><time datetime="${ep.date}">${date(ep)}</time><button class="primary" data-action="open" data-id="${ep.id}">${icon('play')}듣기</button></div>
-        </section>` : ''}
-        <section aria-label="${label(route.tab)} 전체 회차"><div class="section-heading"><h2>전체 회차</h2></div>${searchToolbar()}<div id="results"></div></section>
-    </div>`;
-}
-
-function filtered() {
-    let items = route.view === 'library' ? favorites.map(id => byId.get(id)).filter(Boolean) : lists[route.tab];
-    const words = search.trim().split(/\s+/).map(normalize).filter(Boolean);
-    return items.filter(ep => words.every(w => normalize(ep.title + ' ' + ep.num + ' ' + ep.date + ' ' + label(ep.tab)).includes(w)))
-        .sort((a, b) => ascending ? a.date.localeCompare(b.date) || a.num - b.num : b.date.localeCompare(a.date) || b.num - a.num);
-}
-
-function renderResults() {
-    const target = $('results');
-    if (!target) return;
-    const items = filtered();
-    if (!items.length) {
-        target.innerHTML = empty(search ? '검색 결과가 없습니다' : '보관한 회차가 없습니다', search ? '검색어를 바꿔 주세요.' : '책갈피 버튼으로 회차를 보관할 수 있습니다.', search ? 'search' : 'bookmark');
-        return;
+    // ---------------- State ----------------
+    let currentRoute = 'home';
+    let currentTab = 'radio'; // 'radio' | 'sermon'
+    let sortAscending = false; // false = 최신순
+    let searchKeyword = '';
+    let currentEpisode = null;
+    let currentEpisodeTab = 'radio';
+    let isPlaying = false;
+    let favorites = readSaved('elim.favorites.v2', []);
+    if (!Array.isArray(favorites)) favorites=[];
+    let currentSpeed = Number(readSaved('elim.speed.v2', 1));
+    if (![0.75,1,1.25,1.5,1.75,2].includes(currentSpeed)) currentSpeed=1;
+    let positions = readSaved('elim.positions.v2', {});
+    if (!positions || typeof positions !== 'object' || Array.isArray(positions)) positions={};
+    let lastSavedAt=0;
+    let playRequest=0;
+    
+    // 오디오 객체 전역 싱글톤 선언 및 설정
+    let audioEl = window.audioEl || new Audio();
+    window.audioEl = audioEl;
+    audioEl.preload="metadata";
+    // 잠금화면 / 제어센터에 현재 회차명을 표시
+    function decodeHtml(text) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text || '';
+        return textarea.value;
     }
-    target.innerHTML = `<div class="catalog"><div class="episode-grid">${items.slice(0, limit).map(episodeRow).join('')}</div>${items.length > limit ? `<div class="load-more"><button class="outline-button" data-action="more">더 보기 · ${Math.min(limit, items.length)} / ${items.length}${icon('down')}</button></div>` : ''}</div><p class="sr-only" role="status">${items.length}개의 검색 결과</p>`;
-}
-
-function libraryView() {
-    return `<div class="page"><div class="collection-heading"><h1>보관함</h1><span>${favorites.length}편</span></div>${searchToolbar()}<div id="results"></div></div>`;
-}
-
-function playerView() {
-    if (!current) return '';
-    const ep = current;
-    return `<div class="page player-page"><div class="player-top"><button class="icon-button" data-action="back" aria-label="목록으로 돌아가기">${icon('down')}</button><span>${label(ep.tab)}</span><span aria-hidden="true"></span></div>
-        <div class="player-grid"><div><div class="player-art">${art(ep, true)}</div><div class="player-info"><h1 class="player-title">${esc(title(ep))}</h1><div class="meta"><time datetime="${ep.date}">${date(ep)}</time></div></div></div>
-        <div><section class="player-controls" aria-label="오디오 재생">
-            <div class="playing-status" role="status"><span class="status-dot"></span><span id="play-status">재생 준비</span></div>
-            <input id="progress-slider" class="seek" type="range" min="0" max="100" value="0" step="1" aria-label="재생 위치"><div class="time-row"><span id="current-time-label">00:00</span><span id="duration-time-label">00:00</span></div>
-            <div class="transport"><button class="skip-seconds" data-action="seek-relative" data-seconds="-15" aria-label="15초 뒤로">${icon('rewind')}<span>15</span></button><button class="icon-button" data-action="adjacent" data-delta="-1" aria-label="이전 회차" ${nextEpisode(-1) ? '' : 'disabled'}>${icon('previous')}</button><button class="icon-button play-toggle" data-action="toggle" aria-label="재생">${icon('play')}</button><button class="icon-button" data-action="adjacent" data-delta="1" aria-label="다음 회차" ${nextEpisode() ? '' : 'disabled'}>${icon('next')}</button><button class="skip-seconds" data-action="seek-relative" data-seconds="15" aria-label="15초 앞으로">${icon('forward')}<span>15</span></button></div>
-            <div class="tools-row"><button class="player-tool" data-action="sleep">${icon('moon')}<span id="sleep-label">종료 예약</span></button><button class="player-tool favorite" data-action="favorite" data-id="${ep.id}" aria-label="현재 회차 즐겨찾기" aria-pressed="${favorites.includes(ep.id)}">${icon('bookmark')}<span>${favorites.includes(ep.id) ? '보관됨' : '보관하기'}</span></button></div>
-            <div class="autoplay-row"><span>다음 회차 자동 재생</span><button class="switch" role="switch" aria-label="다음 회차 자동 재생" aria-checked="${prefs.autoplay}" data-action="autoplay"></button></div>
-        </section></div></div></div>`;
-}
-
-function applyTheme() {
-    const section = route.view === 'player' ? current?.tab : route.view === 'library' ? 'library' : route.tab;
-    document.documentElement.dataset.section = section || 'radio';
-    document.querySelector('meta[name="theme-color"]').content = prefs.mode === 'dark' ? '#192024' : section === 'sermon' ? '#294a3b' : '#263f56';
-}
-
-function applyPrefs() {
-    document.documentElement.dataset.mode = prefs.mode;
-    document.documentElement.style.setProperty('--text-scale', prefs.size);
-    applyTheme();
-}
-
-function render() {
-    applyTheme();
-    $('main-content').innerHTML = route.view === 'player' ? playerView() : route.view === 'library' ? libraryView() : homeView();
-    const active = route.view === 'library' ? 'library' : route.view === 'player' ? current?.tab : route.tab;
-    $('bottom-nav').innerHTML = [['radio', 'radio', '엘림'], ['sermon', 'book', '주일말씀'], ['library', 'bookmark', '보관함']].map(([tab, i, text]) => `<button class="nav-item" data-action="nav" data-tab="${tab}" ${active === tab ? 'aria-current="page"' : ''}>${icon(i)}<span>${text}</span></button>`).join('');
-    renderResults(); renderMini(); syncPlayback(); updateProgress();
-}
-
-function renderMini() {
-    const mini = $('mini-player');
-    if (!current || route.view === 'player') { mini.hidden = true; return; }
-    mini.hidden = false;
-    mini.dataset.section = current.tab;
-    mini.innerHTML = `<button class="mini-open" data-action="show-player" aria-label="현재 재생 화면 열기">${art(current, true)}<span class="mini-copy"><strong>${esc(title(current))}</strong><small>${label(current.tab)} · <span id="mini-status">재생 준비</span></small></span></button><button class="icon-button play-toggle" data-action="toggle" aria-label="재생">${icon('play')}</button><button class="icon-button close-mini" data-action="close-mini" aria-label="재생 종료">${icon('close')}</button><span class="mini-line" aria-hidden="true"></span>`;
-}
-
-function syncPlayback() {
-    updateSleepLabel();
-    const playing = hasSource && !audioEl.paused;
-    document.querySelectorAll('.play-toggle').forEach(b => { b.innerHTML = icon(playing || loading ? 'pause' : 'play'); b.setAttribute('aria-label', playing || loading ? '일시정지' : '재생'); });
-    const status = mediaError ? '재생 실패 · 다시 시도해 주세요' : loading ? '불러오는 중' : playing ? '재생 중' : hasSource && audioEl.ended ? '재생 완료' : hasSource ? '일시정지' : '재생 준비';
-    if ($('play-status')) $('play-status').textContent = status;
-    if ($('mini-status')) $('mini-status').textContent = status;
-    try { if (navigator.mediaSession) navigator.mediaSession.playbackState = playing ? 'playing' : 'paused'; } catch {}
-}
-
-function settings() {
-    openDialog('화면 설정', `<div class="setting"><span class="setting-label">화면</span><div class="segments">${[['light', '밝은 화면'], ['dark', '어두운 화면']].map(([v, t]) => `<button class="chip" data-action="pref-mode" data-value="${v}" aria-pressed="${prefs.mode === v}">${t}</button>`).join('')}</div></div><div class="setting"><span class="setting-label">글자 크기</span><div class="segments">${[[1, '기본'], [1.12, '크게'], [1.24, '더 크게']].map(([v, t]) => `<button class="chip" data-action="pref-size" data-value="${v}" aria-pressed="${prefs.size === v}">${t}</button>`).join('')}</div></div>`);
-}
-
-function sleepDialog() {
-    openDialog('재생 종료 예약', `<div class="sleep-options">${[15, 30, 45, 60].map(n => `<button class="outline-button ${sleepDeadline && sleepMinutes === n ? 'active' : ''}" data-action="set-sleep" data-value="${n}">${n}분 후</button>`).join('')}<button class="outline-button ${sleepAtEnd ? 'active' : ''}" data-action="set-sleep" data-value="end">이번 회차 끝나면</button><button class="outline-button" data-action="set-sleep" data-value="off">예약 해제</button></div><p>브라우저가 백그라운드에서 멈추면 종료가 늦어질 수 있습니다.</p>`);
-}
-
-function resetFilters() { search = ''; limit = 24; }
-
-function remember() { if (current) write('elim.last.v3', current.id); }
-
-function minimalClick(e) {
-    const b = e.target.closest('[data-action]');
-    if (!b || b.disabled) return;
-    const v = b.dataset.value;
-    switch (b.dataset.action) {
-    case 'nav': goTab(b.dataset.tab); break;
-    case 'open': openEpisode(b.dataset.id); break;
-    case 'favorite': toggleFavorite(b.dataset.id); break;
-    case 'more': { const offset = $('main-content').scrollTop; limit += 24; renderResults(); $('main-content').scrollTop = offset; document.querySelectorAll('.episode-open')[Math.max(0, limit - 24)]?.focus({ preventScroll: true }); break; }
-    case 'clear-search': clearTimeout(searchTimer); search = ''; limit = 24; if ($('search-input')) { $('search-input').value = ''; $('search-input').focus(); } b.hidden = true; renderResults(); break;
-    case 'back': navigate(returnRoute, { scroll: returnScroll, focus: true }); break;
-    case 'show-player': returnRoute = { ...route }; returnScroll = $('main-content').scrollTop; navigate({ view: 'player', tab: current.tab }); break;
-    case 'toggle': toggle(); break;
-    case 'seek-relative': seek((pendingSeek ?? (hasSource ? audioEl.currentTime : positions[current?.id] || 0)) + Number(b.dataset.seconds)); break;
-    case 'adjacent': adjacent(Number(b.dataset.delta)); break;
-    case 'close-mini': savePosition(); switching = true; pause(); audioEl.removeAttribute('src'); audioEl.load(); hasSource = false; current = null; pendingSeek = null; loading = false; switching = false; clearSleep(); write('elim.last.v3', null); if (navigator.mediaSession) { navigator.mediaSession.metadata = null; navigator.mediaSession.playbackState = 'none'; } document.title = '라디오 엘림'; renderMini(); renderResults(); break;
-    case 'settings': settings(); break;
-    case 'close-dialog': closeDialog(); break;
-    case 'pref-mode': prefs.mode = v; write('elim.preferences.v3', prefs); applyPrefs(); document.querySelectorAll('[data-action="pref-mode"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.value === v))); break;
-    case 'pref-size': prefs.size = Number(v); write('elim.preferences.v3', prefs); applyPrefs(); document.querySelectorAll('[data-action="pref-size"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.value === v))); break;
-    case 'sleep': sleepDialog(); break;
-    case 'set-sleep': setSleep(v); break;
-    case 'autoplay': prefs.autoplay = !prefs.autoplay; write('elim.preferences.v3', prefs); b.setAttribute('aria-checked', String(prefs.autoplay)); break;
+    function updateNowPlayingInfo(ep) {
+        if (!ep) return;
+        const episodeTitle = ep.title;
+        const sectionName = currentEpisodeTab === 'radio' ? '라디오 엘림' : '주일말씀';
+        // iOS WKWebView는 웹페이지 제목을 잠금화면 재생 제목으로 사용하는 경우가 있어
+        // 재생 직전에 현재 회차명으로 페이지 제목과 audio title을 모두 갱신한다.
+        document.title = episodeTitle;
+        audioEl.title = episodeTitle;
+        audioEl.setAttribute('title', episodeTitle);
+        audioEl.setAttribute('aria-label', episodeTitle);
+        // Media Session API를 지원하는 환경에서는 더 자세한 메타데이터도 함께 전달한다.
+        if ('mediaSession' in navigator && 'MediaMetadata' in window) {
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: episodeTitle,
+                    artist: sectionName,
+                    album: '생명의말씀선교회 광주교회',
+                    artwork: ep.youtubeId ? [{src:thumbURL(ep), sizes:'480x360',type:'image/jpeg'}] : []
+                });
+            } catch (e) {
+                console.log('Media Session metadata 설정 불가:', e);
+            }
+        }
     }
-}
-
-document.addEventListener('click',minimalClick);
-document.addEventListener('change',e=>{if(e.target.id==='sort-select'){ascending=e.target.value==='asc';limit=24;renderResults();}});
-document.addEventListener('visibilitychange',()=>document.documentElement.toggleAttribute('data-background-paused',document.hidden));
-// Restore a paused session without fetching or autoplaying an audio file.
-const last=read('elim.last.v3',null);if(byId.has(last)){current=byId.get(last);queue=lists[current.tab].map(e=>e.id);pendingSeek=positions[last]||0;pendingEpisode=last;}
-loadRoute();if('ResizeObserver'in window)new ResizeObserver(()=>document.documentElement.style.setProperty('--dock',$('bottom-dock').getBoundingClientRect().height+'px')).observe($('bottom-dock'));
-</script>
+    // 오디오 이벤트 바인딩
+    audioEl.onended = () => { if(currentEpisode) { delete positions[currentEpisode.id]; writeSaved('elim.positions.v2',positions); } playAdjacent(1, true); };
+    audioEl.ontimeupdate = () => { updatePlayerProgress(); if(Date.now()-lastSavedAt>5000) savePosition(); updatePositionState(); };
+    audioEl.onloadedmetadata = () => {
+        const saved=Number(positions[currentEpisode?.id]);
+        if(Number.isFinite(saved) && saved>0 && Number.isFinite(audioEl.duration) && saved<audioEl.duration-3) audioEl.currentTime=saved;
+        updatePlayerProgress();
+        if (currentEpisode) updateNowPlayingInfo(currentEpisode);
+    };
+    audioEl.ondurationchange = () => { updatePlayerProgress(); };
+    audioEl.onplay = () => {
+        if (currentEpisode) updateNowPlayingInfo(currentEpisode);
+        isPlaying = true;
+        syncPlayingUI();
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'playing'; } catch (e) {}
+        }
+    };
+    audioEl.onerror = () => { isPlaying=false; syncPlayingUI(); showMessage("음원을 불러오지 못했습니다. 네트워크를 확인한 뒤 다시 재생해 주세요."); };
+    audioEl.onpause = () => {
+        if(!audioEl.ended) savePosition();
+        isPlaying = false;
+        syncPlayingUI();
+        if ('mediaSession' in navigator) {
+            try { navigator.mediaSession.playbackState = 'paused'; } catch (e) {}
+        }
+    };
+    window.addEventListener('DOMContentLoaded', () => render());
+    function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
+    function formatTime(totalSeconds) {
+        if (!isFinite(totalSeconds) || totalSeconds < 0) totalSeconds = 0;
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = Math.floor(totalSeconds % 60);
+        if (h > 0) {
+            return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+        }
+        return `${pad2(m)}:${pad2(s)}`;
+    }
+    function updatePlayerProgress() {
+        const slider = document.getElementById('progress-slider');
+        const curLabel = document.getElementById('current-time-label');
+        const durLabel = document.getElementById('duration-time-label');
+        if (!slider || !curLabel || !durLabel) return;
+        
+        const dur = Number.isFinite(audioEl.duration) ? audioEl.duration : 0;
+        slider.disabled = dur <= 0;
+        slider.max = dur || 100;
+        slider.value = audioEl.currentTime || 0;
+        curLabel.innerText = formatTime(audioEl.currentTime || 0);
+        durLabel.innerText = formatTime(dur);
+    }
+    function onSeekInput(val) {
+        if(!Number.isFinite(audioEl.duration) || audioEl.duration<=0) return;
+        audioEl.currentTime = Math.max(0,Math.min(audioEl.duration,Number(val)||0));
+        updatePlayerProgress();
+    }
+    function listFor(tab) { return tab === 'radio' ? radioEpisodes : sermonEpisodes; }
+    function tabLabel(tab) { return tab === 'radio' ? '라디오 엘림' : '주일말씀'; }
+    function formatDateKo(d) {
+        const [y, m, day] = d.split('-');
+        return `${y}.${m}.${day}`;
+    }
+    function getFilteredSorted() {
+        let items = listFor(currentTab).slice();
+        if (searchKeyword.trim()) {
+            const kw = searchKeyword.normalize('NFC').replace(/\s+/g,'').toLowerCase();
+            items = items.filter(ep => ep.title.normalize('NFC').replace(/\s+/g,'').toLowerCase().includes(kw) || String(ep.num).includes(kw));
+        }
+        items.sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
+        return items;
+    }
+    // ---------------- Navigation ----------------
+    function navigate(route) { 
+        currentRoute = route; 
+        render();
+        document.getElementById('main-content').scrollTop=0; 
+    }
+    function goElim() { currentTab = 'radio'; searchKeyword = ''; navigate('home'); }
+    function goSermon() { currentTab = 'sermon'; searchKeyword = ''; navigate('home'); }
+    function goFavorites() { navigate('favorites'); }
+    function backToList() { 
+        currentTab = currentEpisodeTab; 
+        navigate('home'); 
+    }
+    function openPlayer(tab, id) {
+        const ep = listFor(tab).find(e => e.id === id);
+        if (!ep) return;
+        if(currentEpisode && currentEpisode.id!==ep.id && !audioEl.ended) savePosition();
+        currentEpisode = ep;
+        currentEpisodeTab = tab;
+        updateNowPlayingInfo(ep);
+        navigate('player');
+        playEpisode(ep);
+    }
+    function openPlayerFromMini() { if (currentEpisode) navigate('player'); }
+    // ---------------- Render ----------------
+    function render() {
+        updateTheme();
+        updateNavStyles();
+        document.getElementById('main-content').innerHTML =
+            currentRoute === 'home' ? renderHomeView() :
+            currentRoute === 'player' ? renderPlayerView() :
+            renderFavoritesView();
+        updateMiniPlayer();
+        attachHomeEvents();
+        if (currentRoute === 'player') {
+            updatePlayerProgress();
+        }
+    }
+    function updateNavStyles() {
+        const relevantTab = currentRoute === 'player' ? currentEpisodeTab : currentTab;
+        const activeId =
+            currentRoute === 'favorites' ? 'nav-favorites' :
+            relevantTab === 'sermon' ? 'nav-sermon' : 'nav-elim';
+        ['nav-elim', 'nav-sermon', 'nav-favorites'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.className = "flex flex-col items-center space-y-1 px-4 py-1 transition-colors " +
+                    (id === activeId ? "text-blue-950 font-bold" : "text-slate-400 hover:text-slate-600");
+            }
+        });
+    }
+    function updateTheme() {
+        const theme=currentRoute==='favorites' ? 'favorites' : currentRoute==='player' ? currentEpisodeTab : currentTab;
+        document.getElementById('app').dataset.theme=theme;
+        document.getElementById('mini-player').dataset.theme=currentEpisodeTab;
+    }
+    function sectionBanner(tab) {
+        return `<section class="section-banner" aria-label="${tabLabel(tab)}">
+            <div class="banner-copy"><h2>${tab==='radio'?'라디오 엘림':'주일말씀'}</h2><p>${tab==='radio'?'RADIO ELIM':'SUNDAY SERMON'} · ${listFor(tab).length}개의 ${tab==='radio'?'이야기':'말씀'}</p></div>
+            <svg aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0 90 Q150 0 300 90 T600 90 T900 90 T1200 90 V200 H0Z"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none"><path d="M0 90 Q150 180 300 90 T600 90 T900 90 T1200 90 V200 H0Z"/></svg>
+        </section>`;
+    }
+    function renderHomeView() {
+        const latest = listFor(currentTab).slice().sort((a, b) => b.num - a.num)[0];
+        const items = getFilteredSorted();
+        return `
+            <div class="p-5 space-y-5">
+                ${sectionBanner(currentTab)}
+                <!-- HERO / LATEST -->
+                <div class="latest-card relative rounded-2xl overflow-hidden bg-white border border-slate-200 text-slate-800 p-5 cursor-pointer hover:border-blue-900/30 transition-all shadow-sm" onclick="openPlayer('${currentTab}','${latest.id}')">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-950 text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-blue-900 animate-pulse"></span>
+                            <span>${currentTab === 'radio' ? '최신 회차' : '최신 말씀'}</span>
+                        </span>
+                        <span class="text-xs text-slate-400">${formatDateKo(latest.date)}</span>
+                    </div>
+                    ${thumbnail(latest, 'cover-large mb-4', false)}
+                    <h2 class="text-lg font-bold mb-1 leading-snug text-slate-900">${escapeHtml(latest.title)}</h2>
+                    <div class="flex items-center space-x-2 mt-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-950 text-white flex items-center justify-center text-xs shadow-sm">
+                            <i class="fa-solid fa-play ml-0.5"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-blue-950">지금 바로 듣기</span>
+                    </div>
+                </div>
+                <!-- SEARCH & SORT -->
+                <div class="space-y-2">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input id="search-input" aria-label="제목, 회차, 목사님 검색" type="text" placeholder="제목 · 회차 · 목사님 검색" value="${escapeHtml(searchKeyword)}"
+                            class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-900 focus:bg-white shadow-sm" />
+                    </div>
+                    <div class="flex justify-end space-x-3 text-xs font-semibold">
+                        <button onclick="setSort(false)" class="${!sortAscending ? 'text-blue-950 underline font-bold' : 'text-slate-400'}">최신 순</button>
+                        <button onclick="setSort(true)" class="${sortAscending ? 'text-blue-950 underline font-bold' : 'text-slate-400'}">오래된 순</button>
+                    </div>
+                </div>
+                <!-- LIST -->
+                <div class="library-surface">
+                    <h3 class="font-bold text-sm text-slate-700 mb-3 flex items-center">
+                        <i class="fa-solid fa-list-ul text-blue-950 mr-2"></i>${tabLabel(currentTab)} 전체 (${items.length} / ${listFor(currentTab).length}개)
+                    </h3>
+                    <div class="space-y-2.5">
+                        ${items.length === 0 ? `<p class="text-center text-slate-400 text-sm py-10">검색 결과가 없습니다 🙇</p>` :
+                        items.map(ep => {
+                            const isFav = favorites.includes(ep.id);
+                            return `
+                                <div onclick="openPlayer('${currentTab}','${ep.id}')" class="episode-row flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer transition-all group">
+                                    <div class="flex items-center space-x-3 min-w-0">
+                                        ${thumbnail(ep, 'cover-small')}
+                                        <div class="min-w-0">
+                                            <h4 class="episode-title font-semibold text-sm text-slate-800">${escapeHtml(ep.title)}</h4>
+                                            <p class="text-xs text-slate-500 truncate">${formatDateKo(ep.date)}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1 pl-2 flex-shrink-0">
+                                        <button onclick="event.stopPropagation(); toggleFavorite('${ep.id}')" class="text-slate-300 hover:text-rose-500 p-2 transition-colors">
+                                            <i class="${isFav ? 'fa-solid fa-heart text-rose-500' : 'fa-regular fa-heart'} text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    function attachHomeEvents() {
+        const input = document.getElementById('search-input');
+        if (input) {
+            input.addEventListener('compositionend',()=>input.dispatchEvent(new Event('input')));
+            input.addEventListener('input', (e) => {
+                if(e.isComposing) return;
+                searchKeyword = e.target.value;
+                const cursorPos = e.target.selectionStart;
+                render();
+                const newInput = document.getElementById('search-input');
+                if (newInput) { newInput.focus(); newInput.setSelectionRange(cursorPos, cursorPos); }
+            });
+        }
+    }
+    function setSort(asc) { sortAscending = asc; render(); }
+    function renderPlayerView() {
+        if (!currentEpisode) return '';
+        const ep=currentEpisode;
+        const isFav=favorites.includes(ep.id);
+        return `
+            <div id="player-card">
+                <div class="player-topbar">
+                    <button onclick="backToList()" aria-label="플레이어 접기" class="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600"><i class="fa-solid fa-chevron-down"></i></button>
+                    <span>${tabLabel(currentEpisodeTab)}</span>
+                    <button onclick="toggleFavorite('${ep.id}')" aria-label="즐겨찾기 전환" aria-pressed="${isFav}" class="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-600"><i class="${isFav?'fa-solid fa-heart text-rose-500':'fa-regular fa-heart'}"></i></button>
+                </div>
+                <section class="now-playing-panel" aria-label="회차 정보">
+                    <div class="artwork-well">${thumbnail(ep,'cover-large',false)}</div>
+                    <div class="episode-information">
+                        <p class="eyebrow">${currentEpisodeTab==='radio'?'RADIO ELIM':'SUNDAY SERMON'}</p>
+                        <h2>${escapeHtml(ep.title)}</h2>
+                        <div class="episode-meta"><span>${formatDateKo(ep.date)}</span>
+                        ${ep.youtubeId?`<a href="https://www.youtube.com/watch?v=${ep.youtubeId}" target="_blank" rel="noopener noreferrer">YouTube 원본 ↗</a>`:'<span>썸네일 준비 중</span>'}</div>
+                    </div>
+                </section>
+                <section class="transport-panel" aria-label="재생 조절">
+                    <h3 class="transport-label">재생 조절</h3>
+                <!-- PLAYBACK BAR & CONTROLS -->
+                <div class="w-full space-y-4 px-1 pb-2">
+                    <div>
+                        <input id="progress-slider" aria-label="재생 위치" type="range" min="0" max="100" value="0" step="0.1"
+                            oninput="onSeekInput(this.value)"
+                            class="w-full h-1.5 rounded-lg cursor-pointer">
+                        <div class="flex items-center justify-between mt-2 text-xs font-semibold text-slate-400">
+                            <span id="current-time-label">00:00</span>
+                            <span id="duration-time-label">00:00</span>
+                        </div>
+                    </div>
+                    <!-- 재생 컨트롤 버튼 레이아웃 -->
+                    <div class="flex items-center justify-around px-2">
+                        <button onclick="skipSeconds(-15)" class="relative text-slate-500 hover:text-slate-800 p-2 flex flex-col items-center" title="15초 뒤로">
+                            <i class="fa-solid fa-rotate-left text-base"></i>
+                            <span class="text-[9px] font-bold -mt-0.5">15</span>
+                        </button>
+                        <button onclick="playAdjacent(-1)" class="text-slate-700 hover:text-blue-950 p-2 text-lg" title="이전 회차">
+                            <i class="fa-solid fa-backward-step"></i>
+                        </button>
+                        <button onclick="togglePlayPause()" class="w-16 h-16 rounded-full bg-blue-950 hover:bg-blue-900 text-white flex items-center justify-center shadow-lg shadow-blue-950/30 text-xl active:scale-95">
+                            <i id="player-main-icon" class="fa-solid ${isPlaying ? 'fa-pause' : 'fa-play ml-0.5'}"></i>
+                        </button>
+                        <button onclick="playAdjacent(1)" class="text-slate-700 hover:text-blue-950 p-2 text-lg" title="다음 회차">
+                            <i class="fa-solid fa-forward-step"></i>
+                        </button>
+                        <button onclick="skipSeconds(15)" class="relative text-slate-500 hover:text-slate-800 p-2 flex flex-col items-center" title="15초 앞으로">
+                            <i class="fa-solid fa-rotate-right text-base"></i>
+                            <span class="text-[9px] font-bold -mt-0.5">15</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="speed-row">
+                    <label for="speed-select" class="text-sm text-slate-500">재생 속도</label>
+                    <select id="speed-select" onchange="setSpeed(Number(this.value))" class="p-2 rounded-xl bg-slate-100 text-sm">
+                        ${[0.75,1,1.25,1.5,1.75,2].map(s=>`<option value="${s}" ${s===currentSpeed?'selected':''}>${s}배</option>`).join('')}
+                    </select>
+                </div>
+                </section>
+            </div>
+        `;
+    }
+    function renderFavoritesView() {
+        const all = [...radioEpisodes.map(e => ({ ...e, tab: 'radio' })), ...sermonEpisodes.map(e => ({ ...e, tab: 'sermon' }))];
+        const favEps = all.filter(e => favorites.includes(e.id));
+        return `
+            <div class="p-6 space-y-4">
+                <h2 class="text-lg font-bold text-slate-800 mb-1 flex items-center">
+                    <i class="fa-solid fa-heart text-rose-500 mr-2"></i>즐겨찾기
+                </h2>
+                ${favEps.length === 0 ? `
+                    <div class="text-center py-20 text-slate-400">
+                        <i class="fa-regular fa-heart text-4xl mb-3"></i>
+                        <p class="text-sm">즐겨찾기한 회차가 없습니다.</p>
+                    </div>
+                ` : `
+                    <div class="library-surface space-y-2.5">
+                        ${favEps.map(ep => `
+                            <div onclick="openPlayer('${ep.tab}','${ep.id}')" class="episode-row flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-900/30 cursor-pointer shadow-sm">
+                                <div class="flex items-center space-x-3 min-w-0">
+                                    ${thumbnail(ep, 'cover-small')}
+                                    <div class="min-w-0">
+                                        <span class="text-[10px] text-blue-900 font-semibold px-1.5 py-0.5 rounded bg-blue-50">${tabLabel(ep.tab)}</span>
+                                        <h4 class="episode-title font-semibold text-sm text-slate-800 mt-0.5">${escapeHtml(ep.title)}</h4>
+                                        <p class="text-xs text-slate-500 truncate">${formatDateKo(ep.date)}</p>
+                                    </div>
+                                </div>
+                                <button onclick="event.stopPropagation(); toggleFavorite('${ep.id}')" class="text-rose-500 p-2 flex-shrink-0">
+                                    <i class="fa-solid fa-heart text-base"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `}
+            </div>
+        `;
+    }
+    // ---------------- Player logic ----------------
+    function playEpisode(ep) {
+        updateNowPlayingInfo(ep);
+        if (audioEl.getAttribute('src') !== ep.src) {
+            audioEl.src = ep.src;
+            audioEl.load();
+        }
+        audioEl.playbackRate = currentSpeed;
+        safePlay();
+    }
+    async function safePlay() {
+        const request=++playRequest;
+        try {
+            if(audioEl.error && currentEpisode) { audioEl.src=currentEpisode.src; audioEl.load(); }
+            await audioEl.play();
+        } catch(error) {
+            if(request!==playRequest || error.name==='AbortError') return;
+            isPlaying=false; syncPlayingUI();
+            showMessage('재생을 시작하지 못했습니다. 재생 버튼을 다시 눌러 주세요.');
+        }
+    }
+    function togglePlayPause() {
+        if(!currentEpisode) { const list=listFor(currentTab); if(list.length) openPlayer(currentTab,list[0].id); return; }
+        if(audioEl.paused) safePlay(); else { ++playRequest; audioEl.pause(); }
+    }
+    function syncPlayingUI() {
+        updateMiniPlayer();
+        if (currentRoute === 'player') {
+            const playIcon = document.getElementById('player-main-icon');
+            if (playIcon) {
+                playIcon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play ml-0.5';
+            }
+        }
+    }
+    function skipSeconds(delta) {
+        if (!audioEl || !Number.isFinite(audioEl.duration)) return;
+        let newTime = audioEl.currentTime + delta;
+        audioEl.currentTime = Math.max(0, Math.min(audioEl.duration || 0, newTime));
+        updatePlayerProgress();
+    }
+    function setSpeed(s) {
+        if (![0.75,1,1.25,1.5,1.75,2].includes(s)) return;
+        currentSpeed = s;
+        audioEl.playbackRate = s;
+        writeSaved('elim.speed.v2',s); updatePositionState();
+    }
+    function playAdjacent(delta, auto = false) {
+        if (!currentEpisode) return;
+        const list = listFor(currentEpisodeTab).slice().sort((a, b) => sortAscending ? a.date.localeCompare(b.date) || a.num-b.num : b.date.localeCompare(a.date) || b.num-a.num);
+        const idx = list.findIndex(e => e.id === currentEpisode.id);
+        if (idx === -1) return;
+        const nextIdx = idx + delta;
+        if(nextIdx<0 || nextIdx>=list.length) { if(!auto) showMessage('마지막 회차입니다.'); return; }
+        openPlayer(currentEpisodeTab, list[nextIdx].id);
+    }
+    function toggleFavorite(id) {
+        favorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
+        writeSaved('elim.favorites.v2',favorites);
+        render();
+    }
+    function updateMiniPlayer() {
+        const mini = document.getElementById('mini-player');
+        document.getElementById('app').classList.toggle('has-mini', !!currentEpisode && currentRoute!=='player');
+        if (currentEpisode && currentRoute !== 'player') {
+            mini.dataset.theme=currentEpisodeTab;
+            mini.classList.remove('hidden');
+            document.getElementById('mini-art').innerHTML=thumbnail(currentEpisode,'cover-mini',false);
+            document.getElementById('mini-title').innerText = currentEpisode.title;
+            document.getElementById('mini-date').innerText = tabLabel(currentEpisodeTab)+' · '+formatDateKo(currentEpisode.date);
+            document.querySelector('#mini-play-btn i').className = isPlaying ? 'fa-solid fa-pause text-sm' : 'fa-solid fa-play text-sm ml-0.5';
+            document.getElementById('mini-equalizer').classList.toggle('is-active',isPlaying);
+        } else {
+            mini.classList.add('hidden');
+        }
+    }
+    function closeMiniPlayer() {
+        savePosition(); ++playRequest; audioEl.pause();
+        audioEl.removeAttribute('src'); audioEl.load();
+        isPlaying = false;
+        currentEpisode = null;
+        if('mediaSession' in navigator) { navigator.mediaSession.metadata=null; navigator.mediaSession.playbackState='none'; }
+        document.title = '라디오 엘림';
+        updateMiniPlayer();
+    }
+    // 잠금화면 / 제어센터 버튼 제어
+    if ('mediaSession' in navigator) {
+        try {
+            navigator.mediaSession.setActionHandler('play', () => {
+                if (!currentEpisode) return;
+                updateNowPlayingInfo(currentEpisode);
+                safePlay();
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                audioEl.pause();
+            });
+            navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                skipSeconds(-(details.seekOffset || 10));
+            });
+            navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                skipSeconds(details.seekOffset || 10);
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', () => {
+                playAdjacent(-1);
+            });
+            navigator.mediaSession.setActionHandler('nexttrack', () => {
+                playAdjacent(1);
+            });
+        } catch (e) {
+            console.log('Media Session 버튼 설정 불가:', e);
+        }
+    }
+    function escapeHtml(value) { return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function readSaved(key,fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+    function writeSaved(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch {} }
+    function thumbURL(ep) { return 'https://i.ytimg.com/vi/'+ep.youtubeId+'/hqdefault.jpg'; }
+    function placeholder(ep) {
+        const label=ep.id.startsWith('sermon')?'주일말씀':'RADIO ELIM';
+        return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" rx="20" fill="${ep.id.startsWith('sermon')?'#064e3b':'#172554'}"/><text x="320" y="155" text-anchor="middle" fill="#fff" font-size="36" font-family="sans-serif">${label}</text><text x="320" y="213" text-anchor="middle" fill="#cbd5e1" font-size="21" font-family="sans-serif">썸네일 준비 중</text></svg>`);
+    }
+    function thumbnail(ep,classes='',lazy=true) {
+        return `<img src="${escapeHtml(ep.youtubeId?thumbURL(ep):placeholder(ep))}" data-episode="${ep.id}" alt="${escapeHtml(ep.title)} 썸네일" class="cover ${classes}" width="480" height="270" loading="${lazy?'lazy':'eager'}" decoding="async" onerror="thumbnailFailed(this)">`;
+    }
+    function thumbnailFailed(img) {
+        img.onerror=null;
+        const ep=[...radioEpisodes,...sermonEpisodes].find(e=>e.id===img.dataset.episode);
+        if(ep) img.src=placeholder(ep);
+    }
+    function savePosition() {
+        if(!currentEpisode || audioEl.readyState<1 || audioEl.ended) return;
+        positions[currentEpisode.id]=audioEl.currentTime;
+        writeSaved('elim.positions.v2',positions); lastSavedAt=Date.now();
+    }
+    function updatePositionState() {
+        if(!navigator.mediaSession?.setPositionState || !Number.isFinite(audioEl.duration) || audioEl.duration<=0) return;
+        try { navigator.mediaSession.setPositionState({duration:audioEl.duration,playbackRate:audioEl.playbackRate,position:Math.min(audioEl.duration,Math.max(0,audioEl.currentTime))}); } catch {}
+    }
+    let messageTimer;
+    function showMessage(text) {
+        const el=document.getElementById('status-message'); el.textContent=text; el.hidden=false;
+        clearTimeout(messageTimer); messageTimer=setTimeout(()=>el.hidden=true,6000);
+    }
+    window.addEventListener('pagehide',savePosition);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden) savePosition();});
+    if('mediaSession' in navigator) {
+        try { navigator.mediaSession.setActionHandler('seekto',d=>{if(Number.isFinite(d.seekTime)) onSeekInput(d.seekTime);}); } catch {}
+    }
+    const originalRender=render;
+    render=function() { originalRender();
+        document.querySelectorAll('button:not([aria-label])').forEach(b=>{
+            const action=b.getAttribute('onclick')||'';
+            if(b.textContent.trim()) return;
+            b.setAttribute('aria-label',b.title || (action.includes('Favorite')?'즐겨찾기 전환':action.includes('togglePlay')?'재생 또는 일시정지':action.includes('closeMini')?'재생 종료':'목록으로 돌아가기'));
+        });
+    };
+    // Keep one-finger scrolling and seeking; suppress page pinch/double-tap zoom.
+    for (const name of ['gesturestart','gesturechange','gestureend']) {
+        document.addEventListener(name, e => e.preventDefault(), {passive:false});
+    }
+    for (const name of ['touchstart','touchmove']) {
+        document.addEventListener(name, e => { if(e.touches.length>1) e.preventDefault(); }, {passive:false});
+    }
+    document.addEventListener('dblclick', e => e.preventDefault(), {passive:false});
+    document.addEventListener('wheel', e => { if(e.ctrlKey) e.preventDefault(); }, {passive:false});
+    window.addEventListener('DOMContentLoaded',()=>{
+        const dock=document.getElementById('bottom-dock');
+        const update=()=>document.documentElement.style.setProperty('--dock-height',dock.getBoundingClientRect().height+'px');
+        if('ResizeObserver' in window) new ResizeObserver(update).observe(dock);
+        window.addEventListener('resize',update); update();
+    });
+    </script>
+    <div id="status-message" role="status" aria-live="polite" hidden style="position:fixed;z-index:100;bottom:calc(150px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(90%,400px);padding:14px 18px;background:#172554;color:white;border-radius:14px;font-size:14px;box-shadow:0 6px 30px #0003"></div>
 </body>
+</html>
 </html>
