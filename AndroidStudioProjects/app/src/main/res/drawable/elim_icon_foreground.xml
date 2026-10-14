@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original PNG, centered; its wordmark stays inside the 66dp safe zone. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="14%" android:insetRight="14%"
+    android:insetTop="14%" android:insetBottom="14%">
+    <bitmap android:src="@drawable/elim_icon_original"
+        android:gravity="fill" android:filter="true" />
+</inset>
